@@ -10,14 +10,16 @@ TARGETS:=$(patsubst data/%,$(OUTDIR)/%.$(TARGET_LEVEL),$(basename $(DATA)))
 all: $(TARGETS)
 
 $(OUTDIR)/%: data/%
-	mkdir -p $(OUTDIR)
+	@mkdir -p $(OUTDIR)
 	cp $< $@
 
 $(OUTDIR)/%.txt: $(OUTDIR)/%.html
-	src/extract_text.py $< >$@
+	src/html2text.py $< >$@
 
 $(OUTDIR)/%.syn.json: $(OUTDIR)/%.txt
-	$(FREELING) -f en.cfg --outlv dep --output json <$< >$@
+	@echo -n "[" >$@
+	$(FREELING) -f en.cfg --outlv dep --output json <$< | sed 's/}\s*{/}, {/g' >>$@
+	@echo "]" >>$@
 
 clean:
 	rm -rf $(OUTDIR)
