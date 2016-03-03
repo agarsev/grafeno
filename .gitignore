@@ -1,2 +1,3 @@
 data
 local.mk
+src/__pycache__
