@@ -3,44 +3,71 @@
 import json
 import networkx as nx
 
-def simplerule (head, children):
-    if head['tag'][0] == 'N':
-        return ({'concept':head['lemma'],'type':'N'},[])
-    elif head['tag'][0] == 'V':
-        deps = [ (c, 'ARG') for c, fun in children if c and fun in ("ncsubj","ncmod","dobj") ]
-        return ({'concept':head['lemma'],'type':'V'},deps)
-    return (None, None)
+def extract_nouns (head, function, children):
+    if 'tag' in head and head['tag'][0] == 'N':
+        deps = [ (c, 'ATTR', ds) for c, fun, ds in children if c and fun == 'ncmod' ]
+        return ({'concept':head['lemma'],'type':'N'},function,deps)
 
-rules = [ simplerule ]
+def predicative_verbs (head, function, children):
+    if 'tag' in head and head['tag'][0] == 'V' and function != 'aux':
+        deps = []
+        for c, fun, ds in children:
+            if fun == 'ncsubj':
+                deps.append((c, 'AGENT', ds))
+            elif fun == 'dobj':
+                deps.append((c, 'THEME', ds))
+        return ({'concept':head['lemma'],'type':'V'},function,deps)
+
+def copula (head, function, children):
+    if 'lemma' in head and head['lemma'] == 'be' and function != 'aux':
+        subj = next((c, ds) for c, fun, ds in children if fun == 'ncsubj')
+        attr = next((c, 'ATTR', []) for c, fun, ds in children if fun == 'ncmod')
+        return (subj[0], function, [attr]+subj[1])
+
+def extract_adjectives (head, function, children):
+    if 'tag' in head and head['tag'][0] == 'J':
+        return ({'concept':head['lemma'],'type':'J'},function,[])
+
+rules = [ extract_nouns, copula, predicative_verbs, extract_adjectives ]
+
+def transform_node (tree, node, function):
+    '''Take a dependency node and process it according to the rules'''
+    children = []
+    if 'children' in node:
+        for c in node['children']:
+            concept = transform_node(tree, c, c["function"])
+            if concept != None:
+                children.append(concept)
+    head = tree['tokenmap'][node['token']].copy()
+    for r in rules:
+        match = r(head, function, children)
+        if match == None:
+            continue
+        else:
+            head, function, children = match
+    if 'concept' not in head:
+        return None
+    return (head, function, children)
 
 graph_id = 0
-
-def transform_node (G, tree, node):
-    '''Take a dependency node and process it according to the rules'''
+def tree_to_graph (G, tree):
     global graph_id
-    for r in rules:
-        if 'children' in node:
-            children = [ (transform_node(G, tree, c), c["function"]) for c in node['children'] ]
-        else:
-            children = []
-        head = tree['tokenmap'][node['token']]
-        p, deps = r(head, children)
-        if p != None:
-            pid = graph_id
-            graph_id += 1
-            G.add_node(pid, concept=p['concept'], type=p['type'])
-            p['id'] = pid
-            for d, fun in deps:
-                G.add_edge(pid, d['id'], type=fun)
-            return p
+    head, function, children = tree
+    pid = graph_id
+    graph_id += 1
+    G.add_node(pid, concept=head['concept'], type=head['type'])
+    for c in children:
+        G.add_edge(pid, tree_to_graph(G, c), type=c[1])
+    return pid
 
 def transform_tree (tree):
-    '''Take a dependency tree extracted from Freeling and extract the conceptual graph'''
     global graph_id
-    G = nx.DiGraph()
-    graph_id = 0
+    '''Take a dependency tree extracted from Freeling and extract the conceptual graph'''
     tree['tokenmap'] = { t['id']: t for t in tree['tokens'] }
-    transform_node(G, tree, tree['dependencies'][0])
+    res = transform_node(tree, tree['dependencies'][0], 'top')
+    graph_id = 0
+    G = nx.DiGraph()
+    tree_to_graph(G, res)
     return G
 
 
@@ -54,19 +81,16 @@ if __name__ == "__main__":
     args = arg_parser.parse_args()
 
     with open(args.doc, mode='r') as f:
-        tree = json.load(f)
+        trees = json.load(f)
 
-    g = transform_tree(tree[0])
-
-    if args.plot:
-
-        import matplotlib.pyplot as plt
-        lay = nx.spring_layout(g)
-        nx.draw_networkx(g,lay,node_size=1000,node_color="white", labels={n:data['concept'] for n, data in g.nodes(True)})
-        nx.draw_networkx_edge_labels(g,lay,edge_labels={(a,b):data['type'] for (a,b,data) in g.edges(data=True)})
-        plt.show()
-
-    else:
-
-        from networkx.readwrite import json_graph
-        print(json.dumps(json_graph.node_link_data(g)))
+    for t in trees:
+        g = transform_tree(t)
+        if args.plot:
+            import matplotlib.pyplot as plt
+            lay = nx.spring_layout(g)
+            nx.draw_networkx(g,lay,node_size=1000,node_color="white", labels={n:data['concept'] for n, data in g.nodes(True)})
+            nx.draw_networkx_edge_labels(g,lay,edge_labels={(a,b):data['type'] for (a,b,data) in g.edges(data=True)})
+            plt.show()
+        else:
+            from networkx.readwrite import json_graph
+            print(json.dumps(json_graph.node_link_data(g)))
