@@ -65,11 +65,8 @@ if __name__ == "__main__":
         if g == None:
             continue
         if args.plot:
-            import matplotlib.pyplot as plt
-            lay = nx.spring_layout(g)
-            nx.draw_networkx(g,lay,node_size=1000,node_color="white", labels={n:data['concept'] for n, data in g.nodes(True)})
-            nx.draw_networkx_edge_labels(g,lay,edge_labels={(a,b):data['type'] for (a,b,data) in g.edges(data=True)})
-            plt.show()
+            from common import draw_concept_graph
+            draw_concept_graph(g)
         else:
             from networkx.readwrite import json_graph
             print(json.dumps(json_graph.node_link_data(g)))
