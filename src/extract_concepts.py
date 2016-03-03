@@ -16,19 +16,33 @@ def predicative_verbs (head, function, children):
                 deps.append((c, 'AGENT', ds))
             elif fun == 'dobj':
                 deps.append((c, 'THEME', ds))
+            elif fun == 'PREP':
+                deps.append((c, c['prep'], ds))
         return ({'concept':head['lemma'],'type':'V'},function,deps)
 
 def copula (head, function, children):
     if 'lemma' in head and head['lemma'] == 'be' and function != 'aux':
-        subj = next((c, ds) for c, fun, ds in children if fun == 'ncsubj')
-        attr = next((c, 'ATTR', []) for c, fun, ds in children if fun == 'ncmod')
-        return (subj[0], function, [attr]+subj[1])
+        try:
+            subj = next((c, ds) for c, fun, ds in children if fun == 'ncsubj')
+            attr = next((c, 'ATTR', []) for c, fun, ds in children if fun == 'ncmod')
+            return (subj[0], function, [attr]+subj[1])
+        except StopIteration:
+            pass
 
 def extract_adjectives (head, function, children):
     if 'tag' in head and head['tag'][0] == 'J':
         return ({'concept':head['lemma'],'type':'J'},function,[])
 
-rules = [ extract_nouns, copula, predicative_verbs, extract_adjectives ]
+def preposition_rising (head, function, children):
+    if 'tag' in head and head['tag'] == 'IN':
+        try:
+            obj = next((c, ds) for c, fun, ds in children if fun == 'dobj')
+            obj[0]['prep'] = head['lemma']
+            return (obj[0], 'PREP', obj[1])
+        except StopIteration:
+            pass
+
+rules = [ extract_nouns, copula, predicative_verbs, extract_adjectives, preposition_rising ]
 
 def transform_node (tree, node, function):
     '''Take a dependency node and process it according to the rules'''
@@ -65,6 +79,8 @@ def transform_tree (tree):
     '''Take a dependency tree extracted from Freeling and extract the conceptual graph'''
     tree['tokenmap'] = { t['id']: t for t in tree['tokens'] }
     res = transform_node(tree, tree['dependencies'][0], 'top')
+    if res == None:
+        return None
     graph_id = 0
     G = nx.DiGraph()
     tree_to_graph(G, res)
@@ -85,6 +101,8 @@ if __name__ == "__main__":
 
     for t in trees:
         g = transform_tree(t)
+        if g == None:
+            continue
         if args.plot:
             import matplotlib.pyplot as plt
             lay = nx.spring_layout(g)
