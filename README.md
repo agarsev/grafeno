@@ -8,7 +8,11 @@ For more information, view the [wiki](https://gitlab.com/Nil102/nilfusion/wikis/
 
 Usage
 -----
+Run the `experiment.py` script with a number of sentences and different options.
+Use `-h` to get the list of experiments available.
 
+Makefile usage
+--------------
 Put in a folder `data` the data to analyze. If it's an html file, it must have
 the extension `.html`. If it's plain text, the extension should be `.txt`.
 
@@ -19,7 +23,6 @@ For extra configuration, write a `local.mk` file and put there extra options.
 
 Requirements
 ------------
-
 - python3
 - beautifulsoup4
 - freeling
@@ -27,7 +30,6 @@ Requirements
 
 Authors
 -------
-
 - Alberto Díaz <albertodiaz@fdi.ucm.es>
 - Alberto Fernández Isabel <afernandezisabel@ucm.es>
 - Antonio F. G. Sevilla <afgs@ucm.es>
