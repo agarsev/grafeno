@@ -33,12 +33,11 @@ def tree_to_graph (G, tree):
         G.add_edge(pid, tree_to_graph(G, c), type=c[1])
     return pid
 
-def transform_tree (tree, rules_module = 'transform'):
-    T = __import__(rules_module)
+def transform_tree (tree, rules):
     global graph_id
     '''Take a dependency tree extracted from Freeling and extract the conceptual graph'''
     tree['tokenmap'] = { t['id']: t for t in tree['tokens'] }
-    res = transform_node(tree, tree['dependencies'][0], 'top', T.rules)
+    res = transform_node(tree, tree['dependencies'][0], 'top', rules)
     if res == None:
         return None
     graph_id = 0
@@ -61,7 +60,8 @@ if __name__ == "__main__":
         trees = json.load(f)
 
     for t in trees:
-        g = transform_tree(t, args.transform)
+        T = __import__(args.transform)
+        g = transform_tree(t, T.rules)
         if g == None:
             continue
         if args.plot:
