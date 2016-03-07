@@ -13,15 +13,3 @@ def html_to_text (html):
     if not body:
         body = soup.find('body')
     return u' '.join(p.get_text() for p in body.find_all('p'))
-
-if __name__ == "__main__":
-
-    import argparse
-
-    arg_parser = argparse.ArgumentParser(description='Extract the body text of an html document')
-    arg_parser.add_argument('doc', help='document')
-    args = arg_parser.parse_args()
-
-    with open(args.doc, mode='r') as f:
-        print(html_to_text(f.read()))
-

@@ -1,3 +1,2 @@
 data
-local.mk
-*/__pycache__
+*.pyc

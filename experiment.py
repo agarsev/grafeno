@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-from src.freeling_parse import parse
-from src.extract_concepts import transform_tree
-from src.common import draw_concept_graph
+import conceptgraphs.graph as CG
 
 import networkx as nx
 
@@ -75,19 +73,21 @@ if __name__ == "__main__":
     sys.path.insert(1, 'modules')
 
     T = __import__(args.transform)
-    gs = [transform_tree(parse(s), T.rules) for s in args.sent]
+    gs = [CG(T.rules, text=s) for s in args.sent]
 
     if args.generalize:
-        gs = [reduce(generalize, gs)]
+        nu = CG(T.rules)
+        nu.g = reduce(generalize, [g.g for g in gs])
+        gs = [nu]
 
     if args.rave:
         for g in gs:
-            rave(g)
+            rave(g.g)
 
     if args.print:
         for g in gs:
-            draw_concept_graph(g)
+            g.draw()
 
     L = __import__(args.linearize)
     for g in gs:
-        print(L.linearize(g))
+        print(L.linearize(g.g))
