@@ -10,14 +10,16 @@ def transform_node (tree, node, function, rules):
             if concept != None:
                 children.append(concept)
     head = tree['tokenmap'][node['token']].copy()
+    func = { 'fun': function }
     for r in rules:
-        match = r(head, function, children)
+        match = r(head, func, children)
         if match == None:
             continue
         else:
             head, function, children = match
     if 'concept' not in head:
         return None
+    children = [c for c in children if 'ftor' in c[1]]
     return (head, function, children)
 
 

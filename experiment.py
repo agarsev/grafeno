@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import conceptgraphs.graph as CG
+from conceptgraphs import Graph as CG
 
 import networkx as nx
 
@@ -21,40 +21,36 @@ def get_common_concept(a, b):
         return None
 
 def generalize_rec (G, a, b, an, bn):
-    global n
-    na = a.node[an]
-    nb = b.node[bn]
-    if na['type'] != nb['type']:
+    na = a._g.node[an]
+    nb = b._g.node[bn]
+    if na['gram']['type'] != nb['gram']['type']:
         return None
     com=get_common_concept(na, nb)
     if com == None:
         return None
-    node = n
-    n += 1
-    G.add_node(node, concept=com, type=na['type'])
-    for i in a[an]:
-        for j in b[bn]:
-            if a[an][i]['type'] == b[bn][j]['type']:
+    node = G.add_node(com, na['gram'])
+    for i in a._g[an]:
+        for j in b._g[bn]:
+            if a._g[an][i]['functor'] == b._g[bn][j]['functor']:
                 d = generalize_rec(G, a, b, i, j)
                 if d != None:
-                    G.add_edge(node, d, type=a[an][i]['type'])
+                    G.add_edge(node, d, a._g[an][i]['functor'],
+                            a._g[an][i]['gram'])
     return node
 
 def generalize (a, b):
-    global n
-    n = 0
-    G = nx.DiGraph()
-    generalize_rec(G, a, b, 0, 0)
-    return G
+    gen = CG()
+    generalize_rec(gen, a, b, 0, 0)
+    return gen
 
-def rave (g, node=0):
-    sss = wn.synsets(g.node[node]['concept'])
+def rave (cg, node=0):
+    sss = wn.synsets(cg._g.node[node]['concept'])
     opts = [ss.closure(lambda s: s.hyponyms(), depth=2) for ss in sss]
     opts = sss + [s for o in opts for s in o]
     alt = random.choice(opts)
-    g.node[node]['concept'] = alt.lemma_names()[0]
-    for n in g[node]:
-        rave (g, n)
+    cg._g.node[node]['concept'] = alt.lemma_names()[0]
+    for n in cg._g[node]:
+        rave(cg, n)
 
 
 if __name__ == "__main__":
@@ -76,13 +72,11 @@ if __name__ == "__main__":
     gs = [CG(T.rules, text=s) for s in args.sent]
 
     if args.generalize:
-        nu = CG(T.rules)
-        nu.g = reduce(generalize, [g.g for g in gs])
-        gs = [nu]
+        gs = [reduce(generalize, gs)]
 
     if args.rave:
         for g in gs:
-            rave(g.g)
+            rave(g)
 
     if args.print:
         for g in gs:
@@ -90,4 +84,4 @@ if __name__ == "__main__":
 
     L = __import__(args.linearize)
     for g in gs:
-        print(L.linearize(g.g))
+        print(L.linearize(g._g))
