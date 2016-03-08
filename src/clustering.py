@@ -4,6 +4,7 @@ Created on 3 de mar. de 2016
 @author: fiutten
 '''
 import networkx as nx
+import random as rnd
 import matplotlib.pyplot as plt
 
 class semantic_graph:
@@ -20,10 +21,11 @@ class semantic_graph:
     
     def createNodes(self):
         nx.set_node_attributes(self.G,'iden',None)
-        nx.set_node_attributes(self.G,'synsets',[])
+        nx.set_node_attributes(self.G,'concept',None)
+        rnd.seed()
         for i in self.G.nodes_iter():
             self.G.node[i]['iden'] = i  
-        
+            self.G.node[i]['concept'] = rnd.randint(0,10)
    
     def createEdges(self):
         nx.set_edge_attributes(self.G,'iden',None)
@@ -101,8 +103,8 @@ class graph_operations:
                     iden = vertexes[j]
                     intraconnection = self.getConnectionWithHVS2(iden,self.HVSs[i])
                     interconnection = self.getMaxConnectionWithHVSs2(iden,intraconnection)
-                    if interconnection[0] != -1 and interconnection[1] != 0: #Existe otro HVS con el que se encuentra más conectado.
-                        #Cambiar al vértice de HVS.
+                    if interconnection[0] != -1 and interconnection[1] != 0: # Existe otro HVS con el que se encuentra más conectado.
+                        # Cambiar al vértice de HVS.
                         change = True
                         self.HVSs[interconnection[0]].append(iden)
                         self.HVSs[i].remove(iden)
@@ -126,7 +128,7 @@ class graph_operations:
                     intra_sim2 = self.getIntraSimilarity(hvs2)
                     inter_sim = self.getInterSimilarity(hvs1,hvs2)
                     if (inter_sim > intra_sim1 or inter_sim > intra_sim2):
-                        # Unier ambos HVSs.
+                        # Unir ambos HVSs.
                         hvs1.append(hvs2)
                         self.HVSs.remove(j)
                         change = True
@@ -243,28 +245,39 @@ class graph_operations:
                     self.non_hub_vertexes.remove(non_hub_vertex);
                 else:
                     i = i + 1
-                    
-    def getMoreSimilarHVS(self,node):
-        return 0
-        '''private int getMoreSimilarHVS(ArrayList<ArrayList<Node>> HVSs, Node node) {
-        double maxSimilarity = 0.0;
-        int maxPosition=-1;
-        int pos= -1;
-        for(int i=0;i<HVSs.size();i++){
-            double similarity=0.0;
-            for(int j=0;j<HVSs.get(i).size();j++){
-                Node hv =  HVSs.get(i).get(j);
-                if((pos=find(node.getEdges(),hv))!=-1){
-                    similarity+=node.getEdges().get(pos).getWeight();
-                }
-            }//for
-            if(similarity>maxSimilarity){
-                maxSimilarity=similarity;
-                maxPosition=i;
-            }
-        }
-        return maxPosition;
-    }'''
+       
+    # Dado un nodo, devuelve el HVS al que más se asemeja, y a cuyo cluster.             
+    def getMoreSimilarHVS(self,iden):
+        max_position = -1
+        max_similarity = 0.0
+        for i in range(len(self.HVSs)):
+            similarity = 0.0
+            vertexes = self.HVSs[i]
+            for j in range(len(vertexes)):
+                hv = vertexes[j]
+                hvnode = self.getNodeFromIden(hv)
+                node = self.getNodeFromIden(iden)
+                pos = self.find(node,hvnode)
+                if (pos != -1):
+                    edge_data = self.G.get_edge_data(node['iden'],self.G.node[pos]['iden'])
+                    weight = edge_data['weight']
+                    similarity = similarity + weight
+                if (similarity > max_similarity):
+                    max_position = i
+                    max_similarity = similarity
+        return max_position
+    
+    def find(self,node1,node2):
+        result = -1
+        processed = []
+        itr = nx.all_neighbors(self.G,node1['iden'])
+        for i in itr:
+            if i not in processed:
+                processed.append(i)
+                if self.G.node[i]['concept'] == node2['concept']:
+                    result = self.G.node[i]['iden']
+                    break
+        return result
     
 class salience_node: 
     
