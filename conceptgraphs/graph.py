@@ -32,7 +32,7 @@ class Graph:
         head, function, children = tree
         nid = self.add_node(head['concept'], head)
         for c in children:
-            self.add_edge(nid, self.__add_node_recursive(c), c[1]['ftor'], c[1])
+            self.add_edge(nid, self.__add_node_recursive(c), c[1]['functor'], c[1])
         return nid
 
     def add_text (self, text):

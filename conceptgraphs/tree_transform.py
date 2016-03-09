@@ -19,7 +19,7 @@ def transform_node (tree, node, function, rules):
             head, function, children = match
     if 'concept' not in head:
         return None
-    children = [c for c in children if 'ftor' in c[1]]
+    children = [c for c in children if 'functor' in c[1]]
     return (head, function, children)
 
 

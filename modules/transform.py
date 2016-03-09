@@ -5,9 +5,9 @@ from conceptgraphs import Functor
 #       grammatemes. `concept` should have the tectogrammatical lemma.
 #       If no concept is found in the end, the node is dropped.
 # - function: dictionary. In `fun` is the syntactic dependency, in
-#       `ftor` should be the Functor. Other attributes are grammatemes
+#       `functor` should be the Functor. Other attributes are grammatemes
 #       of the dependency.
-#       If no ftor is found in the end, the edge and children are dropped.
+#       If no functor is found in the end, the edge and children are dropped.
 # string or Functor. Either the syntactic dependency
 #       or the already processed Functor
 # - children: list of NODEs (3-tuples)
@@ -20,7 +20,7 @@ def extract_nouns (head, function, children):
         deps = []
         for c, f, ds in children:
             if c and f['fun'] == 'ncmod':
-                deps.append((c, {'ftor': Functor.ATTR}, ds))
+                deps.append((c, {'functor': Functor.ATTR}, ds))
         return ({'concept':head['lemma'],'type':'N'},function,deps)
 
 def predicative_verbs (head, function, children):
@@ -30,11 +30,11 @@ def predicative_verbs (head, function, children):
             f = {}
             synt = fun['fun']
             if synt == 'ncsubj':
-                f['ftor'] = Functor.AGENT
+                f['functor'] = Functor.AGENT
             elif synt == 'dobj':
-                f['ftor'] = Functor.THEME
+                f['functor'] = Functor.THEME
             elif synt == 'PREP':
-                f['ftor'] = Functor.ADV
+                f['functor'] = Functor.ADV
                 f['pval'] = fun['pval']
             deps.append((c, f, ds))
         return ({'concept':head['lemma'],'type':'V'},function,deps)
@@ -43,7 +43,7 @@ def copula (head, function, children):
     if 'lemma' in head and head['lemma'] == 'be' and function != 'aux':
         try:
             subj = next((c, ds) for c, fun, ds in children if fun == 'ncsubj')
-            attr = next((c, {'ftor':Funcor.ATTR}, []) for c, fun, ds in children if fun == 'ncmod')
+            attr = next((c, {'functor':Funcor.ATTR}, []) for c, fun, ds in children if fun == 'ncmod')
             return (subj[0], function, [attr]+subj[1])
         except StopIteration:
             pass
