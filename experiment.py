@@ -39,7 +39,7 @@ if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(description='Do an experiment')
     arg_parser.add_argument('sent', nargs='+', help='one or more sentences')
     arg_parser.add_argument('-p', '--print', action='store_true', help='display the concept graph for the generalization')
-    arg_parser.add_argument('-t','--transform',help="Transformer module to use",default='transform')
+    arg_parser.add_argument('-t','--transform',help="Transform grammar to use",default='transform')
     arg_parser.add_argument('-l','--linearize',help="Linearizing module to use",default='simple_nlg')
     arg_parser.add_argument('-g','--generalize',action="store_true",help="Generalize two sentences")
     arg_parser.add_argument('-r','--rave',action="store_true",help="Distort the concept graph by raving")
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     sys.path.insert(1, 'modules')
 
     T = __import__(args.transform)
-    gs = [CG(T.rules, text=s) for s in args.sent]
+    gs = [CG(T.grammar, text=s) for s in args.sent]
 
     if args.generalize:
         gs = [reduce(lambda a, b:

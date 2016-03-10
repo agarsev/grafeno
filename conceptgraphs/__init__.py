@@ -1,1 +1,2 @@
-from .graph import Graph, Functor
+from .graph import Graph
+from .functor import Functor

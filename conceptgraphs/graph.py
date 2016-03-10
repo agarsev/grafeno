@@ -1,29 +1,13 @@
-from enum import Enum
 import networkx as nx
 
-from .tree_transform import transform_tree
 from .freeling_parse import parse
-
-class Functor(Enum):
-
-    AGENT = 1
-    THEME = 2
-    ADV = 3
-    ATTR = 4
-    JUX = 5
-
-    def is_semantic(self):
-        return self.value in {1, 2, 3, 4}
-
-    def is_discourse(self):
-        return self.value in {5,}
 
 class Graph:
 
-    def __init__ (self, rules=[], text=None):
+    def __init__ (self, grammar=None, text=None):
         self.node_id = 0
         self._g = nx.DiGraph()
-        self.rules = rules
+        self.tgrammar = grammar
         self.last_sentence = None
         if text:
             self.add_text(text)
@@ -37,23 +21,25 @@ class Graph:
     def add_edge (self, head, dependent, functor, gram=None):
         self._g.add_edge(head, dependent, functor=functor, gram=gram)
 
-    def __add_node_recursive (self, tree):
-        head, function, children = tree
-        nid = self.add_node(head['concept'], head)
-        for c in children:
-            self.add_edge(nid, self.__add_node_recursive(c), c[1]['functor'], c[1])
+    def __add_node_recursive (self, tnode):
+        nid = self.add_node(tnode.head['concept'], tnode.head)
+        for c in tnode.children:
+            self.add_edge(nid, self.__add_node_recursive(c),
+                    c.function['functor'], c.function)
         return nid
-
-    def __link (self, fro, to):
-        self.add_edge(fro, to, Functor.JUX)
 
     def add_text (self, text):
         parses = parse(text)
         for p in parses:
-            t = transform_tree(p, self.rules)
+            t = self.tgrammar.transform_tree(p)
+            if t == None:
+                continue
             nunode = self.__add_node_recursive(t)
             if self.last_sentence != None:
-                self.__link(self.last_sentence, nunode)
+                fro = self._g.node[self.last_sentence]['gram']
+                ftor, gram = self.tgrammar.link_sentences(fro, t)
+                if ftor != None:
+                    self.add_edge(self.last_sentence, nunode, ftor, gram)
             self.last_sentence = nunode
 
     def add_html (self, html):

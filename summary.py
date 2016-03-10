@@ -15,5 +15,5 @@ if __name__ == "__main__":
     sys.path.insert(1, 'modules')
 
     T = __import__(args.transform)
-    cg = CG(rules=T.rules, text=args.text)
+    cg = CG(grammar=T.grammar, text=args.text)
     cg.draw()

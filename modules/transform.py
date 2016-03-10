@@ -1,63 +1,88 @@
+from conceptgraphs.grammar import TRule, TNode, IterativeRuleGrammar as IRG
 from conceptgraphs import Functor
 
-# NODEs are 3-tuples of:
-# - head: dictionary. Syntactic features and already processed
-#       grammatemes. `concept` should have the tectogrammatical lemma.
-#       If no concept is found in the end, the node is dropped.
-# - function: dictionary. In `fun` is the syntactic dependency, in
-#       `functor` should be the Functor. Other attributes are grammatemes
-#       of the dependency.
-#       If no functor is found in the end, the edge and children are dropped.
-# string or Functor. Either the syntactic dependency
-#       or the already processed Functor
-# - children: list of NODEs (3-tuples)
-#
-# Each rule should take a 3-tuple and return a 3-tuple partially processed,
-# or return None to indicate no processing happened
+def match_tagclass (tnode, tagclass):
+    return 'tag' in tnode.head and tnode.head['tag'][0] == tagclass
 
-def extract_nouns (head, function, children):
-    if 'tag' in head and head['tag'][0] == 'N':
-        deps = []
-        for c, f, ds in children:
-            if c and f['fun'] == 'ncmod':
-                deps.append((c, {'functor': Functor.ATTR}, ds))
-        return ({'concept':head['lemma'],'type':'N'},function,deps)
+def noun_transform (tnode):
+    children = []
+    for c in tnode.children:
+        if c.function['fun'] == 'ncmod':
+            children.append(TNode(c.head, {'functor': Functor.ATTR}, c.children))
+    return TNode(head={'concept':tnode.head['lemma'],'type':'N'},
+                 function=tnode.function,
+                 children=children)
 
-def predicative_verbs (head, function, children):
-    if 'tag' in head and head['tag'][0] == 'V' and function != 'aux':
-        deps = []
-        for c, fun, ds in children:
-            f = {}
-            synt = fun['fun']
-            if synt == 'ncsubj':
-                f['functor'] = Functor.AGENT
-            elif synt == 'dobj':
-                f['functor'] = Functor.THEME
-            elif synt == 'PREP':
-                f['functor'] = Functor.ADV
-                f['pval'] = fun['pval']
-            deps.append((c, f, ds))
-        return ({'concept':head['lemma'],'type':'V'},function,deps)
+extract_nouns = TRule(
+    match=lambda t: match_tagclass(t, 'N'),
+    transform=noun_transform)
 
-def copula (head, function, children):
-    if 'lemma' in head and head['lemma'] == 'be' and function != 'aux':
-        try:
-            subj = next((c, ds) for c, fun, ds in children if fun['fun'] == 'ncsubj')
-            attr = next((c, {'functor':Functor.ATTR}, []) for c, fun, ds in children if fun['fun'] != 'ncsubj')
-            return (subj[0], function, [attr]+subj[1])
-        except StopIteration:
-            pass
 
-def extract_adjectives (head, function, children):
-    if 'tag' in head and head['tag'][0] == 'J':
-        return ({'concept':head['lemma'],'type':'J'},function,[])
+def predicative_verbs (tnode):
+    children = []
+    for c in tnode.children:
+        ftor = {}
+        synt = c.function['fun']
+        if synt == 'ncsubj':
+            ftor['functor'] = Functor.AGENT
+        elif synt == 'dobj':
+            ftor['functor'] = Functor.THEME
+        elif synt == 'PREP':
+            ftor['functor'] = Functor.ADV
+            ftor['pval'] = c.function['pval']
+        children.append(TNode(c.head, ftor, c.children))
+    return TNode(head={'concept':tnode.head['lemma'],'type':'V'},
+                 function=tnode.function,
+                 children=children)
 
-def preposition_rising (head, function, children):
-    if 'tag' in head and head['tag'] == 'IN':
-        try:
-            obj = next((c, ds) for c, f, ds in children if f['fun'] == 'dobj')
-            return (obj[0], {'fun':'PREP','pval':head['lemma']}, obj[1])
-        except StopIteration:
-            pass
+extract_pverbs = TRule(
+    match=lambda t: match_tagclass(t, 'V') and t.function != 'aux',
+    transform=predicative_verbs)
 
-rules = [ extract_nouns, copula, predicative_verbs, extract_adjectives, preposition_rising ]
+
+def copula_transform (tnode):
+    try:
+        subj = next(c for c in tnode.children if c.function['fun']=='ncsubj')
+        attr = next(TNode(c.head, {'functor':Functor.ATTR}, [])
+                for c in children if c.function['fun'] != 'ncsubj')
+        return (subj.head, tnode.function, [attr]+subj.children)
+    except StopIteration:
+        return tnode
+
+extract_copula = TRule(
+    match=lambda t: 'lemma' in t.head and t.head['lemma']=='be' and t.function!='aux',
+    transform=copula_transform)
+
+
+def adjective_transform (tnode):
+    return TNode(head={'concept':tnode.head['lemma'],'type':'J'},
+        function=tnode.function,
+        children=[])
+
+extract_adjectives = TRule(
+    match=lambda t: match_tagclass(t, 'J'),
+    transform=adjective_transform)
+
+
+def preposition_transform (tnode):
+    try:
+        obj = next(c for c in tnode.children if c.function['fun']=='dobj')
+        return TNode(head=obj.head,
+            function={'functor':True,'fun':'PREP','pval':tnode.head['lemma']},
+            children=obj.children)
+    except StopIteration:
+        return tnode
+
+preposition_rising = TRule(
+    match=lambda t: 'tag' in t.head and t.head['tag'] == 'IN',
+    transform=preposition_transform)
+
+
+grammar = IRG(
+    transform_rules = [
+        extract_nouns,
+        extract_copula,
+        extract_pverbs,
+        extract_adjectives,
+        preposition_rising
+    ])
