@@ -5,10 +5,18 @@ from .tree_transform import transform_tree
 from .freeling_parse import parse
 
 class Functor(Enum):
+
     AGENT = 1
     THEME = 2
     ADV = 3
     ATTR = 4
+    JUX = 5
+
+    def is_semantic(self):
+        return self.value in {1, 2, 3, 4}
+
+    def is_discourse(self):
+        return self.value in {5,}
 
 class Graph:
 
@@ -16,6 +24,7 @@ class Graph:
         self.node_id = 0
         self._g = nx.DiGraph()
         self.rules = rules
+        self.last_sentence = None
         if text:
             self.add_text(text)
 
@@ -35,9 +44,17 @@ class Graph:
             self.add_edge(nid, self.__add_node_recursive(c), c[1]['functor'], c[1])
         return nid
 
+    def __link (self, fro, to):
+        self.add_edge(fro, to, Functor.JUX)
+
     def add_text (self, text):
-        t = transform_tree(parse(text), self.rules)
-        self.__add_node_recursive(t)
+        parses = parse(text)
+        for p in parses:
+            t = transform_tree(p, self.rules)
+            nunode = self.__add_node_recursive(t)
+            if self.last_sentence != None:
+                self.__link(self.last_sentence, nunode)
+            self.last_sentence = nunode
 
     def add_html (self, html):
         from .html_to_text import html_to_text

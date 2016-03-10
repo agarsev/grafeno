@@ -42,8 +42,8 @@ def predicative_verbs (head, function, children):
 def copula (head, function, children):
     if 'lemma' in head and head['lemma'] == 'be' and function != 'aux':
         try:
-            subj = next((c, ds) for c, fun, ds in children if fun == 'ncsubj')
-            attr = next((c, {'functor':Funcor.ATTR}, []) for c, fun, ds in children if fun == 'ncmod')
+            subj = next((c, ds) for c, fun, ds in children if fun['fun'] == 'ncsubj')
+            attr = next((c, {'functor':Functor.ATTR}, []) for c, fun, ds in children if fun['fun'] != 'ncsubj')
             return (subj[0], function, [attr]+subj[1])
         except StopIteration:
             pass
