@@ -9,9 +9,9 @@ import matplotlib.pyplot as plt
 
 class semantic_graph:
 
-    def __init__(self):
+    def __init__(self): #OK
         self.edge_types = ['Ret','Sem','Prag']
-        self.G = nx.lollipop_graph(100,50)
+        self.G = nx.grid_graph([3,10])
         self.createNodes()
         self.createEdges()
         operations = graph_operations(self.G)
@@ -19,21 +19,20 @@ class semantic_graph:
         nx.draw(self.G)
         plt.show()
     
-    def createNodes(self):
+    def createNodes(self): #OK
         nx.set_node_attributes(self.G,'iden',None)
         nx.set_node_attributes(self.G,'concept',None)
         rnd.seed()
         for i in self.G.nodes_iter():
-            self.G.node[i]['iden'] = i  
+            self.G.node[i]['iden'] = i
             self.G.node[i]['concept'] = rnd.randint(0,10)
    
-    def createEdges(self):
+    def createEdges(self): #OK
         nx.set_edge_attributes(self.G,'iden',None)
         nx.set_edge_attributes(self.G,'weight',1)
         nx.set_edge_attributes(self.G,'type',[self.edge_types.__getitem__(0)])
         for i in self.G.edges_iter():
             self.G.edge[i[0]][i[1]]['iden']= i
-            #print(self.G.edge[i[0]][i[1]])
         
 class graph_operations:
     
@@ -52,14 +51,11 @@ class graph_operations:
         self.hub_score = 1
         self.no_hub_score = 0.5
          
-    def getSalienceRanking(self):
+    def getSalienceRanking(self): #OK
         for i in self.G.nodes_iter():
             new_salience = salience_node(self.G.node[i]['iden'],len(self.G.neighbors(i)))
             self.nodes.append(new_salience)
         self.nodes = sorted(self.nodes, key = lambda salience_node: salience_node.neighbors)
-        #for i in range(len(self.nodes)):
-        #    print(self.nodes[i])
-        #    print(self.nodes[i].neighbors)
         return self.nodes
     
     def computeClusters(self):
@@ -69,16 +65,18 @@ class graph_operations:
         self.extractNodesWithOneVertex()
         # 3. Asignar los 'non hub vertices' a los clusters
         self.assignNonHubToClusters()
+        for i in range(len(self.clusters)):
+            print(self.clusters[i])
         
     def computeHVSs(self):
         # 1. Obtener los 'n' hub vertices y los 'N-n' no hub vertices.
         ranking = self.getSalienceRanking()
-        stop = len(ranking) - self.num_hub_vertexes
+        stop = len(ranking) - self.num_hub_vertexes - 2
         for i in range(len(ranking)-1,stop,-1):
             self.hub_vertexes.append(ranking[i].getiden())
             #print("Si",ranking[i].iden,ranking[i].neighbors)
         
-        start = len(ranking) - self.num_hub_vertexes - 1
+        start = len(ranking) - self.num_hub_vertexes - 2
         for i in range(start,0,-1):
             self.non_hub_vertexes.append(ranking[i].getiden())
             #print("No",ranking[i].iden,ranking[i].neighbors)
@@ -89,7 +87,8 @@ class graph_operations:
             hvs = []
             hvs.append(iden)
             self.HVSs.append(hvs)
-            
+            #print(self.HVSs)
+        #OK    
         # 3. Para cada hub vertice, comprobar si existe un HVS distinto al que pertenece
         #   con el que presente una mayor conectividad que al suyo propio.
         change = True
@@ -106,31 +105,31 @@ class graph_operations:
                     if interconnection[0] != -1 and interconnection[1] != 0: # Existe otro HVS con el que se encuentra más conectado.
                         # Cambiar al vértice de HVS.
                         change = True
+                        self.HVSs[i].pop(j)
                         self.HVSs[interconnection[0]].append(iden)
-                        self.HVSs[i].remove(iden)
                     else:
                         j = j + 1
-                if len(self.HVSs[i]) == 0:
-                    self.HVSs.remove(vertexes)
+                if len(vertexes) == 0:
+                    self.HVSs.pop(i)
                 else:
                     i = i + 1
                     
+        # 4. Unir los HVS que presenten una conectividad interna menor que la que tienen entre sí.  
         change = True
         while(change):
             change = False
-        # 4. Unir los HVS que presenten una conectividad interna menor que la que tienen entre sí.  
             for i in range(len(self.HVSs)):
                 hvs1 = self.HVSs[i]
                 j = i
-                while (j<len(self.HVSs)):
+                while (j < len(self.HVSs)):
                     hvs2 = self.HVSs[j]
                     intra_sim1 = self.getIntraSimilarity(hvs1)
                     intra_sim2 = self.getIntraSimilarity(hvs2)
                     inter_sim = self.getInterSimilarity(hvs1,hvs2)
                     if (inter_sim > intra_sim1 or inter_sim > intra_sim2):
                         # Unir ambos HVSs.
-                        hvs1.append(hvs2)
-                        self.HVSs.remove(j)
+                        self.HVSs[i].extend(hvs2)
+                        self.HVSs.pop(j)
                         change = True
                     else:
                         j = j + 1
@@ -170,7 +169,6 @@ class graph_operations:
         
         node = self.getNodeFromIden(iden)
         neighbors = self.G.neighbors(node['iden'])
-        #print(neighbors)
         connection = 0.0
         for i in range(len(neighbors)):
             neighbor_iden = neighbors[i]
@@ -279,7 +277,7 @@ class graph_operations:
                     break
         return result
     
-class salience_node: 
+class salience_node: #OK
     
     def __init__(self,iden,neighbors):
         self.iden = iden
