@@ -13,7 +13,7 @@ def linearize_rec (tree, node):
                 subj = linearize_rec(tree, n)
             elif ftor == Functor.THEME:
                 dobj = linearize_rec(tree, n)
-            else:
+            elif ftor == Functor.ADV:
                 cc = linearize_rec(tree, n)
                 if cc != None:
                     comps.append(tree[node][n]['gram']['pval']+' '+cc)

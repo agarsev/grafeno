@@ -44,8 +44,8 @@ def copula_transform (tnode):
     try:
         subj = next(c for c in tnode.children if c.function['fun']=='ncsubj')
         attr = next(TNode(c.head, {'functor':Functor.ATTR}, [])
-                for c in children if c.function['fun'] != 'ncsubj')
-        return (subj.head, tnode.function, [attr]+subj.children)
+                for c in tnode.children if c.function['fun'] != 'ncsubj')
+        return TNode(subj.head, tnode.function, [attr]+subj.children)
     except StopIteration:
         return tnode
 
