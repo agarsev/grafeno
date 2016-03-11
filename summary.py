@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import conceptgraphs.operations as cop
 from conceptgraphs import Graph as CG
 
 if __name__ == "__main__":
@@ -17,3 +18,4 @@ if __name__ == "__main__":
     T = __import__(args.transform)
     cg = CG(grammar=T.grammar, text=args.text)
     cg.draw()
+    print(cop.cluster(cg).clusters)
