@@ -87,7 +87,8 @@ class Clustering:
         change = True
         while(change):
             change = False
-            for i in range(len(self.HVSs)):
+            i = 0
+            while (i < len(self.HVSs)):
                 hvs1 = self.HVSs[i]
                 j = i
                 while (j < len(self.HVSs)):
@@ -102,7 +103,7 @@ class Clustering:
                         change = True
                     else:
                         j = j + 1
-
+                i = i + 1
     # Función que devuelve el nodo del grafo que tiene el identificador indicado.
     def getNodeFromId(self,id):
         result = None
@@ -120,11 +121,13 @@ class Clustering:
         result = []
         result.append(-1)
         result.append(-1)
-        for i in range(len(self.HVSs)):
+        i = 0
+        while (i < len(self.HVSs)):
             connection = self.getConnectionWithHVS2(id,self.HVSs[i]);
             if (connection> max_connection):
                 max_connection = connection
                 max_position = i
+            i = i + 1
         if (max_connection > intraconnection):
             result[0] = max_position
             result[1] = max_connection
@@ -139,7 +142,8 @@ class Clustering:
         node = self.getNodeFromId(id)
         neighbors = self.G.neighbors(node['id'])
         connection = 0.0
-        for i in range(len(neighbors)):
+        i = 0
+        while (i < len(neighbors)):
             neighbor_id = neighbors[i]
             if neighbor_id in vertexes:
                 neighbor = self.getNodeFromId(neighbor_id)
@@ -147,16 +151,19 @@ class Clustering:
                     edge_data = self.G.get_edge_data(node['id'],neighbor['id'])
                     connection = edge_data['weight']
                     break
+            i = i + 1
         return connection
 
     # Función que calcula la similitud (conectividad) entre los conceptos de un HVS.
     def getIntraSimilarity(self,vertexes):
         similarity = 0.0;
-        for i in range(len(vertexes)):
+        i = 0
+        while (i < len(vertexes)):
             id = vertexes[i]
             node = self.getNodeFromId(id)
             neighbors = self.G.neighbors(node['id'])
-            for j in range(len(neighbors)):
+            j = 0
+            while (j < len(neighbors)):
                 neighbor_id = neighbors[j]
                 if neighbor_id in vertexes:
                     neighbor = self.getNodeFromId(neighbor_id)
@@ -164,16 +171,20 @@ class Clustering:
                         edge_data = self.G.get_edge_data(node['id'],neighbor['id'])
                         weight = edge_data['weight']
                         similarity = similarity + weight
+                j = j + 1
+            i = i + 1
         return similarity
 
     # Función que calcula la similitud (conectividad) entre dos HVSx.
     def getInterSimilarity(self,hvs1,hvs2):
         similarity = 0.0;
-        for i in range(len(hvs1)):
+        i = 0
+        while (i < len(hvs1)):
             id = hvs1[i]
             node = self.getNodeFromId(id)
             neighbors = self.G.neighbors(node['id'])
-            for j in range(len(neighbors)):
+            j = 0
+            while (j < len(neighbors)):
                 neighbor_id = neighbors[j]
                 if neighbor_id in hvs2:
                     neighbor = self.getNodeFromId(neighbor_id)
@@ -181,6 +192,8 @@ class Clustering:
                         edge_data = self.G.get_edge_data(node['id'],neighbor['id'])
                         weight = edge_data['weight']
                         similarity = similarity + weight
+                j = j + 1
+            i = i + 1
         return similarity
 
     # Método que elimina los HVSs con conectividad 1.
@@ -197,8 +210,10 @@ class Clustering:
     # Método que asigna a los clusters los vértices Non-Hub más similares.
     def assignNonHubToClusters(self):
         self.clusters = []
-        for i in range(len(self.HVSs)):
+        i = 0
+        while (i < len(self.HVSs)):
             self.clusters.append(self.HVSs[i])
+            i = i + 1
         change = True
         while (change):
             change = False
@@ -217,10 +232,12 @@ class Clustering:
     def getMoreSimilarHVS(self,id):
         max_position = -1
         max_similarity = 0.0
-        for i in range(len(self.HVSs)):
+        i = 0
+        while (i < len(self.HVSs)):
             similarity = 0.0
             vertexes = self.HVSs[i]
-            for j in range(len(vertexes)):
+            j = 0
+            while (j < len(vertexes)):
                 hv = vertexes[j]
                 hvnode = self.getNodeFromId(hv)
                 node = self.getNodeFromId(id)
@@ -234,6 +251,8 @@ class Clustering:
                 if (similarity > max_similarity):
                     max_position = i
                     max_similarity = similarity
+                j = j + 1
+            i = i + 1
         return max_position
 
     def find(self,node1,node2):
