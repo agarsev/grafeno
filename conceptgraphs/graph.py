@@ -46,9 +46,12 @@ class Graph:
         from .html_to_text import html_to_text
         self.add_text(html_to_text(html))
 
-    def draw (self):
+    def draw (self, bunch=None):
         import matplotlib.pyplot as plt
-        g = self._g
+        if bunch:
+            g = self._g.subgraph(bunch)
+        else:
+            g = self._g
         lay = nx.spring_layout(g)
         nx.draw_networkx_nodes(g,lay,node_size=3000,node_color="white",linewidths=0)
         nx.draw_networkx_labels(g,lay,labels={n:data['concept'] for n, data in g.nodes(True)})

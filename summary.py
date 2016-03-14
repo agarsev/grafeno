@@ -20,7 +20,10 @@ def extend (cgraph):
                 continue
             ss = syn.hypernyms()
         else:
-            ss = wn.synsets(node['concept'], node['gram']['type'].lower())
+            pos = node['gram']['type']
+            if pos != 'N':
+                continue
+            ss = wn.synsets(node['concept'], pos.lower())
         for s in ss:
             name = s.name()
             if name in hypers:
@@ -47,5 +50,5 @@ if __name__ == "__main__":
     T = __import__(args.transform)
     cg = CG(grammar=T.grammar, text=args.text)
     extend(cg)
-    #cg.draw()
-    print(cop.cluster(cg).clusters)
+    for cl in cop.cluster(cg).clusters:
+        cg.draw(cl)
