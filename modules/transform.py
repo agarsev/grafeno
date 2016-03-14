@@ -78,6 +78,9 @@ preposition_rising = TRule(
     transform=preposition_transform)
 
 
+def juxtapose_link (a, b):
+    return (Functor.JUX, {})
+
 grammar = IRG(
     transform_rules = [
         extract_nouns,
@@ -85,4 +88,7 @@ grammar = IRG(
         extract_pverbs,
         extract_adjectives,
         preposition_rising
+    ],
+    link_rules = [
+        juxtapose_link
     ])

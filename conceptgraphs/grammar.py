@@ -66,5 +66,9 @@ class IterativeRuleGrammar(TGrammar):
 
 
     def link_sentences (self, head1, head2):
-        return (Functor.JUX, {})
+        for l in self.lrules:
+            f = l(head1, head2)
+            if f:
+                return f
+        return None, None
 
