@@ -7,7 +7,7 @@ from conceptgraphs import Functor, Graph as CG
 
 from nltk.corpus import wordnet as wn
 
-def extend (cgraph):
+def extend (cgraph, min_depth):
     g = cgraph._g
     hypers = {}
     to_extend = deque(g.nodes())
@@ -16,7 +16,7 @@ def extend (cgraph):
         node = g.node[n]
         if 'hyper' in node['gram']:
             syn = wn.synset(node['concept'])
-            if syn.min_depth()<10:
+            if syn.min_depth()<min_depth:
                 continue
             ss = syn.hypernyms()
         else:
@@ -43,6 +43,7 @@ if __name__ == "__main__":
     arg_parser.add_argument('text', nargs='*', help='Text file to summarize')
     arg_parser.add_argument('-t','--transform',help="Transformer module to use",default='transform')
     arg_parser.add_argument('-l','--linearize',help="Linearizing module to use",default='simple_nlg')
+    arg_parser.add_argument('-d','--depth',type=int,help="Minimum conceptual depth for hypernyms to use for extension",default=10)
     args = arg_parser.parse_args()
 
     sys.path.insert(1, 'modules')
@@ -54,6 +55,6 @@ if __name__ == "__main__":
 
     T = __import__(args.transform)
     cg = CG(grammar=T.grammar, text=text)
-    extend(cg)
+    extend(cg, args.depth)
     for cl in cop.cluster(cg).clusters:
         cg.draw(cl)
