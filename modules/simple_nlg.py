@@ -22,4 +22,5 @@ def linearize_rec (tree, node):
         return data['concept']+'s'
 
 def linearize (tree):
-    return linearize_rec(tree, 0)
+    s = linearize_rec(tree, 0).replace('_',' ')
+    return s[0].upper() + s[1:] + '.'
