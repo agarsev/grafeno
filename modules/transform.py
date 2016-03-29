@@ -9,7 +9,7 @@ def noun_transform (tnode):
     for c in tnode.children:
         if c.function['fun'] == 'ncmod':
             children.append(TNode(c.head, {'functor': Functor.ATTR}, c.children))
-    return TNode(head={'concept':tnode.head['lemma'],'type':'N'},
+    return TNode(head={'concept':tnode.head['lemma'],'sempos':'N'},
                  function=tnode.function,
                  children=children)
 
@@ -28,10 +28,10 @@ def predicative_verbs (tnode):
         elif synt == 'dobj':
             ftor['functor'] = Functor.THEME
         elif synt == 'PREP':
-            ftor['functor'] = Functor.ADV
+            ftor['functor'] = Functor.COMP
             ftor['pval'] = c.function['pval']
         children.append(TNode(c.head, ftor, c.children))
-    return TNode(head={'concept':tnode.head['lemma'],'type':'V'},
+    return TNode(head={'concept':tnode.head['lemma'],'sempos':'V'},
                  function=tnode.function,
                  children=children)
 
@@ -55,7 +55,7 @@ extract_copula = TRule(
 
 
 def adjective_transform (tnode):
-    return TNode(head={'concept':tnode.head['lemma'],'type':'J'},
+    return TNode(head={'concept':tnode.head['lemma'],'sempos':'J'},
         function=tnode.function,
         children=[])
 

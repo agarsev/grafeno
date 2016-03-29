@@ -10,7 +10,7 @@ import random
 from functools import reduce
 
 def wordnet_common_concept(a, b):
-    if a['gram']['type'] != b['gram']['type']:
+    if a['gram']['sempos'] != b['gram']['sempos']:
         return None
     try:
         ssa = wn.synsets(a['concept'])

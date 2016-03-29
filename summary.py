@@ -20,7 +20,7 @@ def extend (cgraph):
                 continue
             ss = syn.hypernyms()
         else:
-            pos = node['gram']['type']
+            pos = node['gram']['sempos']
             if pos != 'N':
                 continue
             ss = wn.synsets(node['concept'], pos.lower())

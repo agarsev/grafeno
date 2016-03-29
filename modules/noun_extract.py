@@ -11,7 +11,7 @@ def make_chain (tlist):
 
 def pickup_nouns (tnode):
     if 'tag' in tnode.head and tnode.head['tag'][0] == 'N':
-        return TNode(head={'concept':tnode.head['lemma'],'type':'N'},
+        return TNode(head={'concept':tnode.head['lemma'],'sempos':'N'},
                 function={'functor':Functor.JUX},
                 children=make_chain(tnode.children))
     elif len(tnode.children)>0:
