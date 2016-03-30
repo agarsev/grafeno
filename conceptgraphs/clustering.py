@@ -9,7 +9,7 @@ class Clustering:
 
     def __init__(self,G):
         self.nodes = []
-        self.G = G
+        self.G = nx.Graph(G)
         self.createHubs()
 
     def createHubs(self):
@@ -244,9 +244,7 @@ class Clustering:
                 pos = self.find(node,hvnode)
                 if (pos != -1):
                     edge_data = self.G.get_edge_data(node['id'],self.G.node[pos]['id'])
-                    # Esto no funciona por algún motivo
-                    #weight = edge_data['weight']
-                    weight = 1
+                    weight = edge_data['weight']
                     similarity = similarity + weight
                 if (similarity > max_similarity):
                     max_position = i

@@ -7,7 +7,7 @@ from conceptgraphs import Functor, Graph as CG
 
 from nltk.corpus import wordnet as wn
 
-def extend (cgraph, min_depth):
+def extend (cgraph, min_depth, weight):
     g = cgraph._g
     hypers = {}
     to_extend = deque(g.nodes())
@@ -32,7 +32,7 @@ def extend (cgraph, min_depth):
                 nu = cgraph.add_node(s.name(), gram={'hyper':True})
                 hypers[name] = nu
                 to_extend.append(nu)
-            cgraph.add_edge(n, nu, Functor.HYP)
+            cgraph.add_edge(n, nu, Functor.HYP, weight=weight)
 
 
 if __name__ == "__main__":
@@ -40,21 +40,29 @@ if __name__ == "__main__":
     import argparse, sys
 
     arg_parser = argparse.ArgumentParser(description='Summarize text via concept graphs')
-    arg_parser.add_argument('text', nargs='*', help='Text file to summarize')
+    arg_parser.add_argument('fulltext', help='Text file with the original text')
+    arg_parser.add_argument('summary', help='Text file with a correct summary')
     arg_parser.add_argument('-t','--transform',help="Transformer module to use",default='transform')
-    arg_parser.add_argument('-l','--linearize',help="Linearizing module to use",default='simple_nlg')
-    arg_parser.add_argument('-d','--depth',type=int,help="Minimum conceptual depth for hypernyms to use for extension",default=10)
+    arg_parser.add_argument('-d','--depth',type=int,help="Minimum conceptual depth for hypernyms to use for extension",default=5)
+    arg_parser.add_argument('-w','--weight',type=float,help="Weight to assign to hypernym relations",default=0.5)
     args = arg_parser.parse_args()
 
     sys.path.insert(1, 'modules')
 
-    if len(args.text)>0:
-        text = ' '.join(args.text)
-    else:
-        text = sys.stdin.read()
+    with open(args.fulltext) as f:
+        text = f.read()
+
+    with open(args.summary) as f:
+        summ = f.read()
 
     T = __import__(args.transform)
+
     cg = CG(grammar=T.grammar, text=text)
-    extend(cg, args.depth)
-    for cl in cop.cluster(cg).clusters:
-        cg.draw(cl)
+    extend(cg, args.depth, args.weight)
+    clusters = cop.cluster(cg).clusters
+    biggest = sorted(clusters, key=len, reverse=True)[0]
+    filtered = [n for n in biggest if not 'hyper' in cg._g.node[n]['gram']]
+    cg.draw(filtered)
+
+    #sc = CG(grammar=T.grammar, text=summ)
+    #sc.draw()

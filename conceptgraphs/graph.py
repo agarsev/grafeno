@@ -18,8 +18,8 @@ class Graph:
         self._g.add_node(nid, id=nid, concept=concept, gram=gram)
         return nid
 
-    def add_edge (self, head, dependent, functor, gram=None):
-        self._g.add_edge(head, dependent, weight=1, functor=functor, gram=gram)
+    def add_edge (self, head, dependent, functor, gram=None, weight=1):
+        self._g.add_edge(head, dependent, weight=weight, functor=functor, gram=gram)
 
     def __add_node_recursive (self, tnode):
         nid = self.add_node(tnode.head['concept'], tnode.head)
