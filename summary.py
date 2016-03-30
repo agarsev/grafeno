@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 
+import sys
+
 from collections import deque
 
 import conceptgraphs.operations as cop
 from conceptgraphs import Functor, Graph as CG
 
 from nltk.corpus import wordnet as wn
+
+import nltk
 
 def extend (cgraph, min_depth, weight):
     g = cgraph._g
@@ -35,9 +39,18 @@ def extend (cgraph, min_depth, weight):
             cgraph.add_edge(n, nu, Functor.HYP, weight=weight)
 
 
+sys.path.insert(1, 'modules')
+Ext = __import__('tag_extract')
+
+def concept_coverage (graph, text, tags):
+    surf = CG(grammar=Ext.tag_extract(tags), text=text)
+    surf_concepts = set(surf._g.node[n]['concept'] for n in surf._g.nodes())
+    graph_concepts = set(graph._g.node[n]['concept'] for n in graph._g.nodes())
+    return len(graph_concepts & surf_concepts)/len(surf_concepts)
+
 if __name__ == "__main__":
 
-    import argparse, sys
+    import argparse
 
     arg_parser = argparse.ArgumentParser(description='Summarize text via concept graphs')
     arg_parser.add_argument('fulltext', help='Text file with the original text')
@@ -46,8 +59,6 @@ if __name__ == "__main__":
     arg_parser.add_argument('-d','--depth',type=int,help="Minimum conceptual depth for hypernyms to use for extension",default=5)
     arg_parser.add_argument('-w','--weight',type=float,help="Weight to assign to hypernym relations",default=0.5)
     args = arg_parser.parse_args()
-
-    sys.path.insert(1, 'modules')
 
     with open(args.fulltext) as f:
         text = f.read()
@@ -62,7 +73,9 @@ if __name__ == "__main__":
     clusters = cop.cluster(cg).clusters
     biggest = sorted(clusters, key=len, reverse=True)[0]
     filtered = [n for n in biggest if not 'hyper' in cg._g.node[n]['gram']]
-    cg.draw(filtered)
+    #cg.draw(filtered)
 
-    #sc = CG(grammar=T.grammar, text=summ)
+    sc = CG(grammar=T.grammar, text=summ)
     #sc.draw()
+    print(concept_coverage(cg, summ, {'N','V','J'}))
+    print(concept_coverage(sc, summ, {'N','V','J'}))
