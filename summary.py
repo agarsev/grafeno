@@ -50,7 +50,7 @@ def extend (cgraph, min_depth, weight):
                 nu = cgraph.add_node(s.name(), gram={'hyper':True})
                 hypers[name] = nu
                 to_extend.append(nu)
-            cgraph.add_edge(n, nu, Functor.HYP, weight=weight)
+            cgraph.add_edge(n, nu, Functor.HYP, {'weight':weight})
 
 
 if __name__ == "__main__":
