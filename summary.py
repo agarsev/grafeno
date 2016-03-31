@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from collections import deque, namedtuple
+import math
 
 import nltk
 from nltk.corpus import wordnet as wn
@@ -52,6 +53,12 @@ def extend (cgraph, min_depth, weight):
                 to_extend.append(nu)
             cgraph.add_edge(n, nu, Functor.HYP, {'weight':weight})
 
+hit_functions = {
+    'auth': lambda auth, hub: auth,
+    'hub': lambda auth, hub: hub,
+    'sum': lambda auth, hub: auth+hub,
+    'norm': lambda auth, hub: math.sqrt(auth**2+hub**2)
+}
 
 if __name__ == "__main__":
 
@@ -65,35 +72,54 @@ if __name__ == "__main__":
     arg_parser.add_argument('--baseline',action='store_true',help="Baseline experiment: take the first appearing concepts in the text")
     arg_parser.add_argument('--clustering',action='store_true',help="Clustering experiment: take the biggest cluster in the conceptual graph")
     arg_parser.add_argument('--hits',action='store_true',help="HITS experiment: take the nodes with higher AUTH")
+    arg_parser.add_argument('--all',action='store_true',help="Run all experiments")
 
     arg_parser.add_argument('-r','--ratio', type=float, help='Compression rate to use for the summary', default=0.2)
     arg_parser.add_argument('-t','--transform',help="Transformer module to use",default='transform')
     arg_parser.add_argument('-d','--depth', type=int, help="Minimum conceptual depth for hypernyms to use for extension", default=5)
     arg_parser.add_argument('-w','--weight', type=float, help="Weight to assign to hypernym relations", default=0.5)
+    arg_parser.add_argument('-v','--verbose', action='store_true', help='Show selected concepts for the summary')
+    arg_parser.add_argument('--sel-function', choices=hit_functions.keys(), help='Function to use to select the best nodes in HITS', default='hub')
 
     args = arg_parser.parse_args()
+
+    if args.all:
+        args.baseline = True
+        args.clustering = True
+        args.hits = True
 
     text = args.fulltext.read()
     summ = args.summary.read()
 
-    if args.baseline:
+    graph = None
+
+    def result (name, best_function):
+        summary = graph.copy(best_function)
+        if args.verbose:
+            print(summary.all_concepts())
+        print(name+": "+str(concept_coverage(summary, summ)))
+
+    if args.baseline or args.hits:
         graph = CG(grammar=tag_extract({'N','V','J','R'}), text=text)
-        last = int(len(graph._g.nodes())*args.ratio)
-        graph = graph.copy(lambda n: n['id']<last)
-        print("Baseline: "+str(concept_coverage(graph, summ)))
+        summary_length = int(len(graph._g.nodes())*args.ratio)
+
+    if args.baseline:
+        result('Baseline', lambda n: n['id']<summary_length)
 
     if args.clustering or args.hits:
         sys.path.insert(1, 'modules')
         T = __import__(args.transform)
         graph = CG(grammar=T.grammar, text=text)
-        extend(graph, args.depth, args.weight)
 
     if args.clustering:
-        clusters = cop.cluster(graph).clusters
+        ext = graph.copy()
+        extend(ext, args.depth, args.weight)
+        clusters = cop.cluster(ext).clusters
         biggest = sorted(clusters, key=len, reverse=True)[0]
-        csum = graph.copy(lambda n: n['id'] in biggest and not 'hyper' in n['gram'])
-        print("Clustering: "+str(concept_coverage(csum, summ)))
+        result('Clustering', lambda n: n['id'] in biggest)
 
     if args.hits:
-        pass
+        auth, hub = cop.hits(graph)
+        best = sorted(graph._g.nodes(), key=lambda n: hit_functions[args.sel_function](auth[n], hub[n]), reverse=True)
+        result('HITS', lambda n: n['id'] in best[:summary_length])
 
