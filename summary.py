@@ -79,18 +79,20 @@ if __name__ == "__main__":
     if args.baseline:
         graph = CG(grammar=tag_extract({'N','V','J','R'}), text=text)
         last = int(len(graph._g.nodes())*args.ratio)
-        graph.prune(lambda n: n['id']<last)
+        graph = graph.copy(lambda n: n['id']<last)
         print("Baseline: "+str(concept_coverage(graph, summ)))
 
-    if args.clustering:
+    if args.clustering or args.hits:
         sys.path.insert(1, 'modules')
         T = __import__(args.transform)
         graph = CG(grammar=T.grammar, text=text)
         extend(graph, args.depth, args.weight)
+
+    if args.clustering:
         clusters = cop.cluster(graph).clusters
         biggest = sorted(clusters, key=len, reverse=True)[0]
-        graph.prune(lambda n: n['id'] in biggest and not 'hyper' in n['gram'])
-        print("Clustering: "+str(concept_coverage(graph, summ)))
+        csum = graph.copy(lambda n: n['id'] in biggest and not 'hyper' in n['gram'])
+        print("Clustering: "+str(concept_coverage(csum, summ)))
 
     if args.hits:
         pass
