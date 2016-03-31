@@ -46,30 +46,25 @@ if __name__ == "__main__":
     import argparse
 
     arg_parser = argparse.ArgumentParser(description='Summarize text via concept graphs')
-    arg_parser.add_argument('fulltext', help='Text file with the original text')
-    arg_parser.add_argument('summary', help='Text file with a correct summary')
+    arg_parser.add_argument('fulltext', type=argparse.FileType('r'), help='Text file with the original text')
+    arg_parser.add_argument('summary', type=argparse.FileType('r'), help='Text file with a correct summary')
     arg_parser.add_argument('-t','--transform',help="Transformer module to use",default='transform')
     arg_parser.add_argument('-d','--depth',type=int,help="Minimum conceptual depth for hypernyms to use for extension",default=5)
     arg_parser.add_argument('-w','--weight',type=float,help="Weight to assign to hypernym relations",default=0.5)
     args = arg_parser.parse_args()
 
-    with open(args.fulltext) as f:
-        text = f.read()
-
-    with open(args.summary) as f:
-        summ = f.read()
+    text = args.fulltext.read()
+    summ = args.summary.read()
 
     sys.path.insert(1, 'modules')
     T = __import__(args.transform)
-
-    cg = CG(grammar=T.grammar, text=text)
-    extend(cg, args.depth, args.weight)
-    clusters = cop.cluster(cg).clusters
+    graph = CG(grammar=T.grammar, text=text)
+    extend(graph, args.depth, args.weight)
+    clusters = cop.cluster(graph).clusters
     biggest = sorted(clusters, key=len, reverse=True)[0]
-    filtered = [n for n in biggest if not 'hyper' in cg._g.node[n]['gram']]
-    #cg.draw(filtered)
+    filtered = [n for n in biggest if not 'hyper' in graph._g.node[n]['gram']]
 
-    sc = CG(grammar=T.grammar, text=summ)
-    #sc.draw()
-    print(concept_coverage(cg, summ, {'N','V','J'}))
-    print(concept_coverage(sc, summ, {'N','V','J'}))
+    sub = graph._g.subgraph(filtered)
+    graph._g = sub
+
+    print(concept_coverage(graph, summ))
