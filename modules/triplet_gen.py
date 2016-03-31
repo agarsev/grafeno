@@ -7,7 +7,7 @@ def linearize (g):
     while len(roots)>0:
         node = roots.popleft()
         data = g.node[node]
-        if data['gram']['type'] == 'V':
+        if data['gram']['sempos'] == 'V':
             subj = None
             verb = data['concept']
             dobj = None
@@ -19,7 +19,7 @@ def linearize (g):
                     dobj = g.node[n]['concept']
             if subj and dobj:
                 out += verb+'('+subj+','+dobj+')\n'
-        elif data['gram']['type'] == 'N':
+        elif data['gram']['sempos'] == 'N':
             for n in g[node]:
                 ftor = g[node][n]['functor']
                 if ftor == Functor.ATTR:

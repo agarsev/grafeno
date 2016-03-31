@@ -2,7 +2,7 @@ from conceptgraphs import Functor
 
 def linearize_rec (tree, node):
     data = tree.node[node]
-    if data['gram']['type'] == 'V':
+    if data['gram']['sempos'] == 'V':
         subj = None
         verb = data['concept']
         dobj = None
@@ -13,13 +13,14 @@ def linearize_rec (tree, node):
                 subj = linearize_rec(tree, n)
             elif ftor == Functor.THEME:
                 dobj = linearize_rec(tree, n)
-            elif ftor == Functor.ADV:
+            elif ftor == Functor.COMP:
                 cc = linearize_rec(tree, n)
                 if cc != None:
                     comps.append(tree[node][n]['gram']['pval']+' '+cc)
         return ' '.join(w for w in [subj, verb, dobj] + comps if w != None)
-    elif data['gram']['type'] == 'N':
+    elif data['gram']['sempos'] == 'N':
         return data['concept']+'s'
 
 def linearize (tree):
-    return linearize_rec(tree, 0)
+    s = linearize_rec(tree, 0).replace('_',' ')
+    return s[0].upper() + s[1:] + '.'

@@ -4,7 +4,7 @@ class Functor(Enum):
 
     AGENT = 1
     THEME = 2
-    ADV = 3
+    COMP = 3
     ATTR = 4
     JUX = 5
     HYP = 6
