@@ -61,3 +61,7 @@ class Graph:
 
     def all_concepts (self):
         return set(self._g.node[n]['concept'] for n in self._g.nodes())
+
+    def prune (self, keep):
+        self._g = self._g.subgraph(n for n in self._g.nodes()
+                if keep(self._g.node[n]))
