@@ -58,3 +58,6 @@ class Graph:
         nx.draw_networkx_edges(g,lay)
         nx.draw_networkx_edge_labels(g,lay,edge_labels={(a,b):data['functor'] for (a,b,data) in g.edges(data=True)})
         plt.show()
+
+    def all_concepts (self):
+        return set(self._g.node[n]['concept'] for n in self._g.nodes())

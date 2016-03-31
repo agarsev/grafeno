@@ -9,6 +9,8 @@ from conceptgraphs import Functor, Graph as CG
 
 from nltk.corpus import wordnet as wn
 
+from common import concept_coverage
+
 import nltk
 
 def extend (cgraph, min_depth, weight):
@@ -39,15 +41,6 @@ def extend (cgraph, min_depth, weight):
             cgraph.add_edge(n, nu, Functor.HYP, weight=weight)
 
 
-sys.path.insert(1, 'modules')
-Ext = __import__('tag_extract')
-
-def concept_coverage (graph, text, tags):
-    surf = CG(grammar=Ext.tag_extract(tags), text=text)
-    surf_concepts = set(surf._g.node[n]['concept'] for n in surf._g.nodes())
-    graph_concepts = set(graph._g.node[n]['concept'] for n in graph._g.nodes())
-    return len(graph_concepts & surf_concepts)/len(surf_concepts)
-
 if __name__ == "__main__":
 
     import argparse
@@ -66,6 +59,7 @@ if __name__ == "__main__":
     with open(args.summary) as f:
         summ = f.read()
 
+    sys.path.insert(1, 'modules')
     T = __import__(args.transform)
 
     cg = CG(grammar=T.grammar, text=text)
