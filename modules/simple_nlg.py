@@ -28,7 +28,7 @@ def linearize_rec (tree, node):
             if ftor == Functor.ATTR:
                 comps.append(linearize_rec(tree, n))
         word = data['concept']
-        if 'number' in gram and gram['number'] == 'plural':
+        if gram.get('number') == 'plural':
             word += 's'
         return ' '.join(comps + [word])
     elif gram['sempos'] == 'J':

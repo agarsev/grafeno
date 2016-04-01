@@ -2,7 +2,7 @@ from conceptgraphs.grammar import TRule, TNode, IterativeRuleGrammar as IRG
 from conceptgraphs import Functor
 
 def match_tagclass (tnode, tagclass):
-    return 'tag' in tnode.head and tnode.head['tag'][0] == tagclass
+    return tnode.head.get('tag','-')[0] == tagclass
 
 def noun_transform (tnode):
     children = []
@@ -50,7 +50,7 @@ def copula_transform (tnode):
         return tnode
 
 extract_copula = TRule(
-    match=lambda t: 'lemma' in t.head and t.head['lemma']=='be' and t.function!='aux',
+    match=lambda t: t.head.get('lemma')=='be' and t.function!='aux',
     transform=copula_transform)
 
 
@@ -74,7 +74,7 @@ def preposition_transform (tnode):
         return tnode
 
 preposition_rising = TRule(
-    match=lambda t: 'tag' in t.head and t.head['tag'] == 'IN',
+    match=lambda t: t.head.get('tag') == 'IN',
     transform=preposition_transform)
 
 

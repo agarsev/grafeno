@@ -149,7 +149,7 @@ class Clustering:
                 neighbor = self.getNodeFromId(neighbor_id)
                 if self.G.has_edge(node['id'],neighbor['id']):
                     edge_data = self.G.get_edge_data(node['id'],neighbor['id'])['gram']
-                    connection = edge_data['weight'] if 'weight' in edge_data else 1
+                    connection = edge_data.get('weight', 1)
                     break
             i = i + 1
         return connection
@@ -169,7 +169,7 @@ class Clustering:
                     neighbor = self.getNodeFromId(neighbor_id)
                     if self.G.has_edge(node['id'],neighbor['id']):
                         edge_data = self.G.get_edge_data(node['id'],neighbor['id'])['gram']
-                        weight = edge_data['weight'] if 'weight' in edge_data else 1
+                        weight = edge_data.get('weight', 1)
                         similarity = similarity + weight
                 j = j + 1
             i = i + 1
@@ -190,7 +190,7 @@ class Clustering:
                     neighbor = self.getNodeFromId(neighbor_id)
                     if self.G.has_edge(node['id'],neighbor['id']):
                         edge_data = self.G.get_edge_data(node['id'],neighbor['id'])['gram']
-                        weight = edge_data['weight'] if 'weight' in edge_data else 1
+                        weight = edge_data.get('weight',1)
                         similarity = similarity + weight
                 j = j + 1
             i = i + 1
@@ -244,7 +244,7 @@ class Clustering:
                 pos = self.find(node,hvnode)
                 if (pos != -1):
                     edge_data = self.G.get_edge_data(node['id'],self.G.node[pos]['id'])['gram']
-                    weight = edge_data['weight'] if 'weight' in edge_data else 1
+                    weight = edge_data.get('weight', 1)
                     similarity = similarity + weight
                 if (similarity > max_similarity):
                     max_position = i

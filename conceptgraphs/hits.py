@@ -7,10 +7,8 @@ def hits (graph, epsilon = 1e-5, max_its = 100):
     hub = defaultdict(lambda:1)
 
     g = graph._g
-    weight = dict()
-    for a,b,data in g.edges_iter(data=True):
-        gram = data['gram']
-        weight[(a,b)] = gram['weight'] if 'weight' in gram else 1
+    weight = { (a,b): data['gram'].get('weight', 1)
+            for a, b, data in g.edges_iter(data=True) }
 
     delta = epsilon+1
     its = 0
