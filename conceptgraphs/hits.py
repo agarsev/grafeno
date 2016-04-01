@@ -2,30 +2,38 @@ from collections import defaultdict
 import math
 
 def hits (graph, epsilon = 1e-5, max_its = 100):
+
     auth = defaultdict(lambda:1)
     hub = defaultdict(lambda:1)
+
     g = graph._g
+    weight = dict()
+    for a,b,data in g.edges_iter(data=True):
+        gram = data['gram']
+        weight[(a,b)] = gram['weight'] if 'weight' in gram else 1
+
     delta = epsilon+1
     its = 0
+    prev_total = 0
+
     while delta > epsilon and its < max_its:
-        prev_auth = auth
-        prev_hub = hub
-        auth = defaultdict(lambda:0)
-        hub = defaultdict(lambda:0)
-        for a, b, data in g.edges_iter(data=True):
-            gram = data['gram']
-            weight = gram['weight'] if 'weight' in gram else 1
-            auth[b] += weight * prev_hub[a]
-            hub[a] += weight * prev_auth[b]
+
+        for a, b in g.edges_iter():
+            auth[b] += weight[(a,b)] * hub[a]
+        for a, b in g.edges_iter():
+            hub[a] += weight[(a,b)] * auth[b]
+
+        totauth = math.sqrt(sum(auth[n]**2 for n in g.nodes()))
+        tothub = math.sqrt(sum(hub[n]**2 for n in g.nodes()))
+
         for n in g.nodes():
-            sum = math.sqrt(auth[n]**2+hub[n]**2)
-            if sum>0:
-                auth[n] /= sum
-                hub[n] /= sum
-        delta = 0
-        for n in g.nodes():
-            delta += abs(auth[n] - prev_auth[n])
-            delta += abs(hub[n] - prev_hub[n])
-        delta /= 2*len(g.nodes())
+            auth[n] /= totauth
+            hub[n] /= tothub
+
+        delta = abs(totauth + tothub - prev_total)
+        prev_total = totauth + tothub
         its += 1
+
+    auth.default_factory = lambda:0
+    hub.default_factory = lambda:0
     return auth, hub

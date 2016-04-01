@@ -79,6 +79,7 @@ if __name__ == "__main__":
     arg_parser.add_argument('-d','--depth', type=int, help="Minimum conceptual depth for hypernyms to use for extension", default=5)
     arg_parser.add_argument('-w','--weight', type=float, help="Weight to assign to hypernym relations", default=0.5)
     arg_parser.add_argument('-v','--verbose', action='store_true', help='Show selected concepts for the summary')
+    arg_parser.add_argument('-s','--show', action='store_true', help='Show the summary graph on-screen')
     arg_parser.add_argument('--sel-function', choices=hit_functions.keys(), help='Function to use to select the best nodes in HITS', default='hub')
 
     args = arg_parser.parse_args()
@@ -97,6 +98,8 @@ if __name__ == "__main__":
         summary = graph.copy(best_function)
         if args.verbose:
             print(summary.all_concepts())
+        if args.show:
+            summary.draw()
         print(name+": "+str(concept_coverage(summary, summ)))
 
     if args.baseline or args.hits:
