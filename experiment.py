@@ -17,8 +17,10 @@ def wordnet_common_concept(a, b):
         ssb = wn.synsets(b['concept'])
         commons = [x for a in ssa for b in ssb for x in a.lowest_common_hypernyms(b) ]
         commons.sort(key=lambda x: x.max_depth(), reverse=True)
+        gram = dict(a['gram'])
+        gram['number'] = 'plural'
         return { 'concept': commons[0].lemma_names()[0],
-                 'gram': a['gram'] }
+                 'gram': gram }
     except IndexError:
         return None
 
@@ -65,4 +67,4 @@ if __name__ == "__main__":
 
     L = __import__(args.linearize)
     for g in gs:
-        print(L.linearize(g._g))
+        print(L.linearize(g))

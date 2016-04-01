@@ -78,7 +78,7 @@ if __name__ == "__main__":
     arg_parser.add_argument('-t','--transform',help="Transformer module to use",default='transform')
     arg_parser.add_argument('-d','--depth', type=int, help="Minimum conceptual depth for hypernyms to use for extension", default=5)
     arg_parser.add_argument('-w','--weight', type=float, help="Weight to assign to hypernym relations", default=0.5)
-    arg_parser.add_argument('-v','--verbose', action='store_true', help='Show selected concepts for the summary')
+    arg_parser.add_argument('-l','--linearize', action='store_true', help='Linearize the summary graph')
     arg_parser.add_argument('-s','--show', action='store_true', help='Show the summary graph on-screen')
     arg_parser.add_argument('--sel-function', choices=hit_functions.keys(), help='Function to use to select the best nodes in HITS', default='hub')
 
@@ -96,8 +96,9 @@ if __name__ == "__main__":
 
     def result (name, best_function):
         summary = graph.copy(best_function)
-        if args.verbose:
-            print(summary.all_concepts())
+        if args.linearize:
+            from modules.simple_nlg import linearize
+            print(linearize(summary))
         if args.show:
             summary.draw()
         print(name+": "+str(concept_coverage(summary, summ)))
