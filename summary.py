@@ -97,12 +97,12 @@ if __name__ == "__main__":
 
     def result (name, best_function):
         summary = graph.copy(best_function)
+        print(name+": "+str(concept_coverage(summary, summ)))
         if args.linearize:
             from modules.simple_nlg import linearize
             print(linearize(summary))
         if args.show:
             summary.draw()
-        print(name+": "+str(concept_coverage(summary, summ)))
 
     if args.baseline or args.hits:
         graph = CG(grammar=tag_extract({'N','V','J','R'}), text=text)
@@ -128,7 +128,7 @@ if __name__ == "__main__":
         best = sorted(graph._g.nodes(), key=lambda n: hit_functions[args.sel_function](auth[n], hub[n]), reverse=True)
         summary = set()
         i = 0
-        while len(summary) < summary_length:
+        while len(summary) < summary_length and i<len(best):
             nx = best[i]
             i += 1
             summary.add(nx)
