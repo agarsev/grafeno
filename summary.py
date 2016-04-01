@@ -22,7 +22,7 @@ def concept_coverage (graph, text, tags={'N','V','J','R'}):
     overlap = len(graph_concepts & text_concepts)
     prec = overlap / len(graph_concepts)
     recall = overlap / len(text_concepts)
-    f = 2*recall*prec/(recall+prec)
+    f = 2*recall*prec/(recall+prec) if recall+prec > 0 else 0
     return Metrics(prec,recall,f)
 
 
@@ -78,6 +78,7 @@ if __name__ == "__main__":
     arg_parser.add_argument('-t','--transform',help="Transformer module to use",default='transform')
     arg_parser.add_argument('-d','--depth', type=int, help="Minimum conceptual depth for hypernyms to use for extension", default=5)
     arg_parser.add_argument('-w','--weight', type=float, help="Weight to assign to hypernym relations", default=0.5)
+    arg_parser.add_argument('-k','--keep-args', action='store_true', help='Keep arguments to verbs selected for the summary')
     arg_parser.add_argument('-l','--linearize', action='store_true', help='Linearize the summary graph')
     arg_parser.add_argument('-s','--show', action='store_true', help='Show the summary graph on-screen')
     arg_parser.add_argument('--sel-function', choices=hit_functions.keys(), help='Function to use to select the best nodes in HITS', default='hub')
@@ -125,5 +126,17 @@ if __name__ == "__main__":
     if args.hits:
         auth, hub = cop.hits(graph)
         best = sorted(graph._g.nodes(), key=lambda n: hit_functions[args.sel_function](auth[n], hub[n]), reverse=True)
-        result('HITS', lambda n: n['id'] in best[:summary_length])
+        summary = set()
+        i = 0
+        while len(summary) < summary_length:
+            nx = best[i]
+            i += 1
+            summary.add(nx)
+            if args.keep_args:
+                g = graph._g
+                if g.node[nx]['gram']['sempos'] == 'V':
+                    for m in g[nx]:
+                        if g[nx][m]['functor'] in (Functor.AGENT, Functor.THEME):
+                            summary.add(m)
+        result('HITS', lambda n: n['id'] in summary)
 
