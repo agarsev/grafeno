@@ -37,9 +37,13 @@ class Graph:
             nunode = self.__add_node_recursive(t)
             if self.last_sentence != None:
                 fro = self._g.node[self.last_sentence]['gram']
-                ftor, gram = self.tgrammar.link_sentences(fro, t)
-                if ftor != None:
+                fwd, back = self.tgrammar.link_sentences(fro, t)
+                if fwd != None:
+                    ftor, gram = fwd
                     self.add_edge(self.last_sentence, nunode, ftor, gram)
+                if back != None:
+                    ftor, gram = back
+                    self.add_edge(nunode, self.last_sentence, ftor, gram)
             self.last_sentence = nunode
 
     def add_html (self, html):

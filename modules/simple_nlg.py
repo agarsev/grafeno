@@ -42,11 +42,13 @@ def linearize (cgraph):
             sentences.append(n)
             break
     results = []
+    processed = set()
     while len(sentences)>0:
         n = sentences.popleft()
+        processed.add(n)
         for m in g[n]:
             ftor = g[n][m]['functor']
-            if ftor == Functor.JUX:
+            if ftor == Functor.JUX and not m in processed:
                 sentences.append(m)
         s = linearize_rec(g, n)
         if s:

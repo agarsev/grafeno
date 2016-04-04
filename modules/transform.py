@@ -79,7 +79,7 @@ preposition_rising = TRule(
 
 
 def juxtapose_link (a, b):
-    return (Functor.JUX, {})
+    return (Functor.JUX, {'weight':1}), (Functor.JUX, {'weight':1})
 
 grammar = IRG(
     transform_rules = [

@@ -1,11 +1,18 @@
 from conceptgraphs import Functor
 from collections import deque
 
-def linearize (g):
-    roots = deque([0])
+def linearize (cg):
+    g = cg._g
+    roots = deque()
+    for n in g.nodes():
+        if g.node[n]['gram']['sempos'] == 'V':
+            roots.append(n)
+            break
+    processed = set()
     out = ''
     while len(roots)>0:
         node = roots.popleft()
+        processed.add(node)
         data = g.node[node]
         if data['gram']['sempos'] == 'V':
             subj = None
@@ -25,6 +32,6 @@ def linearize (g):
                 if ftor == Functor.ATTR:
                     out += 'is('+data['concept']+','+g.node[n]['concept']+')\n'
         for n in g[node]:
-            if g[node][n]['functor'] == Functor.JUX:
+            if g[node][n]['functor'] == Functor.JUX and n not in processed:
                 roots.append(n)
     return out
