@@ -104,9 +104,8 @@ if __name__ == "__main__":
         if args.show:
             summary.draw()
 
-    if args.baseline or args.hits:
-        graph = CG(grammar=tag_extract({'N','V','J','R'}), text=text)
-        summary_length = int(len(graph._g.nodes())*args.ratio)
+    graph = CG(grammar=tag_extract({'N','V','J','R'}), text=text)
+    summary_length = int(len(graph._g.nodes())*args.ratio)
 
     if args.baseline:
         result('Baseline', lambda n: n['id']<summary_length)
@@ -120,8 +119,19 @@ if __name__ == "__main__":
         ext = graph.copy()
         extend(ext, args.depth, args.weight)
         clusters = cop.cluster(ext).clusters
-        biggest = sorted(clusters, key=len, reverse=True)[0]
-        result('Clustering', lambda n: n['id'] in biggest)
+        clusters = sorted(clusters, key=len, reverse=True)
+        summary, i, j = set(), 0, 0
+        while len(summary) < summary_length:
+            if j>=len(clusters[i]):
+                j = 0
+                i += 1
+                if i>=len(clusters):
+                    break
+            nx = clusters[i][j]
+            if nx in graph._g.nodes():
+                summary.add(nx)
+            j+=1
+        result('Clustering', lambda n: n['id'] in summary)
 
     if args.hits:
         auth, hub = cop.hits(graph)
