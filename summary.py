@@ -74,13 +74,17 @@ if __name__ == "__main__":
     arg_parser.add_argument('--hits',action='store_true',help="HITS experiment: take the nodes with higher AUTH")
     arg_parser.add_argument('--all',action='store_true',help="Run all experiments")
 
-    arg_parser.add_argument('-r','--ratio', type=float, help='Compression rate to use for the summary', default=0.2)
+    group = arg_parser.add_mutually_exclusive_group()
+    group.add_argument('-r','--ratio', type=float, help='Compression rate to use for the summary', default=0.2)
+    group.add_argument('-n','--number-of-words', type=int, help='Number of words to use for the summary')
+
     arg_parser.add_argument('-t','--transform',help="Transformer module to use",default='transform')
     arg_parser.add_argument('-d','--depth', type=int, help="Minimum conceptual depth for hypernyms to use for extension", default=5)
     arg_parser.add_argument('-w','--weight', type=float, help="Weight to assign to hypernym relations", default=0.5)
     arg_parser.add_argument('-k','--keep-args', action='store_true', help='Keep arguments to verbs selected for the summary')
     arg_parser.add_argument('-l','--linearize', action='store_true', help='Linearize the summary graph')
     arg_parser.add_argument('-s','--show', action='store_true', help='Show the summary graph on-screen')
+    arg_parser.add_argument('-q','--quiet', action='store_true', help='Print only the metrics without the description')
     arg_parser.add_argument('--sel-function', choices=hit_functions.keys(), help='Function to use to select the best nodes in HITS', default='hub')
 
     args = arg_parser.parse_args()
@@ -97,7 +101,11 @@ if __name__ == "__main__":
 
     def result (name, best_function):
         summary = graph.copy(best_function)
-        print(name+": "+str(concept_coverage(summary, summ)))
+        met = concept_coverage(summary, summ)
+        if args.quiet:
+            print(' '.join(str(m) for m in met))
+        else:
+            print(name+": "+str(met))
         if args.linearize:
             from modules.simple_nlg import linearize
             print(linearize(summary))
@@ -105,7 +113,10 @@ if __name__ == "__main__":
             summary.draw()
 
     graph = CG(grammar=tag_extract({'N','V','J','R'}), text=text)
-    summary_length = int(len(graph._g.nodes())*args.ratio)
+    if args.number_of_words:
+        summary_length = args.number_of_words
+    else:
+        summary_length = int(len(graph._g.nodes())*args.ratio)
 
     if args.baseline:
         result('Baseline', lambda n: n['id']<summary_length)
