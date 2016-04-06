@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from collections import deque, namedtuple
+from itertools import combinations
 import math
 
 import nltk
@@ -53,6 +54,28 @@ def extend (cgraph, min_depth, weight):
                 to_extend.append(nu)
             cgraph.add_edge(n, nu, Functor.HYP, {'weight':weight})
 
+def get_semantic_similarity (x, xpos, y, ypos):
+    if xpos != ypos or xpos not in {'N','V'}:
+        return 0
+    r = 0
+    for sx in wn.synsets(x, xpos.lower()):
+        for sy in wn.synsets(y, ypos.lower()):
+            sim = sx.lch_similarity(sy)
+            if sim and sim>r:
+                r = sim
+    return r
+
+def link_all (cgraph, threshold = 0.5, weight = 1):
+    g = cgraph._g
+    for n, m in combinations(g.nodes(), 2):
+        nn = g.node[n]
+        nm = g.node[m]
+        sim = get_semantic_similarity(nn['concept'], nn['gram']['sempos'], nm['concept'], nm['gram']['sempos'])
+        if sim > threshold:
+            cgraph.add_edge(n, m, Functor.SIM, {'weight':weight})
+            cgraph.add_edge(m, n, Functor.SIM, {'weight':weight})
+
+
 hit_functions = {
     'auth': lambda auth, hub: auth,
     'hub': lambda auth, hub: hub,
@@ -86,6 +109,8 @@ if __name__ == "__main__":
     arg_parser.add_argument('-s','--show', action='store_true', help='Show the summary graph on-screen')
     arg_parser.add_argument('-q','--quiet', action='store_true', help='Print only the metrics without the description')
     arg_parser.add_argument('--sel-function', choices=hit_functions.keys(), help='Function to use to select the best nodes in HITS', default='hub')
+    arg_parser.add_argument('--extend-for-hits', action='store_true', help='Extend graph when using HITS too')
+    arg_parser.add_argument('--similarity-links', action='store_true', help='Link concepts in the graph with similarity links')
 
     args = arg_parser.parse_args()
 
@@ -125,10 +150,14 @@ if __name__ == "__main__":
         sys.path.insert(1, 'modules')
         T = __import__(args.transform)
         graph = CG(grammar=T.grammar, text=text)
+        if args.similarity_links:
+            link_all(graph)
 
-    if args.clustering:
+    if args.clustering or args.extend_for_hits:
         ext = graph.copy()
         extend(ext, args.depth, args.weight)
+
+    if args.clustering:
         clusters = cop.cluster(ext).clusters
         clusters = sorted(clusters, key=len, reverse=True)
         summary, i, j = set(), 0, 0
@@ -145,7 +174,10 @@ if __name__ == "__main__":
         result('Clustering', lambda n: n['id'] in summary)
 
     if args.hits:
-        auth, hub = cop.hits(graph)
+        if args.extend_for_hits:
+            auth, hub = cop.hits(ext)
+        else:
+            auth, hub = cop.hits(graph)
         best = sorted(graph._g.nodes(), key=lambda n: hit_functions[args.sel_function](auth[n], hub[n]), reverse=True)
         summary = set()
         i = 0

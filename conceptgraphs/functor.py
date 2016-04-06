@@ -8,6 +8,7 @@ class Functor(Enum):
     ATTR = 4
     JUX = 5
     HYP = 6
+    SIM = 7
 
     def is_semantic(self):
         return self.value in {1, 2, 3, 4}
@@ -16,4 +17,4 @@ class Functor(Enum):
         return self.value in {5,}
 
     def is_lexical(self):
-        return self.value in {6,}
+        return self.value in {6, 7}
