@@ -8,7 +8,6 @@ class Graph:
         self.node_id = 0
         self._g = nx.DiGraph()
         self.tgrammar = grammar
-        self.last_sentence = None
         if text:
             self.add_text(text)
 
@@ -21,34 +20,10 @@ class Graph:
     def add_edge (self, head, dependent, functor, gram={}):
         self._g.add_edge(head, dependent, functor=functor, gram=gram)
 
-    def __add_node_recursive (self, tnode):
-        nid = self.add_node(tnode.head['concept'], tnode.head)
-        for c in tnode.children:
-            self.add_edge(nid, self.__add_node_recursive(c),
-                    c.function['functor'], c.function)
-        return nid
-
     def add_text (self, text):
         parses = parse(text)
         for p in parses:
-            t = self.tgrammar.transform_tree(p)
-            if t == None:
-                continue
-            nunode = self.__add_node_recursive(t)
-            if self.last_sentence != None:
-                fro = self._g.node[self.last_sentence]['gram']
-                fwd, back = self.tgrammar.link_sentences(fro, t)
-                if fwd != None:
-                    ftor, gram = fwd
-                    self.add_edge(self.last_sentence, nunode, ftor, gram)
-                if back != None:
-                    ftor, gram = back
-                    self.add_edge(nunode, self.last_sentence, ftor, gram)
-            self.last_sentence = nunode
-
-    def add_html (self, html):
-        from .html_to_text import html_to_text
-        self.add_text(html_to_text(html))
+            t = self.tgrammar.transform_sentence(p, self)
 
     def draw (self, bunch=None):
         import matplotlib.pyplot as plt
