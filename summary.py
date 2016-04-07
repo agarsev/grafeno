@@ -38,7 +38,7 @@ def extend (cgraph, min_depth, weight):
             syn = wn.synset(node['concept'])
             if syn.min_depth()<min_depth:
                 continue
-            ss = syn.hypernyms()
+            ss = syn.hypernyms() + syn.instance_hypernyms()
         else:
             pos = node['gram']['sempos']
             if pos != 'N':
