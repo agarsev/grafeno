@@ -31,5 +31,9 @@ def _generalize_rec (G, a, b, an, bn, node_generalize, edge_generalize):
 def generalize (a, b, node_generalize=concept_equal, edge_generalize=functor_equal):
     '''Take two concept graphs and return a new one which generalizes them'''
     gen = CG()
-    _generalize_rec(gen, a, b, 0, 0, node_generalize, edge_generalize)
+    aroot = [n for n, data in a._g.nodes(True) \
+            if data['gram']['sempos'] == 'v'][0]
+    broot = [n for n, data in b._g.nodes(True) \
+            if data['gram']['sempos'] == 'v'][0]
+    _generalize_rec(gen, a, b, aroot, broot, node_generalize, edge_generalize)
     return gen

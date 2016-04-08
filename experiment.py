@@ -18,7 +18,7 @@ def wordnet_common_concept(a, b):
         commons = [x for a in ssa for b in ssb for x in a.lowest_common_hypernyms(b) ]
         commons.sort(key=lambda x: x.max_depth(), reverse=True)
         gram = dict(a['gram'])
-        gram['number'] = 'plural'
+        gram['num'] = 'p'
         return { 'concept': commons[0].lemma_names()[0],
                  'gram': gram }
     except IndexError:
@@ -36,21 +36,19 @@ def rave (cg, node=0):
 
 if __name__ == "__main__":
 
-    import argparse, sys
+    import argparse, sys, importlib
 
     arg_parser = argparse.ArgumentParser(description='Do an experiment')
     arg_parser.add_argument('sent', nargs='+', help='one or more sentences')
     arg_parser.add_argument('-p', '--print', action='store_true', help='display the concept graph for the generalization')
-    arg_parser.add_argument('-t','--transform',help="Transform grammar to use",default='transform')
-    arg_parser.add_argument('-l','--linearize',help="Linearizing module to use",default='simple_nlg')
+    arg_parser.add_argument('-t','--transform',help="Transform grammar to use",default='modules.deep_grammar')
+    arg_parser.add_argument('-l','--linearize',help="Linearizing module to use",default='modules.simple_nlg')
     arg_parser.add_argument('-g','--generalize',action="store_true",help="Generalize two sentences")
     arg_parser.add_argument('-r','--rave',action="store_true",help="Distort the concept graph by raving")
     args = arg_parser.parse_args()
 
-    sys.path.insert(1, 'modules')
-
-    T = __import__(args.transform)
-    gs = [CG(T.grammar, text=s) for s in args.sent]
+    T = importlib.import_module(args.transform)
+    gs = [CG(T.Grammar(), text=s) for s in args.sent]
 
     if args.generalize:
         gs = [reduce(lambda a, b:
@@ -65,6 +63,6 @@ if __name__ == "__main__":
         for g in gs:
             g.draw()
 
-    L = __import__(args.linearize)
+    L = importlib.import_module(args.linearize)
     for g in gs:
         print(L.linearize(g))

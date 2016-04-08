@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     text = args.fulltext.read()
 
-    from modules.newgrammar import Grammar as Newgrammar
-    graph = CG(grammar=Newgrammar(), text=text)
+    from modules.deep_grammar import Grammar
+    graph = CG(grammar=Grammar(), text=text)
     from modules.simple_nlg import linearize
     print(linearize(graph))
