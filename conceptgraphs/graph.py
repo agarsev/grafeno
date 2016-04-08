@@ -18,6 +18,8 @@ class Graph:
         return nid
 
     def add_edge (self, head, dependent, functor, gram={}):
+        if head not in self._g or dependent not in self._g:
+            raise ValueError('Head or dependent are not in the graph ('+str(functor)+')')
         self._g.add_edge(head, dependent, functor=functor, gram=gram)
 
     def add_text (self, text):

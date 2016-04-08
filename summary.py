@@ -10,14 +10,14 @@ from nltk.corpus import wordnet as wn
 from conceptgraphs import Graph as CG
 import conceptgraphs.operations as cop
 
-from modules.tag_extract import tag_extract
-
+import modules.pos_extract
+extract = modules.pos_extract.Grammar()
 
 Metrics = namedtuple('Metrics', ['precision', 'recall', 'f'])
 
 
-def concept_coverage (graph, text, tags={'N','V','J','R'}):
-    text_concepts = CG(grammar=tag_extract(tags), text=text).all_concepts()
+def concept_coverage (graph, text):
+    text_concepts = CG(grammar=extract, text=text).all_concepts()
     graph_concepts = graph.all_concepts()
 
     overlap = len(graph_concepts & text_concepts)
@@ -41,7 +41,7 @@ def extend (cgraph, min_depth, weight):
             ss = syn.hypernyms() + syn.instance_hypernyms()
         else:
             pos = node['gram']['sempos']
-            if pos != 'N':
+            if pos != 'n':
                 continue
             ss = wn.synsets(node['concept'], pos.lower())
         for s in ss:
@@ -55,7 +55,7 @@ def extend (cgraph, min_depth, weight):
             cgraph.add_edge(n, nu, 'HYP', {'weight':weight})
 
 def get_semantic_similarity (x, xpos, y, ypos):
-    if xpos != ypos or xpos not in {'N','V'}:
+    if xpos != ypos or xpos not in {'n','v'}:
         return 0
     r = 0
     for sx in wn.synsets(x, xpos.lower()):
@@ -85,7 +85,7 @@ hit_functions = {
 
 if __name__ == "__main__":
 
-    import argparse, sys
+    import argparse, sys, importlib
 
     arg_parser = argparse.ArgumentParser(description='Summarize a text and evaluate the resultant summary against a good one')
 
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     group.add_argument('-r','--ratio', type=float, help='Compression rate to use for the summary', default=0.2)
     group.add_argument('-n','--number-of-words', type=int, help='Number of words to use for the summary')
 
-    arg_parser.add_argument('-t','--transform',help="Transformer module to use",default='transform')
+    arg_parser.add_argument('-t','--transform',help="Transformer module to use",default='modules.deep_grammar')
     arg_parser.add_argument('-d','--depth', type=int, help="Minimum conceptual depth for hypernyms to use for extension", default=5)
     arg_parser.add_argument('-w','--weight', type=float, help="Weight to assign to hypernym relations", default=0.5)
     arg_parser.add_argument('-k','--keep-args', action='store_true', help='Keep arguments to verbs selected for the summary')
@@ -137,7 +137,7 @@ if __name__ == "__main__":
         if args.show:
             summary.draw()
 
-    graph = CG(grammar=tag_extract({'N','V','J','R'}), text=text)
+    graph = CG(grammar=extract, text=text)
     if args.number_of_words:
         summary_length = args.number_of_words
     else:
@@ -147,9 +147,8 @@ if __name__ == "__main__":
         result('Baseline', lambda n: n['id']<summary_length)
 
     if args.clustering or args.hits:
-        sys.path.insert(1, 'modules')
-        T = __import__(args.transform)
-        graph = CG(grammar=T.grammar, text=text)
+        T = importlib.import_module(args.transform)
+        graph = CG(grammar=T.Grammar(), text=text)
         if args.similarity_links:
             link_all(graph)
 
@@ -187,7 +186,7 @@ if __name__ == "__main__":
             summary.add(nx)
             if args.keep_args:
                 g = graph._g
-                if g.node[nx]['gram']['sempos'] == 'V':
+                if g.node[nx]['gram']['sempos'] == 'v':
                     for m in g[nx]:
                         if g[nx][m]['functor'] in ('AGENT', 'THEME'):
                             summary.add(m)

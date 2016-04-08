@@ -14,10 +14,7 @@ class Grammar (PosExtract):
     def transform_node (self, msnode):
         sem = super().transform_node(msnode)
         sempos = sem.get('sempos')
-        if sem.get('concept') == 'be' and not msnode:
-            del sem['concept']
-            sem['copula'] = True
-        elif sempos == 'n':
+        if sempos == 'n':
             sem['proper'] = msnode.get('type') == 'proper'
             sem['num'] = msnode.get('num','p')
         elif sempos == 'v':
@@ -35,17 +32,17 @@ class Grammar (PosExtract):
             return edge
         elif parent.get('sempos') == 'v' and dep in self.predication:
             edge['functor'] = self.predication[dep]
-        elif dep == 'ncmod':
+        elif parent.get('sempos') == 'n' and dep == 'ncmod':
             edge['functor'] = 'ATTR'
         return edge
 
     def copula (self, dep, parent, child, edge):
-        if parent.get('concept') != 'be':
+        if parent.get('concept') != 'be' or 'concept' not in child:
             return False
         if dep == 'ncsubj':
             parent['copula_s'] = edge['child']
         else:
-            parent['coputa_a'] = edge['child']
+            parent['copula_a'] = edge['child']
         if 'copula_s' in parent and 'copula_a' in parent:
             edge['functor'] = 'ATTR'
             edge['parent'] = parent['copula_s']
@@ -57,10 +54,19 @@ class Grammar (PosExtract):
         if 'pval' not in parent and 'pval' not in child:
             return False
         if 'pval' in parent:
+            if 'concept' not in child:
+                return False
             parent['prep_obj'] = edge['child']
             prep_node = parent
         if 'pval' in child:
-            child['prep_parent'] = edge['parent']
+            if 'concept' not in parent:
+                return False
+            if parent['concept'] == 'be':
+                if not 'copula_a' in parent:
+                    return False
+                child['prep_parent'] = parent['copula_a']
+            else:
+                child['prep_parent'] = edge['parent']
             prep_node = child
         if 'prep_obj' in prep_node and 'prep_parent' in prep_node:
             edge['functor'] = 'COMP'
