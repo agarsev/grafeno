@@ -7,7 +7,7 @@ import math
 import nltk
 from nltk.corpus import wordnet as wn
 
-from conceptgraphs import Functor, Graph as CG
+from conceptgraphs import Graph as CG
 import conceptgraphs.operations as cop
 
 from modules.tag_extract import tag_extract
@@ -52,7 +52,7 @@ def extend (cgraph, min_depth, weight):
                 nu = cgraph.add_node(s.name(), gram={'hyper':True})
                 hypers[name] = nu
                 to_extend.append(nu)
-            cgraph.add_edge(n, nu, Functor.HYP, {'weight':weight})
+            cgraph.add_edge(n, nu, 'HYP', {'weight':weight})
 
 def get_semantic_similarity (x, xpos, y, ypos):
     if xpos != ypos or xpos not in {'N','V'}:
@@ -72,8 +72,8 @@ def link_all (cgraph, threshold = 0.5, weight = 1):
         nm = g.node[m]
         sim = get_semantic_similarity(nn['concept'], nn['gram']['sempos'], nm['concept'], nm['gram']['sempos'])
         if sim > threshold:
-            cgraph.add_edge(n, m, Functor.SIM, {'weight':weight})
-            cgraph.add_edge(m, n, Functor.SIM, {'weight':weight})
+            cgraph.add_edge(n, m, 'SIM', {'weight':weight})
+            cgraph.add_edge(m, n, 'SIM', {'weight':weight})
 
 
 hit_functions = {
@@ -189,7 +189,7 @@ if __name__ == "__main__":
                 g = graph._g
                 if g.node[nx]['gram']['sempos'] == 'V':
                     for m in g[nx]:
-                        if g[nx][m]['functor'] in (Functor.AGENT, Functor.THEME):
+                        if g[nx][m]['functor'] in ('AGENT', 'THEME'):
                             summary.add(m)
         result('HITS', lambda n: n['id'] in summary)
 

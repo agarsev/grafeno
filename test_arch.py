@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from conceptgraphs import Functor, Graph as CG
+from conceptgraphs import Graph as CG
 
 
 if __name__ == "__main__":
@@ -15,4 +15,5 @@ if __name__ == "__main__":
 
     from modules.newgrammar import Grammar as Newgrammar
     graph = CG(grammar=Newgrammar(), text=text)
-    graph.draw()
+    from modules.simple_nlg import linearize
+    print(linearize(graph))
