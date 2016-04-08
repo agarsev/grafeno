@@ -11,7 +11,7 @@ from conceptgraphs import Graph as CG
 import conceptgraphs.operations as cop
 
 import modules.pos_extract
-extract = modules.pos_extract.Grammar()
+extract = modules.pos_extract.Grammar({'noun':'n','verb':'v'})
 
 Metrics = namedtuple('Metrics', ['precision', 'recall', 'f'])
 

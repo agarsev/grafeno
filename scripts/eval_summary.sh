@@ -2,7 +2,7 @@
 
 trap "exit" INT
 
-OPTIONS="--similarity-links -d 1 -w 0.2"
+OPTIONS="--similarity-links -d 3 -w 0.3"
 
 for file in data/duc/*.original
 do
