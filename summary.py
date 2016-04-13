@@ -101,6 +101,7 @@ if __name__ == "__main__":
     group.add_argument('-r','--ratio', type=float, help='Compression rate to use for the summary', default=0.2)
     group.add_argument('-n','--number-of-words', type=int, help='Number of words to use for the summary')
 
+    arg_parser.add_argument('-f','--freeling-graph',action='store_true',help="Use freeling to extract semantic graphs")
     arg_parser.add_argument('-t','--transform',help="Transformer module to use",default='modules.deep_grammar')
     arg_parser.add_argument('-d','--depth', type=int, help="Minimum conceptual depth for hypernyms to use for extension", default=5)
     arg_parser.add_argument('-w','--weight', type=float, help="Weight to assign to hypernym relations", default=0.5)
@@ -147,8 +148,11 @@ if __name__ == "__main__":
         result('Baseline', lambda n: n['id']<summary_length)
 
     if args.clustering or args.hits:
-        T = importlib.import_module(args.transform)
-        graph = CG(grammar=T.Grammar(), text=text)
+        if args.freeling_graph:
+            graph = CG(use_freeling=True, text=text)
+        else:
+            T = importlib.import_module(args.transform)
+            graph = CG(grammar=T.Grammar(), text=text)
         if args.similarity_links:
             link_all(graph)
 

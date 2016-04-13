@@ -16,6 +16,6 @@ do
 
     echo -n "$name $morewords $words "
     ./summary.py $file $gold -q --baseline --hits $OPTIONS -n $words | tr '\n' ' '
-    timeout 2m ./summary.py $file $gold -q --clustering $OPTIONS -n $words
+    timeout 3m ./summary.py $file $gold -q --clustering $OPTIONS -n $words
     echo ""
 done
