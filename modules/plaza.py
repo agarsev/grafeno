@@ -11,24 +11,33 @@ class Grammar (PosExtract):
         self.min_depth = 4
         self.sentences = []
 
+    def pre_process (self, tree, graph):
+        self.dropped = []
+
     def transform_node (self, msnode):
         sem = super().transform_node(msnode)
         concept = sem.get('concept')
         # Only one node for each concept
-        if concept == None or concept in self.node_from_concept:
+        if concept == None:
+            return None
+        if concept in self.node_from_concept:
+            self.dropped.append(self.node_from_concept[concept])
             return None
         ss = wn.synsets(concept, 'n')
+        if len(ss)<1:
+            return None
         # WSD by MFS
         sem['synset'] = ss[0]
         return sem
 
     def post_insertion (self, sentence_nodes, graph):
         g = graph._g
-        self.sentences.append(sentence_nodes)
         # Record the concept nodes
         for n in sentence_nodes:
             concept = g.node[n]['concept']
             self.node_from_concept[concept] = n
+        # Record the sentence
+        self.sentences.append(sentence_nodes + self.dropped)
         # Extend with hypernyms
         to_extend = deque(sentence_nodes)
         while len(to_extend)>0:

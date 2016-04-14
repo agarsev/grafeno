@@ -7,9 +7,12 @@ import subprocess as subp
 import re
 
 from conceptgraphs import Graph as CG
-import conceptgraphs.operations as cop
+from conceptgraphs.clustering2 import cluster
 
 from modules.plaza import Grammar
+
+
+we_have_a_lot_of_time = False
 
 simparse = re.compile('([0-9.]+)$')
 def link_all (cgraph, nodes, threshold = 100, weight = 1):
@@ -17,11 +20,14 @@ def link_all (cgraph, nodes, threshold = 100, weight = 1):
     for n, m in combinations(nodes, 2):
         sa = g.node[n]['concept']
         sb = g.node[m]['concept']
-        proc = Popen(["/usr/bin/env", "WNSEARCHDIR=/usr/share/wordnet", "similarity.pl", "--type", "WordNet::Similarity::lesk",\
-                sa,sb], stdin=PIPE,stdout=PIPE,stderr=PIPE)
-        data, err = proc.communicate()
-        res = simparse.search(data.decode('UTF-8'))
-        sim = int(res.group(0))
+        if we_have_a_lot_of_time:
+            proc = Popen(["/usr/bin/env", "WNSEARCHDIR=/usr/share/wordnet", "similarity.pl", "--type", "WordNet::Similarity::lesk",\
+                    sa,sb], stdin=PIPE,stdout=PIPE,stderr=PIPE)
+            data, err = proc.communicate()
+            res = simparse.search(data.decode('UTF-8'))
+            sim = int(res.group(0))
+        else:
+            sim = 0
         if sim > threshold:
             cgraph.add_edge(n, m, 'SIM', {'weight':weight})
             cgraph.add_edge(m, n, 'SIM', {'weight':weight})
@@ -41,9 +47,12 @@ if __name__ == "__main__":
     graph = CG(grammar=parser, text=text)
 
     link_all(graph, [n for s in parser.sentences for n in s])
-    graph.draw()
-    #clusters = cop.cluster(graph).clusters
-    #clusters = sorted(clusters, key=len, reverse=True)
-    #for c in clusters:
-        #graph.draw(c)
+    HVS, clusters = cluster(graph)
 
+    def get_concept(n):
+        return graph._g.node[n]['concept']
+
+    for h, c in zip(HVS, clusters):
+        print(','.join(get_concept(n) for n in h))
+        print(','.join(get_concept(n) for n in c))
+        print('---')

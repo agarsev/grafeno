@@ -127,7 +127,7 @@ if __name__ == "__main__":
             link_all(graph)
 
     if args.clustering:
-        clusters = cop.cluster(graph).clusters
+        clusters = cop.cluster(graph)[1]
         clusters = sorted(clusters, key=len, reverse=True)
         summary, i, j = set(), 0, 0
         while len(summary) < summary_length:

@@ -285,4 +285,4 @@ class salience_node: #OK
 def cluster (cgraph):
     cl = Clustering(cgraph._g)
     cl.computeClusters()
-    return cl
+    return cl.HVSs, cl.clusters
