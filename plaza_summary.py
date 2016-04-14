@@ -2,28 +2,26 @@
 
 from itertools import combinations
 from nltk.corpus import wordnet as wn
+from subprocess import Popen, PIPE
+import subprocess as subp
+import re
 
 from conceptgraphs import Graph as CG
 import conceptgraphs.operations as cop
 
 from modules.plaza import Grammar
 
-def get_semantic_similarity (x, xpos, y, ypos):
-    # TODO: Usar lesk
-    r = 0
-    for sx in wn.synsets(x, 'n'):
-        for sy in wn.synsets(y, 'n'):
-            sim = sx.lch_similarity(sy)
-            if sim and sim>r:
-                r = sim
-    return r
-
-def link_all (cgraph, threshold = 1, weight = 1):
+simparse = re.compile('([0-9.]+)$')
+def link_all (cgraph, nodes, threshold = 100, weight = 1):
     g = cgraph._g
-    for n, m in combinations(g.nodes(), 2):
-        nn = g.node[n]
-        nm = g.node[m]
-        sim = get_semantic_similarity(nn['concept'], nn['gram']['sempos'], nm['concept'], nm['gram']['sempos'])
+    for n, m in combinations(nodes, 2):
+        sa = g.node[n]['concept']
+        sb = g.node[m]['concept']
+        proc = Popen(["/usr/bin/env", "WNSEARCHDIR=/usr/share/wordnet", "similarity.pl", "--type", "WordNet::Similarity::lesk",\
+                sa,sb], stdin=PIPE,stdout=PIPE,stderr=PIPE)
+        data, err = proc.communicate()
+        res = simparse.search(data.decode('UTF-8'))
+        sim = int(res.group(0))
         if sim > threshold:
             cgraph.add_edge(n, m, 'SIM', {'weight':weight})
             cgraph.add_edge(m, n, 'SIM', {'weight':weight})
@@ -39,8 +37,10 @@ if __name__ == "__main__":
     args = arg_parser.parse_args()
 
     text = args.fulltext.read()
-    graph = CG(grammar=Grammar(), text=text)
-    link_all(graph)
+    parser = Grammar()
+    graph = CG(grammar=parser, text=text)
+
+    link_all(graph, [n for s in parser.sentences for n in s])
     graph.draw()
     #clusters = cop.cluster(graph).clusters
     #clusters = sorted(clusters, key=len, reverse=True)

@@ -9,6 +9,7 @@ class Grammar (PosExtract):
         super().__init__(sempos = {'noun': 'n'})
         self.node_from_concept = dict()
         self.min_depth = 4
+        self.sentences = []
 
     def transform_node (self, msnode):
         sem = super().transform_node(msnode)
@@ -23,6 +24,7 @@ class Grammar (PosExtract):
 
     def post_insertion (self, sentence_nodes, graph):
         g = graph._g
+        self.sentences.append(sentence_nodes)
         # Record the concept nodes
         for n in sentence_nodes:
             concept = g.node[n]['concept']
