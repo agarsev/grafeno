@@ -11,10 +11,9 @@ from conceptgraphs import Graph as CG
 import conceptgraphs.operations as cop
 
 import modules.pos_extract
-extract = modules.pos_extract.Grammar({'noun':'n','verb':'v'})
+extract = modules.pos_extract.Grammar()
 
 Metrics = namedtuple('Metrics', ['precision', 'recall', 'f'])
-
 
 def concept_coverage (graph, text):
     text_concepts = CG(grammar=extract, text=text).all_concepts()
@@ -26,35 +25,8 @@ def concept_coverage (graph, text):
     f = 2*recall*prec/(recall+prec) if recall+prec > 0 else 0
     return Metrics(prec,recall,f)
 
-
-def extend (cgraph, min_depth, weight):
-    g = cgraph._g
-    hypers = {}
-    to_extend = deque(g.nodes())
-    while len(to_extend)>0:
-        n = to_extend.popleft()
-        node = g.node[n]
-        if 'hyper' in node['gram']:
-            syn = wn.synset(node['concept'])
-            if syn.min_depth()<min_depth:
-                continue
-            ss = syn.hypernyms() + syn.instance_hypernyms()
-        else:
-            pos = node['gram']['sempos']
-            if pos != 'n':
-                continue
-            ss = wn.synsets(node['concept'], pos.lower())
-        for s in ss:
-            name = s.name()
-            if name in hypers:
-                nu = hypers[name]
-            else:
-                nu = cgraph.add_node(s.name(), gram={'hyper':True})
-                hypers[name] = nu
-                to_extend.append(nu)
-            cgraph.add_edge(n, nu, 'HYP', {'weight':weight})
-
 def get_semantic_similarity (x, xpos, y, ypos):
+    # TODO: Usar lesk
     if xpos != ypos or xpos not in {'n','v'}:
         return 0
     r = 0
@@ -65,7 +37,7 @@ def get_semantic_similarity (x, xpos, y, ypos):
                 r = sim
     return r
 
-def link_all (cgraph, threshold = 0.5, weight = 1):
+def link_all (cgraph, threshold = 0.01, weight = 1):
     g = cgraph._g
     for n, m in combinations(g.nodes(), 2):
         nn = g.node[n]
@@ -104,13 +76,11 @@ if __name__ == "__main__":
     arg_parser.add_argument('-f','--freeling-graph',action='store_true',help="Use freeling to extract semantic graphs")
     arg_parser.add_argument('-t','--transform',help="Transformer module to use",default='modules.deep_grammar')
     arg_parser.add_argument('-d','--depth', type=int, help="Minimum conceptual depth for hypernyms to use for extension", default=5)
-    arg_parser.add_argument('-w','--weight', type=float, help="Weight to assign to hypernym relations", default=0.5)
     arg_parser.add_argument('-k','--keep-args', action='store_true', help='Keep arguments to verbs selected for the summary')
     arg_parser.add_argument('-l','--linearize', action='store_true', help='Linearize the summary graph')
     arg_parser.add_argument('-s','--show', action='store_true', help='Show the summary graph on-screen')
     arg_parser.add_argument('-q','--quiet', action='store_true', help='Print only the metrics without the description')
     arg_parser.add_argument('--sel-function', choices=hit_functions.keys(), help='Function to use to select the best nodes in HITS', default='hub')
-    arg_parser.add_argument('--extend-for-hits', action='store_true', help='Extend graph when using HITS too')
     arg_parser.add_argument('--similarity-links', action='store_true', help='Link concepts in the graph with similarity links')
 
     args = arg_parser.parse_args()
@@ -156,12 +126,8 @@ if __name__ == "__main__":
         if args.similarity_links:
             link_all(graph)
 
-    if args.clustering or args.extend_for_hits:
-        ext = graph.copy()
-        extend(ext, args.depth, args.weight)
-
     if args.clustering:
-        clusters = cop.cluster(ext).clusters
+        clusters = cop.cluster(graph).clusters
         clusters = sorted(clusters, key=len, reverse=True)
         summary, i, j = set(), 0, 0
         while len(summary) < summary_length:
@@ -177,10 +143,7 @@ if __name__ == "__main__":
         result('Clustering', lambda n: n['id'] in summary)
 
     if args.hits:
-        if args.extend_for_hits:
-            auth, hub = cop.hits(ext)
-        else:
-            auth, hub = cop.hits(graph)
+        auth, hub = cop.hits(graph)
         best = sorted(graph._g.nodes(), key=lambda n: hit_functions[args.sel_function](auth[n], hub[n]), reverse=True)
         summary = set()
         i = 0

@@ -17,7 +17,7 @@ class Clustering:
         self.non_hub_vertexes = []
         self.HVSs = []
         self.clusters = []
-        self.num_percentage_vertexes = 20
+        self.num_percentage_vertexes = 10
         self.num_hub_vertexes = int(self.G.number_of_nodes() * self.num_percentage_vertexes/100.0)
         self.hub_score = 1
         self.no_hub_score = 0.5
