@@ -9,7 +9,6 @@ import subprocess as subp
 import re
 
 from conceptgraphs import Graph as CG
-from conceptgraphs.clustering2 import cluster
 
 from modules.plaza import Grammar
 
@@ -63,6 +62,8 @@ if __name__ == "__main__":
 
     arg_parser.add_argument('fulltext', type=argparse.FileType('r'), help='Text file with the original text')
     arg_parser.add_argument('--similarity-links',action='store_true',help='Use extra similarity links (takes a *lot* of time)')
+    arg_parser.add_argument('--thesis-clustering',action='store_true',help='Do clustering as in the thesis')
+    arg_parser.add_argument('--hubratio',type=float,default=0.2,help='Percentage of hub vertices (from 0 to 1)')
 
     args = arg_parser.parse_args()
 
@@ -74,7 +75,11 @@ if __name__ == "__main__":
     if args.similarity_links:
         link_all(graph, [n for s in parser.sentences for n in s])
 
-    HVS, clusters = cluster(graph)
+    if args.thesis_clustering:
+        from conceptgraphs.thesis import cluster
+    else:
+        from conceptgraphs.clustering import cluster
+    HVS, clusters = cluster(graph, args.hubratio)
 
     # Heuristica 1
     best_cluster = max(range(len(clusters)), key=lambda i: len(clusters[i]))

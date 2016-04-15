@@ -7,9 +7,10 @@ import networkx as nx
 
 class Clustering:
 
-    def __init__(self,G):
+    def __init__(self,G,num_percentage_vertexes):
         self.nodes = []
         self.G = nx.Graph(G)
+        self.num_percentage_vertexes = num_percentage_vertexes
         self.createHubs()
 
     def createHubs(self):
@@ -17,8 +18,7 @@ class Clustering:
         self.non_hub_vertexes = []
         self.HVSs = []
         self.clusters = []
-        self.num_percentage_vertexes = 10
-        self.num_hub_vertexes = int(self.G.number_of_nodes() * self.num_percentage_vertexes/100.0)
+        self.num_hub_vertexes = int(self.G.number_of_nodes() * self.num_percentage_vertexes)
         self.hub_score = 1
         self.no_hub_score = 0.5
 
@@ -282,7 +282,7 @@ class salience_node: #OK
         neighbors = str(self.neighbors )
         return id + ':' + neighbors
 
-def cluster (cgraph):
-    cl = Clustering(cgraph._g)
+def cluster (cgraph, hubratio = 0.2):
+    cl = Clustering(cgraph._g, hubratio)
     cl.computeClusters()
     return cl.HVSs, cl.clusters
