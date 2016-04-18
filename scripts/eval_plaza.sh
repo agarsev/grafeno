@@ -2,7 +2,9 @@
 
 trap "exit" INT
 
-echo "doc length summaryl plaza deep"
+experiments=$(ls experiments/*.py | sed 's:experiments/\(.*\).py$:\1:')
+
+echo "doc length summaryl" $experiments
 
 rouge_score() {
     timeout 2m ./plaza_summary.py $3 $1 > .candidate
@@ -23,8 +25,10 @@ do
     words=$(wc -w $gold | awk '{print $1}')
 
     echo -n "$name $morewords $words"
-    rouge_score $file $gold "-t plaza --hubratio 0.02"
-    rouge_score $file $gold "-t deep_extend --hubratio 0.02"
+    for exp in $experiments
+    do
+        rouge_score $file $gold "-t experiments.$exp --hubratio 0.05"
+    done
     echo ""
 done
 
