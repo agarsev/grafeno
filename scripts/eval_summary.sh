@@ -7,7 +7,7 @@ experiments=$(ls experiments/*.py | sed 's:experiments/\(.*\).py$:\1:')
 echo "doc length summaryl" $experiments
 
 rouge_score() {
-    timeout 2m ./plaza_summary.py $3 $1 > .candidate
+    timeout 2m ./summary.py $3 $1 > .candidate
     if [ $? -ne 0 ]; then
         echo -n " 0"
     else
