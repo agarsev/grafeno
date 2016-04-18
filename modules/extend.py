@@ -7,7 +7,8 @@ class Transformer (WNGet):
 
     def __init__ (self, min_depth = 4, **kwds):
         super().__init__(**kwds)
-        self.node_from_concept = dict()
+        if not hasattr(self, 'node_from_concept'):
+            self.node_from_concept = dict()
         self.min_depth = 4
 
     def post_insertion (self, sentence_nodes, graph):

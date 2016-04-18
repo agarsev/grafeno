@@ -42,14 +42,14 @@ if __name__ == "__main__":
     arg_parser.add_argument('fulltext', type=argparse.FileType('r'), help='Text file with the original text')
     arg_parser.add_argument('--alternative-clustering',action='store_true',help='Do clustering as in the preliminary code')
     arg_parser.add_argument('--hubratio',type=float,default=0.2,help='Percentage of hub vertices (from 0 to 1)')
-    arg_parser.add_argument('-t','--transformer',default='plaza',help='Transformer module to use')
+    arg_parser.add_argument('-t','--transformer',default='experiments.plaza',help='Transformer module to use')
 
     args = arg_parser.parse_args()
 
     text = args.fulltext.read()
     full = get_full_sentences(text)
 
-    trmod = importlib.import_module('modules.'+args.transformer)
+    trmod = importlib.import_module(args.transformer)
     tr = trmod.Transformer()
     graph = CG(transformer=tr, text=text)
 
