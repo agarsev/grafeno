@@ -1,6 +1,6 @@
-from .pos_extract import Grammar as PosExtract
+from .pos_extract import Transformer as PosExtract
 
-class Grammar (PosExtract):
+class Transformer (PosExtract):
 
     predication = {
             'ncsubj': 'AGENT',

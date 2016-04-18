@@ -1,6 +1,6 @@
 from collections import deque
 
-class TGrammar:
+class Transformer:
 
     def transform_sentence (self, tree, graph):
         '''Transform the tree according to the rules and add

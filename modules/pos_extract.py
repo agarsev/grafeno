@@ -1,4 +1,4 @@
-from conceptgraphs.grammar import TGrammar
+from conceptgraphs.transformer import Transformer as Base
 
 default_sempos = {
     'noun': 'n',
@@ -7,7 +7,7 @@ default_sempos = {
     'adverb': 'r'
 }
 
-class Grammar (TGrammar):
+class Transformer (Base):
 
     def __init__ (self, sempos = default_sempos):
         self.pos_list = sempos.keys()

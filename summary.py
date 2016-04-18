@@ -11,12 +11,12 @@ from conceptgraphs import Graph as CG
 import conceptgraphs.operations as cop
 
 import modules.pos_extract
-extract = modules.pos_extract.Grammar()
+extract = modules.pos_extract.Transformer()
 
 Metrics = namedtuple('Metrics', ['precision', 'recall', 'f'])
 
 def concept_coverage (graph, text):
-    text_concepts = CG(grammar=extract, text=text).all_concepts()
+    text_concepts = CG(transformer=extract, text=text).all_concepts()
     graph_concepts = graph.all_concepts()
 
     overlap = len(graph_concepts & text_concepts)
@@ -108,7 +108,7 @@ if __name__ == "__main__":
         if args.show:
             summary.draw()
 
-    graph = CG(grammar=extract, text=text)
+    graph = CG(transformer=extract, text=text)
     if args.number_of_words:
         summary_length = args.number_of_words
     else:
@@ -122,7 +122,7 @@ if __name__ == "__main__":
             graph = CG(use_freeling=True, text=text)
         else:
             T = importlib.import_module(args.transform)
-            graph = CG(grammar=T.Grammar(), text=text)
+            graph = CG(transformer=T.Transformer(), text=text)
         if args.similarity_links:
             link_all(graph)
 

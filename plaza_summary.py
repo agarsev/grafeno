@@ -10,7 +10,7 @@ import re
 
 from conceptgraphs import Graph as CG
 
-from modules.plaza import Grammar
+from modules.plaza import Transformer
 
 simparse = re.compile('([0-9.]+)$')
 def link_all (cgraph, nodes, threshold = 100, weight = 1):
@@ -69,8 +69,8 @@ if __name__ == "__main__":
 
     text = args.fulltext.read()
     full = get_full_sentences(text)
-    parser = Grammar()
-    graph = CG(grammar=parser, text=text)
+    parser = Transformer()
+    graph = CG(transformer=parser, text=text)
 
     if args.similarity_links:
         link_all(graph, [n for s in parser.sentences for n in s])

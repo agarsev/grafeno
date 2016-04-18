@@ -1,9 +1,9 @@
 from collections import deque
 from nltk.corpus import wordnet as wn
 
-from .pos_extract import Grammar as PosExtract
+from .pos_extract import Transformer as PosExtract
 
-class Grammar (PosExtract):
+class Transformer (PosExtract):
 
     def __init__ (self):
         super().__init__(sempos = {'noun': 'n'})
