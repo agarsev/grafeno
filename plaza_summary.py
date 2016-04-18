@@ -4,26 +4,28 @@ from collections import deque
 from itertools import combinations
 from nltk.corpus import wordnet as wn
 import nltk.data
-from subprocess import Popen, PIPE
-import subprocess as subp
-import re
+import pexpect
 
 from conceptgraphs import Graph as CG
 
-simparse = re.compile('([0-9.]+)$')
 def link_all (cgraph, nodes, threshold = 100, weight = 1):
+    child = pexpect.spawn("/usr/bin/env WNSEARCHDIR=/usr/share/wordnet similarity.pl --type WordNet::Similarity::lesk --interact")
+    child.delaybeforesend = 0
     g = cgraph._g
     for n, m in combinations(nodes, 2):
         sa = g.node[n]['concept']
         sb = g.node[m]['concept']
-        proc = Popen(["/usr/bin/env", "WNSEARCHDIR=/usr/share/wordnet", "similarity.pl", "--type", "WordNet::Similarity::lesk",\
-                sa,sb], stdin=PIPE,stdout=PIPE,stderr=PIPE)
-        data, err = proc.communicate()
-        res = simparse.search(data.decode('UTF-8'))
-        sim = int(res.group(0))
-        if sim > threshold:
-            cgraph.add_edge(n, m, 'SIM', {'weight':weight})
-            cgraph.add_edge(m, n, 'SIM', {'weight':weight})
+        child.expect("Concept #1:")
+        child.sendline(sa)
+        child.expect("Concept #2:")
+        child.sendline(sb)
+        match = child.expect([' ([0-9.]+)\r\n', 'not found'])
+        if match == 0:
+            sim = int(child.match.group(1))
+            if sim > threshold:
+                cgraph.add_edge(n, m, 'SIM', {'weight':weight})
+                cgraph.add_edge(m, n, 'SIM', {'weight':weight})
+    child.send("\n\n\n")
 
 def vote (sentence, graph, HVS, clusters):
     g = graph._g
@@ -60,7 +62,7 @@ if __name__ == "__main__":
 
     arg_parser.add_argument('fulltext', type=argparse.FileType('r'), help='Text file with the original text')
     arg_parser.add_argument('--similarity-links',action='store_true',help='Use extra similarity links (takes a *lot* of time)')
-    arg_parser.add_argument('--thesis-clustering',action='store_true',help='Do clustering as in the thesis')
+    arg_parser.add_argument('--alternative-clustering',action='store_true',help='Do clustering as in the preliminary code')
     arg_parser.add_argument('--hubratio',type=float,default=0.2,help='Percentage of hub vertices (from 0 to 1)')
     arg_parser.add_argument('-t','--transformer',default='plaza',help='Transformer module to use')
 
@@ -76,10 +78,10 @@ if __name__ == "__main__":
     if args.similarity_links:
         link_all(graph, [n for s in tr.sentences for n in s])
 
-    if args.thesis_clustering:
-        from conceptgraphs.thesis import cluster
-    else:
+    if args.alternative_clustering:
         from conceptgraphs.clustering import cluster
+    else:
+        from conceptgraphs.thesis import cluster
     HVS, clusters = cluster(graph, args.hubratio)
 
     # Heuristica 1
