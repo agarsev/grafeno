@@ -2,7 +2,7 @@
 
 trap "exit" INT
 
-echo "doc length summaryl plaza1 plaza2 deep1 deep2"
+echo "doc length summaryl plaza deep"
 
 rouge_score() {
     timeout 2m ./plaza_summary.py $3 $1 > .candidate
@@ -23,10 +23,8 @@ do
     words=$(wc -w $gold | awk '{print $1}')
 
     echo -n "$name $morewords $words"
-    rouge_score $file $gold "--sim -t plaza --hubratio 0.1"
-    rouge_score $file $gold "--sim -t plaza --hubratio 0.2"
-    rouge_score $file $gold "--sim -t deep_extend --hubratio 0.1"
-    rouge_score $file $gold "--sim -t deep_extend --hubratio 0.2"
+    rouge_score $file $gold "-t plaza --hubratio 0.02"
+    rouge_score $file $gold "-t deep_extend --hubratio 0.02"
     echo ""
 done
 

@@ -1,8 +1,9 @@
 from .pos_extract import Transformer as PosExtract
 from .sentence_record import Transformer as SentRecord
 from .extend import Transformer as Extend
+from .similarity_link import Transformer as SimLink
 
-class Transformer (Extend, SentRecord, PosExtract):
+class Transformer (SimLink, Extend, SentRecord, PosExtract):
 
     def __init__ (self, **kwds):
         super().__init__(sempos={'noun':'n'}, **kwds)
