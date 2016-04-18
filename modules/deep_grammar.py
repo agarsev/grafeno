@@ -8,9 +8,6 @@ class Transformer (PosExtract):
             'iobj': 'IOBJ'
             }
 
-    def __init__ (self, **kwds):
-        super().__init__(**kwds)
-
     def transform_node (self, msnode):
         sem = super().transform_node(msnode)
         sempos = sem.get('sempos')
