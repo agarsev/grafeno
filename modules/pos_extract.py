@@ -9,7 +9,8 @@ default_sempos = {
 
 class Transformer (Base):
 
-    def __init__ (self, sempos = default_sempos):
+    def __init__ (self, sempos = default_sempos, **kwds):
+        super().__init__(**kwds)
         self.pos_list = sempos.keys()
         self.pos_dict = sempos
 

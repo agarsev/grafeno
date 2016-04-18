@@ -2,16 +2,17 @@ from collections import deque
 from nltk.corpus import wordnet as wn
 
 from .pos_extract import Transformer as PosExtract
+from .sentence_recorder import Transformer as SentRecord
 
-class Transformer (PosExtract):
+class Transformer (SentRecord, PosExtract):
 
-    def __init__ (self):
-        super().__init__(sempos = {'noun': 'n'})
+    def __init__ (self, sempos = {'noun': 'n'}, **kwds):
+        super().__init__(sempos=sempos, **kwds)
         self.node_from_concept = dict()
         self.min_depth = 4
-        self.sentences = []
 
     def pre_process (self, tree, graph):
+        super().pre_process(tree, graph)
         self.dropped = []
 
     def transform_node (self, msnode):
@@ -31,13 +32,12 @@ class Transformer (PosExtract):
         return sem
 
     def post_insertion (self, sentence_nodes, graph):
+        super().post_insertion(sentence_nodes + self.dropped, graph)
         g = graph._g
         # Record the concept nodes
         for n in sentence_nodes:
             concept = g.node[n]['concept']
             self.node_from_concept[concept] = n
-        # Record the sentence
-        self.sentences.append(sentence_nodes + self.dropped)
         # Extend with hypernyms
         to_extend = deque(sentence_nodes)
         while len(to_extend)>0:

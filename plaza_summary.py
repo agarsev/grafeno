@@ -10,8 +10,6 @@ import re
 
 from conceptgraphs import Graph as CG
 
-from modules.plaza import Transformer
-
 simparse = re.compile('([0-9.]+)$')
 def link_all (cgraph, nodes, threshold = 100, weight = 1):
     g = cgraph._g
@@ -64,16 +62,19 @@ if __name__ == "__main__":
     arg_parser.add_argument('--similarity-links',action='store_true',help='Use extra similarity links (takes a *lot* of time)')
     arg_parser.add_argument('--thesis-clustering',action='store_true',help='Do clustering as in the thesis')
     arg_parser.add_argument('--hubratio',type=float,default=0.2,help='Percentage of hub vertices (from 0 to 1)')
+    arg_parser.add_argument('-t','--transformer',default='plaza',help='Transformer module to use')
 
     args = arg_parser.parse_args()
 
     text = args.fulltext.read()
     full = get_full_sentences(text)
-    parser = Transformer()
-    graph = CG(transformer=parser, text=text)
+
+    trmod = importlib.import_module('modules.'+args.transformer)
+    tr = trmod.Transformer()
+    graph = CG(transformer=tr, text=text)
 
     if args.similarity_links:
-        link_all(graph, [n for s in parser.sentences for n in s])
+        link_all(graph, [n for s in tr.sentences for n in s])
 
     if args.thesis_clustering:
         from conceptgraphs.thesis import cluster
@@ -85,7 +86,7 @@ if __name__ == "__main__":
     best_cluster = max(range(len(clusters)), key=lambda i: len(clusters[i]))
 
     sentence_scores = []
-    for s in parser.sentences:
+    for s in tr.sentences:
         cluster_scores = vote(s, graph, HVS, clusters)
         sentence_scores.append(cluster_scores[best_cluster])
 
