@@ -47,6 +47,8 @@ def cluster (cgraph, hubratio = 0.2):
     demoted = [h[0] for h in HVS if len(h)==1]
     nonhub_v = demoted + nonhub_v
     HVS = [h for h in HVS if len(h)>1]
+    if len(HVS)<1:
+        return [[nonhub_v[0]]], [nonhub_v]
 
     # Assign non-hub vertices to HVS
     # TODO: check whether select max instead of going forward

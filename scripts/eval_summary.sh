@@ -2,9 +2,13 @@
 
 trap "exit" INT
 
-experiments=$(ls experiments/*.py | sed 's:experiments/\(.*\).py$:\1:')
+if [ $# -eq 0 ]; then
+    experiments=$(ls experiments/*.py | sed 's:experiments/\(.*\).py$:\1:')
+else
+    experiments=$@
+fi
 
-echo "doc length summaryl" $experiments
+echo "doc length summaryl baseline" $experiments
 
 rouge_score() {
     timeout 2m ./summary.py $3 $1 > .candidate
@@ -25,6 +29,8 @@ do
     words=$(wc -w $gold | awk '{print $1}')
 
     echo -n "$name $morewords $words"
+    ./baseline.py $file > .candidate
+    echo -n " $(scripts/rouge_eval.js .candidate $gold)"
     for exp in $experiments
     do
         rouge_score $file $gold "-t experiments.$exp --hubratio 0.05"

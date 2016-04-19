@@ -43,6 +43,8 @@ if __name__ == "__main__":
     arg_parser.add_argument('--alternative-clustering',action='store_true',help='Do clustering as in the preliminary code')
     arg_parser.add_argument('--hubratio',type=float,default=0.2,help='Percentage of hub vertices (from 0 to 1)')
     arg_parser.add_argument('-t','--transformer',default='experiments.plaza',help='Transformer module to use')
+    arg_parser.add_argument('--length',type=int,default=100,help='Approximate number of words for the summary to have')
+    arg_parser.add_argument('--margin',type=int,default=10,help='Upper margin for the length of the summary')
 
     args = arg_parser.parse_args()
 
@@ -68,4 +70,10 @@ if __name__ == "__main__":
         sentence_scores.append(cluster_scores[best_cluster])
 
     best = sorted(range(len(sentence_scores)), reverse=True, key=lambda i:sentence_scores[i])
-    print('\n'.join(s for i, s in enumerate(full) if i in best[:5]))
+    length = 0
+    last = 0
+    while length < args.length:
+        length += len(full[best[last]].split(' '))
+        if length < args.length + args.margin:
+            last += 1
+    print('\n'.join(s for i, s in enumerate(full) if i in best[:last]))
