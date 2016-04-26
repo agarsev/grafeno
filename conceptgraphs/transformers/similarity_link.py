@@ -19,6 +19,8 @@ class Transformer (WNGet, SentRecord):
         oldnodes = set(n for s in self.sentences for n in s)
         for n in sentence_nodes:
             for m in oldnodes:
+                if m == n:
+                    continue
                 ga = g.node[n]['gram']
                 gb = g.node[m]['gram']
                 if 'synset' not in ga or 'synset' not in gb \
