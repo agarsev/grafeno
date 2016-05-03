@@ -1,32 +1,34 @@
 Nilfusion
 =========
 
-Workflow and code for concept extraction and operation.
+Python library for concept graphs extraction and operation, with an integrated
+REST server.
 
 For more information, view the [wiki](https://gitlab.com/Nil102/nilfusion/wikis/home).
 
 
-Experiments
+REST Server
 -----------
-Run the `experiment.py` script with a number of sentences and different options.
-
-Use `-h` to get the list of experiments available.
-
-Summarization
--------------
-Run the `summary.py` script with a text, a gold standard (human) summary, and
-the methods to evaluate.
+Run the `server.py` script to get a REST json server which performs different
+graph operations.
 
 Use `-h` to get the list of options available.
+
 
 Requirements
 ------------
 - python3
+  - nltk
+    - wordnet
+    - wordnet_ic
+    - punkt
+  - networkx
+  - bottle
 - freeling
 
 
 Authors
 -------
-- Alberto Díaz <albertodiaz@fdi.ucm.es>
-- Alberto Fernández Isabel <afernandezisabel@ucm.es>
 - Antonio F. G. Sevilla <afgs@ucm.es>
+- Alberto Fernández Isabel <afernandezisabel@ucm.es>
+- Alberto Díaz <albertodiaz@fdi.ucm.es>
