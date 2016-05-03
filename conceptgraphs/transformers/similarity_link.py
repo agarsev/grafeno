@@ -11,18 +11,18 @@ class Transformer (WNGet, SentRecord):
         self.sim_threshold = sim_threshold
         self.sim_weight = sim_weight
 
-    def post_insertion (self, sentence_nodes, graph):
-        super().post_insertion(sentence_nodes, graph)
-        g = graph._g
+    def post_insertion (self, sentence_nodes):
+        super().post_insertion(sentence_nodes)
+        g = self.graph
         threshold = self.sim_threshold
         weight = self.sim_weight
-        oldnodes = set(n for s in self.sentences for n in s)
+        oldnodes = set(n for s in self.gram['sentences'] for n in s)
         for n in sentence_nodes:
             for m in oldnodes:
                 if m == n:
                     continue
-                ga = g.node[n]['gram']
-                gb = g.node[m]['gram']
+                ga = g._g.node[n]['gram']
+                gb = g._g.node[m]['gram']
                 if 'synset' not in ga or 'synset' not in gb \
                         or ga.get('sempos','x') != gb.get('sempos','-'):
                     continue
@@ -30,5 +30,5 @@ class Transformer (WNGet, SentRecord):
                 sb = ga.get('synset')
                 sim = sa.jcn_similarity(sb, brown_ic)
                 if sim > threshold:
-                    graph.add_edge(n, m, 'SIM', {'weight':weight})
-                    graph.add_edge(m, n, 'SIM', {'weight':weight})
+                    g.add_edge(n, m, 'SIM', {'weight':weight})
+                    g.add_edge(m, n, 'SIM', {'weight':weight})

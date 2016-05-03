@@ -4,8 +4,8 @@ class Transformer (Base):
 
     def __init__ (self, **kwds):
         super().__init__(**kwds)
-        self.sentences = []
+        self.graph.gram['sentences'] = []
 
-    def post_insertion (self, sentence_nodes, graph):
-        super().post_insertion(sentence_nodes, graph)
-        self.sentences.append(sentence_nodes[:])
+    def post_insertion (self, sentence_nodes):
+        super().post_insertion(sentence_nodes)
+        self.graph.gram['sentences'].append(sentence_nodes[:])

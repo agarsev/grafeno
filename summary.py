@@ -52,8 +52,7 @@ if __name__ == "__main__":
     full = get_full_sentences(text)
 
     trmod = importlib.import_module(args.transformer)
-    tr = trmod.Transformer()
-    graph = CG(transformer=tr, text=text)
+    graph = CG(transformer=trmod.Transformer, text=text)
 
     if args.alternative_clustering:
         from conceptgraphs.clustering import cluster
@@ -65,7 +64,7 @@ if __name__ == "__main__":
     best_cluster = max(range(len(clusters)), key=lambda i: len(clusters[i]))
 
     sentence_scores = []
-    for s in tr.sentences:
+    for s in graph.gram['sentences']:
         cluster_scores = vote(s, graph, HVS, clusters)
         sentence_scores.append(cluster_scores[best_cluster])
 

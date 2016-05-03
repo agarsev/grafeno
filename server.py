@@ -53,7 +53,7 @@ def extract():
     except AttributeError:
         pass
     T = getTransformer(trans)
-    graph = CG(transformer=T(),text=text)
+    graph = CG(transformer=T,transformer_args=req.get('args',{}),text=text)
     return postGraph(graph)
 
 @error(400)

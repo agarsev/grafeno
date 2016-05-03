@@ -2,17 +2,20 @@ from collections import deque
 
 class Transformer:
 
-    def transform_sentence (self, tree, graph):
+    def __init__ (self, graph=None):
+        self.graph = graph
+
+    def transform_sentence (self, tree):
         '''Transform the tree according to the rules and add
         resulting nodes and edges to the graph'''
-        self.pre_process(tree, graph)
+        self.pre_process(tree)
         nodes = self.process_nodes(tree)
         deps = self.extract_dependencies(tree)
         deps.reverse()
         edges = self.process_edges(nodes, deps)
         nodes, edges = self.post_process(nodes, edges)
-        sentence_nodes = self.add_to_graph(nodes, edges, graph)
-        self.post_insertion(sentence_nodes, graph)
+        sentence_nodes = self.add_to_graph(nodes, edges)
+        self.post_insertion(sentence_nodes)
 
     def process_nodes (self, tree):
         nodes = {}
@@ -56,14 +59,15 @@ class Transformer:
                  'child': child['id'],
                  'gram': {} }
 
-    def add_to_graph (self, nodes, edges, graph):
+    def add_to_graph (self, nodes, edges):
+        g = self.graph
         tokens = {}
         for k in nodes:
             node = nodes[k]
             if 'concept' in node:
                 tokid = node['id']
                 del node['id']
-                nid = graph.add_node(node['concept'], node)
+                nid = g.add_node(node['concept'], node)
                 tokens[tokid] = nid
         for edge in edges:
             if 'functor' in edge:
@@ -72,17 +76,17 @@ class Transformer:
                     parent = tokens[parent]
                 if child in tokens:
                     child = tokens[child]
-                graph.add_edge(head=parent,
+                g.add_edge(head=parent,
                         dependent=child,
                         functor=edge['functor'],
                         gram=edge['gram'])
         return [tokens[i] for i in tokens]
 
-    def pre_process (self, tree, graph):
+    def pre_process (self, tree):
         pass
 
     def post_process (self, nodes, edges):
         return nodes, edges
 
-    def post_insertion (self, sentence_nodes, graph):
+    def post_insertion (self, sentence_nodes):
         pass

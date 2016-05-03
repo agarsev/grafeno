@@ -11,14 +11,14 @@ class Transformer (WNGet):
             self.node_from_concept = dict()
         self.min_depth = min_depth
 
-    def post_insertion (self, sentence_nodes, graph):
-        super().post_insertion(sentence_nodes, graph)
-        g = graph._g
+    def post_insertion (self, sentence_nodes):
+        super().post_insertion(sentence_nodes)
+        g = self.graph
         # Extend with hypernyms
         to_extend = deque(sentence_nodes)
         while len(to_extend)>0:
             n = to_extend.popleft()
-            node = g.node[n]
+            node = g._g.node[n]
             ss = node['gram'].get('synset')
             if not ss:
                 continue
@@ -28,9 +28,9 @@ class Transformer (WNGet):
                     continue
                 concept = cc.lemmas()[0].name()
                 if concept not in self.node_from_concept:
-                    nid = graph.add_node(concept,gram={'synset':cc,'sempos':'n'})
+                    nid = g.add_node(concept,gram={'synset':cc,'sempos':'n'})
                     to_extend.append(nid)
                     self.node_from_concept[concept] = nid
                 else:
                     nid = self.node_from_concept[concept]
-                graph.add_edge(n, nid, 'HYP', {'weight':depth/(depth+1)})
+                g.add_edge(n, nid, 'HYP', {'weight':depth/(depth+1)})

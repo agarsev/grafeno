@@ -4,12 +4,17 @@ from .freeling_parse import parse, extract_semgraph
 
 class Graph:
 
-    def __init__ (self, use_freeling=False, transformer=None, text=None):
+    def __init__ (self, use_freeling=False, transformer=None, transformer_args={}, text=None):
         self.node_id = 0
         self._g = nx.DiGraph()
-        self.use_freeling = use_freeling
-        self.transformer = transformer
-        if not use_freeling and not transformer:
+        self.gram = {}
+        if use_freeling:
+            self.use_freeling = True
+            self.transformer = None
+        elif transformer:
+            self.use_freeling = False
+            self.transformer = transformer(graph=self, **transformer_args)
+        else:
             raise ValueError('Either a transformer or using freeling is required')
         if text:
             self.add_text(text)
@@ -31,7 +36,7 @@ class Graph:
             extract_semgraph(result, self)
         else:
             for s in result:
-                t = self.transformer.transform_sentence(s, self)
+                t = self.transformer.transform_sentence(s)
 
     def draw (self, bunch=None):
         import matplotlib.pyplot as plt
@@ -52,6 +57,7 @@ class Graph:
     def copy (self, keep=None):
         ret = Graph(use_freeling=self.use_freeling,transformer=self.transformer)
         ret.node_id = self.node_id
+        ret.gram = self.gram
         if keep:
             ret._g = nx.DiGraph(self._g.subgraph(n for n in self._g.nodes()
                         if keep(self._g.node[n])))
