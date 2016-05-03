@@ -10,6 +10,7 @@ class Transformer (Base):
     def pre_process (self, tree, graph):
         super().pre_process(tree, graph)
         self.reused_nodes = []
+        self.sentence_concepts = {}
 
     def transform_node (self, msnode):
         sem = super().transform_node(msnode)
@@ -20,6 +21,13 @@ class Transformer (Base):
             nid = self.node_from_concept[concept]
             sem['id'] = nid
             self.reused_nodes.append(nid)
+        elif concept in self.sentence_concepts:
+            del sem['concept']
+            nid = self.sentence_concepts[concept]
+            sem['id'] = nid
+            self.reused_nodes.append(nid)
+        elif concept:
+            self.sentence_concepts[concept] = sem['id']
         return sem
 
     def post_insertion (self, sentence_nodes, graph):
