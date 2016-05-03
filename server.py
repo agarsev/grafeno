@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 
+import argparse
 from bottle import abort, error, post, request, run
 import json
 from networkx.readwrite import json_graph
 
 from conceptgraphs import Graph as CG
 from conceptgraphs.transformers import transformer_dict
+
+arg_parser = argparse.ArgumentParser(description='REST server for concept graphs')
+arg_parser.add_argument('-H','--hostname',help='hostname to bind to',default='localhost')
+arg_parser.add_argument('-P','--port',type=int,help='port number to bind to',default=9000)
+arg_parser.add_argument('-t','--default-transformer',help='transformer to use by default',default='deep')
+args = arg_parser.parse_args()
+
 
 transformers = transformer_dict.copy()
 
@@ -21,15 +29,7 @@ def getTransformer (modules):
         except KeyError:
             abort(400,"Inexistent transformer name")
 
-@error(400)
-def custom400 (error):
-    return json.dumps({
-        'error': True,
-        'message': error.body
-        })
-
 class SkipEncoder(json.JSONEncoder):
-
     def default(self, obj):
         return None
 
@@ -41,23 +41,26 @@ def postGraph (graph):
             g[n][m]['label'] = g[n][m]['functor']
     return json.dumps(json_graph.node_link_data(g), cls=SkipEncoder)
 
+### ROUTES ###
 
 @post('/')
 def extract():
     req = request.json
     text = req.get('text')
-    trans = req.get('transformers')
+    trans = req.get('transformers', args.default_transformer)
+    try:
+        trans = [t.strip() for t in trans.split(',')]
+    except AttributeError:
+        pass
     T = getTransformer(trans)
     graph = CG(transformer=T(),text=text)
     return postGraph(graph)
 
+@error(400)
+def custom400 (error):
+    return json.dumps({
+        'error': True,
+        'message': error.body
+        })
 
-if __name__ == "__main__":
-
-    import argparse
-    arg_parser = argparse.ArgumentParser(description='REST server for concept graphs')
-    arg_parser.add_argument('-H','--hostname',help='hostname to bind to',default='localhost')
-    arg_parser.add_argument('-P','--port',type=int,help='port number to bind to',default=9000)
-    args = arg_parser.parse_args()
-
-    run(host=args.hostname,port=args.port)
+run(host=args.hostname,port=args.port)
