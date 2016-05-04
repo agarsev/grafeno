@@ -2,8 +2,9 @@ from conceptgraphs.transformer import Transformer as Base
 
 class Transformer (Base):
 
-    def __init__ (self, **kwds):
+    def __init__ (self, unique_sempos = None, **kwds):
         super().__init__(**kwds)
+        self.unique_sempos = unique_sempos
         self.graph.gram['node_from_concept'] = dict()
 
     def pre_process (self, tree):
@@ -13,9 +14,12 @@ class Transformer (Base):
 
     def transform_node (self, msnode):
         sem = super().transform_node(msnode)
+        usem = self.unique_sempos
+        if not usem or sem.get('sempos') not in usem:
+            return sem
+        # Only one node for each concept in unique_sempos
         concept = sem.get('concept')
         node_dict = self.graph.gram['node_from_concept']
-        # Only one node for each concept
         if concept in node_dict:
             del sem['concept']
             nid = node_dict[concept]

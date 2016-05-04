@@ -1,4 +1,6 @@
+import json
 import networkx as nx
+from networkx.readwrite import json_graph
 
 from .freeling_parse import parse, extract_semgraph
 
@@ -64,3 +66,15 @@ class Graph:
         else:
             ret._g = nx.DiGraph(self._g)
         return ret
+
+    def to_json (self, with_labels = True):
+        class SkipEncoder(json.JSONEncoder):
+            def default(self, obj):
+                return None
+        g = self._g
+        if with_labels:
+            for n in g:
+                g.node[n]['label'] = g.node[n]['concept']
+                for m in g[n]:
+                    g[n][m]['label'] = g[n][m]['functor']
+        return json.dumps(json_graph.node_link_data(g), cls=SkipEncoder)
