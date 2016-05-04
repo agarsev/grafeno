@@ -11,6 +11,9 @@ transformer_dict = {
     'sim_link': i('.similarity_link').Transformer,
     'unique': i('.unique_nodes').Transformer,
     'wordnet': i('.wordnet_get').Transformer,
+    'no_islands': i('.remove_islands').Transformer,
+    'dependency': i('.dependency').Transformer,
+    'attach': i('.attach_attr').Transformer,
 }
 
 pipeline_cache = transformer_dict.copy()

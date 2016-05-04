@@ -15,7 +15,7 @@ class Transformer (Base):
     def transform_node (self, msnode):
         sem = super().transform_node(msnode)
         usem = self.unique_sempos
-        if not usem or sem.get('sempos') not in usem:
+        if usem and sem.get('sempos') not in usem:
             return sem
         # Only one node for each concept in unique_sempos
         concept = sem.get('concept')
