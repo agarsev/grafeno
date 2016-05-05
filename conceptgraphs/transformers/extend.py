@@ -19,7 +19,7 @@ class Transformer (WNGet):
         while len(to_extend)>0:
             n = to_extend.popleft()
             node = g._g.node[n]
-            ss = node['gram'].get('synset')
+            ss = node.get('synset')
             if not ss:
                 continue
             for cc in ss.hypernyms() + ss.instance_hypernyms():
@@ -28,9 +28,9 @@ class Transformer (WNGet):
                     continue
                 concept = cc.lemmas()[0].name()
                 if concept not in self.node_from_concept:
-                    nid = g.add_node(concept,gram={'synset':cc,'sempos':'n'})
+                    nid = g.add_node(concept,synset=cc,sempos='n')
                     to_extend.append(nid)
                     self.node_from_concept[concept] = nid
                 else:
                     nid = self.node_from_concept[concept]
-                g.add_edge(n, nid, 'HYP', {'weight':depth/(depth+1)})
+                g.add_edge(n, nid, 'HYP', weight=depth/(depth+1))

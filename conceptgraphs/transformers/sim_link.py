@@ -21,8 +21,8 @@ class Transformer (WNGet, SentRecord):
             for m in oldnodes:
                 if m == n:
                     continue
-                ga = g._g.node[n]['gram']
-                gb = g._g.node[m]['gram']
+                ga = g._g.node[n]
+                gb = g._g.node[m]
                 if 'synset' not in ga or 'synset' not in gb \
                         or ga.get('sempos','x') != gb.get('sempos','-'):
                     continue
@@ -30,5 +30,5 @@ class Transformer (WNGet, SentRecord):
                 sb = ga.get('synset')
                 sim = sa.jcn_similarity(sb, brown_ic)
                 if sim > threshold:
-                    g.add_edge(n, m, 'SIM', {'weight':weight})
-                    g.add_edge(m, n, 'SIM', {'weight':weight})
+                    g.add_edge(n, m, 'SIM', weight=weight)
+                    g.add_edge(m, n, 'SIM', weight=weight)

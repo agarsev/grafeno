@@ -67,7 +67,7 @@ class Transformer (PosExtract):
             prep_node = child
         if 'prep_obj' in prep_node and 'prep_parent' in prep_node:
             edge['functor'] = 'COMP'
-            edge['gram']['pval'] = prep_node['pval']
+            edge['pval'] = prep_node['pval']
             edge['parent'] = prep_node['prep_parent']
             edge['child'] = prep_node['prep_obj']
             del prep_node['pval']

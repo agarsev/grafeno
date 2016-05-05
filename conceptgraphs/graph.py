@@ -10,6 +10,7 @@ class Graph:
         self.next_node = 0
         self._g = nx.DiGraph()
         self.gram = self._g.graph
+        self.node = self._g.node
         if use_freeling:
             self.use_freeling = True
             self.transformer = None
@@ -21,16 +22,18 @@ class Graph:
         if text:
             self.add_text(text)
 
-    def add_node (self, concept, gram={}):
+    # Building the graph
+
+    def add_node (self, concept, **gram):
         nid = self.next_node
         self.next_node += 1
-        self._g.add_node(nid, id=nid, concept=concept, gram=gram)
+        self._g.add_node(nid, id=nid, concept=concept, **gram)
         return nid
 
-    def add_edge (self, head, dependent, functor, gram={}):
+    def add_edge (self, head, dependent, functor, **gram):
         if head not in self._g or dependent not in self._g:
             raise ValueError('Head or dependent are not in the graph ('+str(functor)+')')
-        self._g.add_edge(head, dependent, functor=functor, gram=gram)
+        self._g.add_edge(head, dependent, functor=functor, **gram)
 
     def add_text (self, text):
         result = parse(text, self.use_freeling)
@@ -39,6 +42,9 @@ class Graph:
         else:
             for s in result:
                 t = self.transformer.transform_sentence(s)
+            self.transformer.after_all()
+
+    # Output
 
     def draw (self, bunch=None):
         import matplotlib.pyplot as plt
@@ -52,9 +58,6 @@ class Graph:
         nx.draw_networkx_edges(g,lay)
         nx.draw_networkx_edge_labels(g,lay,edge_labels={(a,b):data['functor'] for (a,b,data) in g.edges(data=True)})
         plt.show()
-
-    def all_concepts (self):
-        return set(self._g.node[n]['concept'] for n in self._g.nodes())
 
     def copy (self, keep=None):
         ret = Graph(use_freeling=self.use_freeling,transformer=self.transformer)
@@ -79,7 +82,7 @@ class Graph:
                     g[n][m]['label'] = g[n][m]['functor']
         return json.dumps(json_graph.node_link_data(g), cls=BestEffortEncoder)
 
-    def linearize (self, linearizer=None, linearizer_args = {}):
+    def linearize (self, linearizer=None, linearizer_args={}):
         if linearizer:
             self.linearizer = linearizer(graph=self, **linearizer_args)
         return self.linearizer.linearize()

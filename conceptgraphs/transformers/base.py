@@ -29,7 +29,7 @@ class Transformer:
         '''take a morfosyntactic node (dict) and return a semantic node (dict).
         Semantic nodes get dropped in the end if they don't have a concept
         attribute.'''
-        return { 'id':msnode['id'] }
+        return { 'id': msnode['id'] }
 
     def extract_dependencies (self, tree):
         deps = deque([(tree['dependencies'][0],None)])
@@ -56,8 +56,7 @@ class Transformer:
         (semnodes, dict) and return a semantic edge (dict). Semantic edges get
         dropped in the end if they don't have a functor attribute.'''
         return { 'parent': parent['id'],
-                 'child': child['id'],
-                 'gram': {} }
+                 'child': child['id'] }
 
     def add_to_graph (self, nodes, edges):
         g = self.graph
@@ -67,19 +66,22 @@ class Transformer:
             if 'concept' in node:
                 tokid = node['id']
                 del node['id']
-                nid = g.add_node(node['concept'], node)
+                concept = node['concept']
+                del node['concept']
+                nid = g.add_node(concept, **node)
                 tokens[tokid] = nid
         for edge in edges:
             if 'functor' in edge:
                 parent, child = edge['parent'], edge['child']
+                del edge['parent']
+                del edge['child']
                 if parent in tokens:
                     parent = tokens[parent]
                 if child in tokens:
                     child = tokens[child]
-                g.add_edge(head=parent,
-                        dependent=child,
-                        functor=edge['functor'],
-                        gram=edge['gram'])
+                functor = edge['functor']
+                del edge['functor']
+                g.add_edge(parent, child, functor, **edge)
         return [tokens[i] for i in tokens]
 
     def pre_process (self, tree):
@@ -89,4 +91,7 @@ class Transformer:
         return nodes, edges
 
     def post_insertion (self, sentence_nodes):
+        pass
+
+    def after_all (self):
         pass

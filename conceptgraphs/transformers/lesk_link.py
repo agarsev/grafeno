@@ -31,5 +31,5 @@ class Transformer (WNGet, SentRecord):
                 if match == 0:
                     sim = int(child.match.group(1))
                     if sim > threshold:
-                        g.add_edge(n, m, 'SIM', {'weight':weight})
-                        g.add_edge(m, n, 'SIM', {'weight':weight})
+                        g.add_edge(n, m, 'SIM', weight=weight)
+                        g.add_edge(m, n, 'SIM', weight=weight)
