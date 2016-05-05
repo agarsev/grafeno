@@ -7,9 +7,9 @@ from .freeling_parse import parse, extract_semgraph
 class Graph:
 
     def __init__ (self, use_freeling=False, transformer=None, transformer_args={}, text=None):
-        self.node_id = 0
+        self.next_node = 0
         self._g = nx.DiGraph()
-        self.gram = {}
+        self.gram = self._g.graph
         if use_freeling:
             self.use_freeling = True
             self.transformer = None
@@ -22,8 +22,8 @@ class Graph:
             self.add_text(text)
 
     def add_node (self, concept, gram={}):
-        nid = self.node_id
-        self.node_id += 1
+        nid = self.next_node
+        self.next_node += 1
         self._g.add_node(nid, id=nid, concept=concept, gram=gram)
         return nid
 
@@ -58,7 +58,7 @@ class Graph:
 
     def copy (self, keep=None):
         ret = Graph(use_freeling=self.use_freeling,transformer=self.transformer)
-        ret.node_id = self.node_id
+        ret.next_node = self.next_node
         ret.gram = self.gram
         if keep:
             ret._g = nx.DiGraph(self._g.subgraph(n for n in self._g.nodes()
