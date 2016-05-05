@@ -78,3 +78,8 @@ class Graph:
                 for m in g[n]:
                     g[n][m]['label'] = g[n][m]['functor']
         return json.dumps(json_graph.node_link_data(g), cls=SkipEncoder)
+
+    def linearize (self, linearizer=None, linearizer_args = {}):
+        if linearizer:
+            self.linearizer = linearizer(graph=self, **linearizer_args)
+        return self.linearizer.linearize()
