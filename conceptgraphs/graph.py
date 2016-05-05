@@ -68,16 +68,16 @@ class Graph:
         return ret
 
     def to_json (self, with_labels = True):
-        class SkipEncoder(json.JSONEncoder):
+        class BestEffortEncoder(json.JSONEncoder):
             def default(self, obj):
-                return None
+                return repr(obj)
         g = self._g
         if with_labels:
             for n in g:
                 g.node[n]['label'] = g.node[n]['concept']
                 for m in g[n]:
                     g[n][m]['label'] = g[n][m]['functor']
-        return json.dumps(json_graph.node_link_data(g), cls=SkipEncoder)
+        return json.dumps(json_graph.node_link_data(g), cls=BestEffortEncoder)
 
     def linearize (self, linearizer=None, linearizer_args = {}):
         if linearizer:
