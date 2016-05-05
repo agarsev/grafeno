@@ -1,4 +1,4 @@
-from conceptgraphs.transformer import Transformer as Base
+from .base import Transformer as Base
 
 class Transformer (Base):
 

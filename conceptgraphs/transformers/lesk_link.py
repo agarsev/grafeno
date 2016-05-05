@@ -1,7 +1,7 @@
 import pexpect
 
-from .sentence_record import Transformer as SentRecord
-from .wordnet_get import Transformer as WNGet
+from .sentences import Transformer as SentRecord
+from .wordnet import Transformer as WNGet
 
 class Transformer (WNGet, SentRecord):
 

@@ -1,7 +1,7 @@
 from collections import deque
 from nltk.corpus import wordnet as wn
 
-from .wordnet_get import Transformer as WNGet
+from .wordnet import Transformer as WNGet
 
 class Transformer (WNGet):
 

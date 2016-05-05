@@ -1,30 +1,21 @@
+import glob
 from importlib import import_module
+from os.path import dirname, basename, isfile
 
-i = lambda n: import_module(n, __name__)
+transformers = dict()
 
-transformer_dict = {
-    'deep': i('.deep_grammar').Transformer,
-    'extend': i('.extend').Transformer,
-    'lesk_link': i('.lesk_link').Transformer,
-    'pos_extract': i('.pos_extract').Transformer,
-    'sentences': i('.sentence_record').Transformer,
-    'sim_link': i('.similarity_link').Transformer,
-    'unique': i('.unique_nodes').Transformer,
-    'wordnet': i('.wordnet_get').Transformer,
-    'no_islands': i('.remove_islands').Transformer,
-    'dependency': i('.dependency').Transformer,
-    'attach': i('.attach_attr').Transformer,
-}
-
-pipeline_cache = transformer_dict.copy()
+for m in glob.glob(dirname(__file__)+"/*.py"):
+    f = basename(m)[:-3]
+    if isfile(m) is True and not f.startswith('__'):
+        transformers[f] = import_module('.'+f, __name__).Transformer
 
 def get_pipeline (modules):
     '''Takes a list of transformers and returns a transformer which
     subclasses them all'''
     name = '__'.join(modules)
-    if name in pipeline_cache:
-        return pipeline_cache[name]
+    if name in transformers:
+        return transformers[name]
     else:
-        T = type(name, tuple(transformer_dict[m] for m in reversed(modules)), {})
-        pipeline_cache[name] = T
+        T = type(name, tuple(transformers[m] for m in reversed(modules)), {})
+        transformers[name] = T
         return T

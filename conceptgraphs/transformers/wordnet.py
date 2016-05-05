@@ -1,6 +1,6 @@
 from nltk.corpus import wordnet as wn
 
-from conceptgraphs.transformer import Transformer as Base
+from .base import Transformer as Base
 
 class Transformer (Base):
 

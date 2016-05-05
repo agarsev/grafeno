@@ -1,5 +1,5 @@
-from .sentence_record import Transformer as SentRecord
-from .wordnet_get import Transformer as WNGet
+from .sentences import Transformer as SentRecord
+from .wordnet import Transformer as WNGet
 
 from nltk.corpus import wordnet_ic
 brown_ic = wordnet_ic.ic('ic-brown.dat')
