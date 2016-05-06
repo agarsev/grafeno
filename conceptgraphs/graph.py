@@ -44,6 +44,14 @@ class Graph:
                 t = self.transformer.transform_sentence(s)
             self.transformer.after_all()
 
+    # Examining the graph
+
+    def nodes (self):
+        return [gram for n, gram in self._g.nodes(data=True)]
+
+    def edges (self, nid):
+        return self._g[nid]
+
     # Output
 
     def draw (self, bunch=None):
