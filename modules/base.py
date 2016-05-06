@@ -1,16 +1,20 @@
 class Linearizer ():
 
-    def __init__ (self, separator='', terminator='', graph=None):
+    def __init__ (self, header='', separator='', footer='', graph=None):
         self.graph = graph
         self.separator = separator
-        self.terminator = terminator
+        self.header = header
+        self.footer = footer
 
     def linearize (self):
         nodes = self.get_root_nodes()
         nodes = self.expand_node_list(nodes)
         words = (self.process_node(n) for n in nodes)
         nonempty = [(w, n) for w, n in zip(words, nodes) if w is not None]
-        words, nodes = (list(l) for l in zip(*nonempty))
+        try:
+            words, nodes = (list(l) for l in zip(*nonempty))
+        except ValueError:
+            return ''
         self.apply_boundaries(words, nodes)
         return self.concat(words)
 
@@ -59,5 +63,5 @@ class Linearizer ():
         return word
 
     def concat (self, nodes):
-        return self.separator.join(nodes)+self.terminator
+        return self.header+self.separator.join(nodes)+self.footer
 
