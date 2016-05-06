@@ -9,7 +9,8 @@ class Linearizer ():
         nodes = self.get_root_nodes()
         nodes = self.expand_node_list(nodes)
         words = (self.process_node(n) for n in nodes)
-        words = [w for w in words if w is not None]
+        nonempty = [(w, n) for w, n in zip(words, nodes) if w is not None]
+        words, nodes = (list(l) for l in zip(*nonempty))
         self.apply_boundaries(words, nodes)
         return self.concat(words)
 
