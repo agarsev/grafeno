@@ -42,7 +42,7 @@ class Linearizer (Base):
         return word.replace('_', ' ')
 
     def boundary (self, left, n, word, right):
-        word = super().process_node(n)
+        word = super().boundary(left, n, word, right)
         if not left or left.get('punct'):
             word = word[0].upper()+word[1:]
         if left and not n.get('punct'):
