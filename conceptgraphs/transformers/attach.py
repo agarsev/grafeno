@@ -13,5 +13,6 @@ class Transformer (Base):
         if dep in self.attached_deps and 'concept' in parent and 'concept' in child:
             parent['concept'] = child['concept']+'_'+parent['concept']
             del child['concept']
-            del edge['functor']
+            if 'functor' in edge:
+                del edge['functor']
         return edge
