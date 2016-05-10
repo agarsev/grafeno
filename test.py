@@ -13,7 +13,7 @@ group.add_argument('-s','--string')
 group.add_argument('-f','--file',type=argparse.FileType('r'))
 arg_parser.add_argument('-t','--transformers',action='append',help='transformer pipeline to use')
 arg_parser.add_argument('-p','--print-json',action='store_true',help='print json instead of displaying')
-arg_parser.add_argument('-l','--linearizers',action='append',help='linearizing pipeline to use')
+arg_parser.add_argument('-l','--linearizers',action='append',help='linearizing pipeline to use',default=[])
 args = arg_parser.parse_args()
 
 if args.file:

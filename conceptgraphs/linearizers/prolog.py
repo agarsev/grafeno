@@ -1,4 +1,4 @@
-from .triplets import Linearizer as Triplets
+from .semtriplets import Linearizer as Triplets
 
 prolog_header = ':- multifile r/4, neg/4, arc/5, rule/6, frame/6, integrity/3.\n\n'
 

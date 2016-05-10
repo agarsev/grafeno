@@ -6,7 +6,7 @@ class Linearizer (Base):
         super().__init__(separator='\n', **kwds)
 
     def get_root_nodes (self):
-        return [n['id'] for n in self.graph.nodes() if n['sempos'] in {'v','n'}]
+        return [n['id'] for n in self.graph.nodes()]
 
     def expand_node (self, n):
         exps = super().expand_node(n)
@@ -14,27 +14,11 @@ class Linearizer (Base):
         nodes = self.graph.node
         for n in exps:
             nes = self.graph.edges(n['id'])
-            sempos = n.get('sempos')
-            ret.append(n)
-            if sempos == 'v':
-                for m in nes:
-                    ftor = nes[m]['functor']
-                    if ftor == 'AGENT':
-                        n['left'] = nodes[m]['concept']
-                    elif ftor == 'THEME':
-                        n['right'] = nodes[m]['concept']
-                    elif ftor == 'COMP':
-                        ret.append({ 'expanded': True,
-                            'concept': nes[m]['pval'],
-                            'left': n['concept'],
-                            'right': nodes[m]['concept'] })
-            elif sempos == 'n':
-                for m in nes:
-                    if nes[m]['functor'] == 'ATTR':
-                        ret.append({ 'expanded': True,
-                            'concept': 'is',
-                            'left': n['concept'],
-                            'right': nodes[m]['concept'] })
+            for m in nes:
+                ret.append({ 'expanded': True,
+                    'left': n['concept'],
+                    'concept': nes[m]['functor'],
+                    'right': nodes[m]['concept'] })
         return ret
 
     def process_node (self, n):
