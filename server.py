@@ -74,7 +74,7 @@ def main():
                 abort(400,"Unknown linearizer pipeline")
             ret['result'] = graph.linearize(linearizer=L,linearizer_args=req.get('linearizer_args',{}))
         elif op == 'to_json':
-            ret['result'] = graph.to_json()
+            ret['result'] = json.loads(graph.to_json())
     if name:
         memory[name] = graph
     return json.dumps(ret)
