@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-from bottle import abort, error, post, request, run
+from bottle import abort, error, get, post, request, run
 import re
 import unicodedata
 
@@ -21,6 +21,16 @@ control_char_re = re.compile('[%s]' % re.escape(control_chars))
 def remove_control_chars(s):
     return control_char_re.sub(' ', s)
 
+from nltk.corpus import wordnet as wn
+import json
+@get('/synonyms/<word>')
+def get_synonyms(word):
+    '''For Alberto's alternative project'''
+    if word is None:
+        abort(400,"No word")
+    synonyms = set(l.name() for ss in wn.synsets(word) for l in ss.lemmas())
+    return json.dumps({'synonyms': list(synonyms)})
+
 @post('/')
 def extract():
     req = request.json
@@ -39,6 +49,13 @@ def extract():
 
 @error(400)
 def custom400 (error):
+    return json.dumps({
+        'error': True,
+        'error_message': error.body
+        })
+
+@error(500)
+def custom500 (error):
     return json.dumps({
         'error': True,
         'error_message': error.body
