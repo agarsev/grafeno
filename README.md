@@ -24,6 +24,7 @@ Requirements
     - punkt
   - networkx
   - bottle
+  - lru-dict
 - freeling
 
 

@@ -2,17 +2,21 @@
 
 import argparse
 from bottle import abort, error, get, post, request, run
+from lru import LRU
 import re
 import unicodedata
 
 from conceptgraphs import Graph as CG, transformers, linearizers
 
+arrayize = lambda t: t.split(',')
+
 arg_parser = argparse.ArgumentParser(description='REST server for concept graphs')
 arg_parser.add_argument('-H','--hostname',help='hostname to bind to',default='localhost')
 arg_parser.add_argument('-P','--port',type=int,help='port number to bind to',default=9000)
-arg_parser.add_argument('-t','--default-transformer',help='transformer to use by default',default=['semantic'])
-arg_parser.add_argument('-l','--default-linearizer',help='linearizer to use by default',default=['simple_nlg'])
-arg_parser.add_argument('-o','--default-operations',action='append',help='operation pipeline to run by default',default=['extract','linearize'])
+arg_parser.add_argument('-t','--default-transformer',type=arrayize,help='transformer pipeline to use by default',default=['semantic'])
+arg_parser.add_argument('-l','--default-linearizer',type=arrayize,help='linearizer pipeline to use by default',default=['simple_nlg'])
+arg_parser.add_argument('-o','--default-operations',type=arrayize,help='operation pipeline to run by default',default=['extract','linearize'])
+arg_parser.add_argument('--memory-size',type=int,help='maximum number of graphs to remember for clients',default=10)
 
 args = arg_parser.parse_args()
 
@@ -31,7 +35,7 @@ def get_synonyms(word):
     synonyms = set(l.name() for ss in wn.synsets(word) for l in ss.lemmas())
     return json.dumps({'synonyms': list(synonyms)})
 
-memory = {}
+memory = LRU(args.memory_size)
 # Request:
 #  'name': name of concept graph in server
 #  'operations': [ str ]
@@ -54,12 +58,13 @@ def main():
         abort(400,"Invalid json request")
     name = req.get('name')
     graph = memory.get(name) if name else None
-    text = remove_control_chars(req.get('text'))
     ret = dict()
     for op in req.get('operations',args.default_operations):
+
         if op == 'extract':
             try:
                 text = req['text']
+                text = remove_control_chars(req['text'])
             except KeyError:
                 abort(400,"Required parameter missing: text")
             try:
@@ -67,7 +72,12 @@ def main():
             except KeyError:
                 abort(400,"Unknown transformer pipeline")
             graph = CG(transformer=T,transformer_args=req.get('transformer_args',{}),text=text)
-        elif op == 'linearize':
+            continue
+
+        if not graph:
+            abort(400,"No graph to operate on")
+
+        if op == 'linearize':
             try:
                 L = linearizers.get_pipeline(req.get('linearizers', args.default_linearizer))
             except KeyError:
