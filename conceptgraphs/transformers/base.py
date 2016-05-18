@@ -9,89 +9,79 @@ class Transformer:
         '''Transform the tree according to the rules and add
         resulting nodes and edges to the graph'''
         self.pre_process(tree)
-        nodes = self.process_nodes(tree)
+        self.process_nodes(tree)
         deps = self.extract_dependencies(tree)
         deps.reverse()
-        edges = self.process_edges(nodes, deps)
-        nodes, edges = self.post_process(nodes, edges)
-        sentence_nodes = self.add_to_graph(nodes, edges)
+        self.process_edges(deps)
+        self.post_process()
+        sentence_nodes = self.add_to_graph()
         self.post_insertion(sentence_nodes)
 
+    def pre_process (self, tree):
+        self.nodes = {} # ID -> dict { concept }
+        self.edges = [] # dict { parent(ID), child(ID), functor }
+
     def process_nodes (self, tree):
-        nodes = {}
         for ms in tree['tokens']:
             sem = self.transform_node(ms)
             if sem:
-                nodes[sem['id']] = sem
-        return nodes
+                self.nodes[ms['id']] = sem
 
     def transform_node (self, msnode):
         '''take a morfosyntactic node (dict) and return a semantic node (dict).
         Semantic nodes get dropped in the end if they don't have a concept
         attribute.'''
-        return { 'id': msnode['id'] }
+        return {}
 
     def extract_dependencies (self, tree):
-        deps = deque([(tree['dependencies'][0],None)])
-        edges = []
-        while len(deps)>0:
-            d, parent = deps.popleft()
-            if parent:
-                edges.append((d['function'], parent, d['token']))
+        root = tree['dependencies'][0]
+        deps = deque([(c, root['token']) for c in root.get('children', [])])
+        ret = []
+        while True:
+            try:
+                d, parent = deps.popleft()
+            except IndexError:
+                break
+            ret.append((d['function'], parent, d['token']))
             for c in d.get('children', []):
                 deps.append((c,d['token']))
-        return edges
+        return ret
 
-    def process_edges (self, nodes, deps):
-        edges = []
-        for d in deps:
-            name, parent, child = d
-            if parent not in nodes or child not in nodes:
+    def process_edges (self, deps):
+        for name, parent, child in deps:
+            try:
+                self.edges.append(self.transform_dep(name, parent, child))
+            except KeyError:
                 continue
-            edges.append(self.transform_dep(name, nodes[parent], nodes[child]))
-        return edges
 
     def transform_dep (self, dependency, parent, child):
-        '''take a dependency relation (str) and the parent and child nodes
-        (semnodes, dict) and return a semantic edge (dict). Semantic edges get
+        '''take a dependency relation (str) and the parent and child node ids
+        and return a semantic edge (dict). Semantic edges get
         dropped in the end if they don't have a functor attribute.'''
-        return { 'parent': parent['id'],
-                 'child': child['id'] }
+        return { 'parent': parent,
+                 'child': child }
 
-    def add_to_graph (self, nodes, edges):
-        g = self.graph
-        tokens = {}
-        for k in nodes:
-            node = nodes[k]
-            if 'concept' in node:
-                tokid = node['id']
-                del node['id']
-                concept = node['concept']
-                del node['concept']
-                nid = g.add_node(concept, **node)
-                tokens[tokid] = nid
-        for edge in edges:
-            if 'functor' in edge:
-                parent, child = edge['parent'], edge['child']
-                del edge['parent']
-                del edge['child']
-                if parent in tokens:
-                    parent = tokens[parent]
-                if child in tokens:
-                    child = tokens[child]
-                functor = edge['functor']
-                del edge['functor']
-                g.add_edge(parent, child, functor, **edge)
-        return [tokens[i] for i in tokens]
-
-    def pre_process (self, tree):
+    def post_process (self):
         pass
 
-    def post_process (self, nodes, edges):
-        return nodes, edges
+    def add_to_graph (self):
+        g = self.graph
+        real_id = {}
+        for id, node in self.nodes.items():
+            if 'concept' in node:
+                nid = g.add_node(**node)
+                real_id[id] = nid
+        for edge in self.edges:
+            if 'functor' in edge:
+                parent = edge.pop('parent')
+                child = edge.pop('child')
+                g.add_edge(real_id.get(parent, parent),
+                           real_id.get(child, child), **edge)
+        return real_id.values()
 
     def post_insertion (self, sentence_nodes):
         pass
 
     def after_all (self):
+        '''gets called after transforming a whole text.'''
         pass
