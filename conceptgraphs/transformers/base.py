@@ -5,6 +5,12 @@ class Transformer:
     def __init__ (self, graph=None):
         self.graph = graph
 
+    def transform_text (self, sentences):
+        self.before_all()
+        for s in sentences:
+            self.transform_sentence(s)
+        self.after_all()
+
     def transform_sentence (self, tree):
         '''Transform the tree according to the rules and add
         resulting nodes and edges to the graph'''
@@ -82,6 +88,8 @@ class Transformer:
     def post_insertion (self, sentence_nodes):
         pass
 
+    def before_all (self):
+        pass
+
     def after_all (self):
-        '''gets called after transforming a whole text.'''
         pass

@@ -40,9 +40,7 @@ class Graph:
         if self.use_freeling:
             extract_semgraph(result, self)
         else:
-            for s in result:
-                t = self.transformer.transform_sentence(s)
-            self.transformer.after_all()
+            self.transformer.transform_text(result)
 
     # Examining the graph
 
