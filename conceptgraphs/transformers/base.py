@@ -77,16 +77,13 @@ class Transformer:
         return { 'parent': parent,
                  'child': child }
 
-    def merge (self, a, b, result=None):
-        '''combine two nodes by id. Update all outgoing and incoming edges. If
-        result is None, the node attributes are merged. Otherwise, result is
-        used as the merged node. Must be done during post_process.'''
+    def merge (self, a, b):
+        '''combine two nodes by id. Update all outgoing and incoming edges. All
+        properties of b are lost, the ones in a are kept. a can be an existing
+        graph node, b should be a node currently being processed.
+        Can be done only during post_process.'''
         if self.stage != 'post_process':
             raise AssertionError("merge must be called during post_process")
-        if result:
-            self.nodes[a] = result
-        else:
-            self.nodes[a].update(self.nodes[b])
         del self.nodes[b]
         for edge in self.edges:
             try:
@@ -100,6 +97,7 @@ class Transformer:
                 edge['parent'] = a
             elif c == b:
                 edge['child'] = a
+        self.edges = [e for e in self.edges if not e.get('to_drop')]
 
     def post_process (self):
         pass
@@ -117,7 +115,7 @@ class Transformer:
                 child = edge.pop('child')
                 g.add_edge(real_id.get(parent, parent),
                            real_id.get(child, child), **edge)
-        return real_id.values()
+        return list(real_id.values())
 
     def post_insertion (self, sentence_nodes):
         pass

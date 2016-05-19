@@ -20,11 +20,13 @@ class Transformer (PosExtract):
             sem['pval'] = msnode.get('lemma')
         return sem
 
-    def transform_dep (self, dep, parent, child):
-        edge = super().transform_dep(dep, parent, child)
-        if self.copula(dep, parent, child, edge) or \
-           self.prep_rising(dep, parent, child, edge):
-                pass
+    def transform_dep (self, dep, pid, cid):
+        edge = super().transform_dep(dep, pid, cid)
+        parent = self.nodes[pid]
+        child = self.nodes[cid]
+        if 'pval' in child:
+            edge['functor'] = 'COMP'
+            edge['pval'] = child['pval']
         elif 'concept' not in parent or 'concept' not in child:
             return edge
         elif parent.get('sempos') == 'v' and dep in self.predication:
@@ -33,42 +35,12 @@ class Transformer (PosExtract):
             edge['functor'] = 'ATTR'
         return edge
 
-    def copula (self, dep, parent, child, edge):
-        if parent.get('concept') != 'be' or 'concept' not in child:
-            return False
-        if dep == 'ncsubj':
-            parent['copula_s'] = edge['child']
-        else:
-            parent['copula_a'] = edge['child']
-        if 'copula_s' in parent and 'copula_a' in parent:
-            edge['functor'] = 'ATTR'
-            edge['parent'] = parent['copula_s']
-            edge['child'] = parent['copula_a']
-            del parent['concept']
-        return True
-
-    def prep_rising (self, dep, parent, child, edge):
-        if 'pval' not in parent and 'pval' not in child:
-            return False
-        if 'pval' in parent:
-            if 'concept' not in child:
-                return False
-            parent['prep_obj'] = edge['child']
-            prep_node = parent
-        if 'pval' in child:
-            if 'concept' not in parent:
-                return False
-            if parent['concept'] == 'be':
-                if not 'copula_a' in parent:
-                    return False
-                child['prep_parent'] = parent['copula_a']
-            else:
-                child['prep_parent'] = edge['parent']
-            prep_node = child
-        if 'prep_obj' in prep_node and 'prep_parent' in prep_node:
-            edge['functor'] = 'COMP'
-            edge['pval'] = prep_node['pval']
-            edge['parent'] = prep_node['prep_parent']
-            edge['child'] = prep_node['prep_obj']
-            del prep_node['pval']
-        return True
+    def post_process (self):
+        super().post_process()
+        for edge in self.edges:
+            try:
+                p = self.nodes[edge['parent']]
+            except KeyError:
+                continue
+            if 'pval' in p:
+                self.merge(edge['child'], edge['parent'])
