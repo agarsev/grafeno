@@ -3,25 +3,37 @@ from collections import deque
 class Transformer:
 
     def __init__ (self, graph=None):
+        self.stage = ""
         self.graph = graph
 
     def transform_text (self, sentences):
+        self.stage = "before_all"
         self.before_all()
         for s in sentences:
             self.transform_sentence(s)
+        self.stage = "after_all"
         self.after_all()
+        self.stage = ""
 
     def transform_sentence (self, tree):
         '''Transform the tree according to the rules and add
         resulting nodes and edges to the graph'''
+        self.stage = "pre_process"
         self.pre_process(tree)
+        self.stage = "process_nodes"
         self.process_nodes(tree)
+        self.stage = "extract_dependencies"
         deps = self.extract_dependencies(tree)
         deps.reverse()
+        self.stage = "process_edges"
         self.process_edges(deps)
+        self.stage = "post_process"
         self.post_process()
+        self.stage = "add_to_graph"
         sentence_nodes = self.add_to_graph()
+        self.stage = "post_insertion"
         self.post_insertion(sentence_nodes)
+        self.stage = ""
 
     def pre_process (self, tree):
         self.nodes = {} # ID -> dict { concept }
@@ -29,15 +41,13 @@ class Transformer:
 
     def process_nodes (self, tree):
         for ms in tree['tokens']:
-            sem = self.transform_node(ms)
-            if sem:
-                self.nodes[ms['id']] = sem
+            self.nodes[ms['id']] = self.transform_node(ms)
 
     def transform_node (self, msnode):
         '''take a morfosyntactic node (dict) and return a semantic node (dict).
         Semantic nodes get dropped in the end if they don't have a concept
         attribute.'''
-        return {}
+        return { 'id': msnode['id'] }
 
     def extract_dependencies (self, tree):
         root = tree['dependencies'][0]
@@ -66,6 +76,30 @@ class Transformer:
         dropped in the end if they don't have a functor attribute.'''
         return { 'parent': parent,
                  'child': child }
+
+    def merge (self, a, b, result=None):
+        '''combine two nodes by id. Update all outgoing and incoming edges. If
+        result is None, the node attributes are merged. Otherwise, result is
+        used as the merged node. Must be done during post_process.'''
+        if self.stage != 'post_process':
+            raise AssertionError("merge must be called during post_process")
+        if result:
+            self.nodes[a] = result
+        else:
+            self.nodes[a].update(self.nodes[b])
+        del self.nodes[b]
+        for edge in self.edges:
+            try:
+                p = edge['parent']
+                c = edge['child']
+            except KeyError:
+                continue
+            if (p == b and c == a) or (p == a and c == b):
+                edge['to_drop'] = True
+            elif p == b:
+                edge['parent'] = a
+            elif c == b:
+                edge['child'] = a
 
     def post_process (self):
         pass

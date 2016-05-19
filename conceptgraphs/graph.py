@@ -24,7 +24,7 @@ class Graph:
 
     # Building the graph
 
-    def add_node (self, concept, **gram):
+    def add_node (self, concept, id=None, **gram):
         nid = self.next_node
         self.next_node += 1
         self._g.add_node(nid, id=nid, concept=concept, **gram)
