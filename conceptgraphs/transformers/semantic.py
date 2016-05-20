@@ -3,9 +3,9 @@ from .pos_extract import Transformer as PosExtract
 class Transformer (PosExtract):
 
     predication = {
-            'ncsubj': ('AGENT', 1.0),
-            'dobj': ('THEME', 1.0),
-            'iobj': ('IOBJ', 1.0),
+            'ncsubj': ('AGENT', 1.0, {'n'}),
+            'dobj': ('THEME', 1.0, None),
+            'iobj': ('IOBJ', 1.0, None),
             }
 
     def transform_node (self, msnode):
@@ -30,7 +30,9 @@ class Transformer (PosExtract):
         elif 'concept' not in parent or 'concept' not in child:
             return edge
         elif parent.get('sempos') == 'v' and dep in self.predication:
-            edge['functor'], edge['weight'] = self.predication[dep]
+            functor, w, pos_set = self.predication[dep]
+            if not pos_set or child.get('sempos') in pos_set:
+                edge['functor'], edge['weight'] = functor, w
         elif parent.get('sempos') == 'n' and dep == 'ncmod':
             edge['functor'] = 'ATTR'
         return edge

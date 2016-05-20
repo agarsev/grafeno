@@ -10,9 +10,13 @@ class Transformer (Semantic):
                     if e.get('parent') == nid and e.get('functor') == 'THEME':
                         break
                 else:
+                    # Find a prep complement to rise
                     for e in self.edges:
-                        # Find a prep complement to rise
-                        if e.get('parent') == nid and e.get('functor') == 'COMP':
+                        try:
+                            pid, cpos, functor = e['parent'], self.nodes[e['child']]['sempos'], e['functor']
+                        except KeyError:
+                            continue
+                        if pid == nid and functor == 'COMP' and cpos == 'n':
                             node['concept'] += '_'+e['pval']
                             del e['pval']
                             e['functor'] = 'THEME'
