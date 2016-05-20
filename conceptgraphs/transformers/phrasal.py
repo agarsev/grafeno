@@ -2,22 +2,19 @@ from .semantic import Transformer as Semantic
 
 class Transformer (Semantic):
 
-    def post_process (self, nodes, edges):
-        nodes, edges = super().post_process(nodes, edges)
-        for nid in nodes:
-            n = nodes[nid]
-            if n.get('sempos') == 'v':
-                has_theme = False
-                for e in edges:
-                    if e['parent'] == n['id'] and e.get('functor') == 'THEME':
-                        has_theme = True
-                if has_theme:
-                    continue
-                for e in edges:
-                    if e['parent'] == n['id'] and e.get('functor') == 'COMP':
-                        n['concept'] += '_'+e['pval']
-                        del e['pval']
-                        e['functor'] = 'THEME'
+    def post_process (self):
+        super().post_process()
+        for nid, node in self.nodes.items():
+            if node.get('sempos') == 'v':
+                for e in self.edges:
+                    if e.get('parent') == nid and e.get('functor') == 'THEME':
                         break
-        return nodes, edges
+                else:
+                    for e in self.edges:
+                        # Find a prep complement to rise
+                        if e.get('parent') == nid and e.get('functor') == 'COMP':
+                            node['concept'] += '_'+e['pval']
+                            del e['pval']
+                            e['functor'] = 'THEME'
+                            break
 

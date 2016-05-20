@@ -1,16 +1,16 @@
-from .base import Transformer as Base
+from .index import Transformer as Index
 
-class Transformer (Base):
+class Transformer (Index):
 
     def __init__ (self, unique_sempos = None, **kwds):
         super().__init__(**kwds)
         self.__sempos = unique_sempos
-        self.graph.gram['node_from_concept'] = dict()
 
     def post_process (self):
+        super().post_process()
         self.__reused_nodes = []
         usem = self.__sempos
-        node_dict = self.graph.gram['node_from_concept']
+        node_dict = self.node_from_concept
         first_node = {}
         for nid, node in list(self.nodes.items()):
             if usem and node.get('sempos') not in usem:
@@ -29,7 +29,8 @@ class Transformer (Base):
     def post_insertion (self, sentence_nodes):
         super().post_insertion(sentence_nodes + self.__reused_nodes)
         g = self.graph
+        node_dict = self.node_from_concept
         # Record the concept nodes
         for n in sentence_nodes:
             concept = g.node[n]['concept']
-            g.gram['node_from_concept'][concept] = n
+            node_dict[concept] = n
