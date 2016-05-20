@@ -1,0 +1,9 @@
+transformers:
+    - semantic
+    - phrasal
+    - attach
+    - lenient
+transformer_args: {}
+linearizers:
+    - semtriplets
+linearizer_args: {}
