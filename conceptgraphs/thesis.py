@@ -5,7 +5,7 @@ def cluster (cgraph, hubratio = 0.2):
     g = nx.Graph(cgraph._g)
 
     def weight (n, m):
-        return g[n][m]['gram'].get('weight',1)
+        return g[n][m].get('weight',1)
 
     def intra_con (a):
         return sum(weight(n, m) for n, m in combinations(a, 2) if m in g[n])

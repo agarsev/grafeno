@@ -1,4 +1,3 @@
-from .sentences import Transformer as SentRecord
 from .wordnet import Transformer as WNGet
 
 from itertools import product
@@ -6,7 +5,7 @@ from itertools import product
 from nltk.corpus import wordnet_ic
 brown_ic = wordnet_ic.ic('ic-brown.dat')
 
-class Transformer (WNGet, SentRecord):
+class Transformer (WNGet):
 
     def __init__ (self, sim_threshold = 0.1, sim_weight = 1, **kwds):
         super().__init__(**kwds)
@@ -18,7 +17,7 @@ class Transformer (WNGet, SentRecord):
         g = self.graph
         threshold = self.__threshold
         weight = self.__weight
-        oldnodes = set(n for s in g.gram['sentences'] for n in s)
+        oldnodes = set(g.node.keys())-set(sentence_nodes)
         for n, m in product(sentence_nodes, oldnodes):
             if m == n:
                 continue

@@ -28,7 +28,7 @@ class Transformer (WNGet, Index):
                     continue
                 concept = cc.lemmas()[0].name()
                 if concept not in node_dict:
-                    nid = g.add_node(concept,synset=cc,sempos='n')
+                    nid = g.add_node(concept,synset=cc)
                     to_extend.append(nid)
                     node_dict[concept] = nid
                 else:

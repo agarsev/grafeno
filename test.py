@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-from bottle import abort, error, post, request, run
 import yaml
 
 from conceptgraphs import Graph as CG, transformers, linearizers
