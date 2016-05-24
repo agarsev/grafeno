@@ -69,4 +69,5 @@ def get_synonyms(word):
 
 # RUN SERVER
 
+print("Running Nil graphs web service")
 run(host=args.hostname,port=args.port,reloader=True)
