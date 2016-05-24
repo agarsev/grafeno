@@ -69,4 +69,4 @@ def get_synonyms(word):
 
 # RUN SERVER
 
-run(host=args.hostname,port=args.port)
+run(host=args.hostname,port=args.port,reloader=True)
