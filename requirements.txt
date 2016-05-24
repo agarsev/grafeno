@@ -1,0 +1,14 @@
+PyYAML==3.11
+bottle==0.12.9
+cycler==0.10.0
+decorator==4.0.9
+matplotlib==1.5.1
+networkx==1.11
+nltk==3.2.1
+numpy==1.11.0
+pexpect==4.0.1
+ptyprocess==0.5.1
+pyparsing==2.1.4
+python-dateutil==2.5.3
+pytz==2016.4
+six==1.10.0

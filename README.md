@@ -18,13 +18,6 @@ Use `-h` to get the list of options available.
 Requirements
 ------------
 - python3
-  - nltk
-    - wordnet
-    - wordnet_ic
-    - punkt
-  - networkx
-  - bottle
-  - lru-dict
 - freeling
 
 
