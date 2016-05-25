@@ -5,6 +5,7 @@ from bottle import abort, error, get, post, request, run
 import json
 import re
 import unicodedata
+import yaml
 
 import conceptgraphs.pipeline as pipeline
 
@@ -19,14 +20,7 @@ control_char_re = re.compile('[%s]' % re.escape(control_chars))
 def remove_control_chars(s):
     return control_char_re.sub(' ', s)
 
-# ROUTES
-
-@post('/raw')
-def main():
-    try:
-        config = request.json
-    except ValueError:
-        abort(400,"Invalid json request")
+def run_pipeline (config):
     try:
         result = pipeline.run(config)
     except ValueError as e:
@@ -40,6 +34,30 @@ def main():
         'ok': True,
         'result': result
         })
+
+# ROUTES
+
+@post('/raw')
+def raw_request():
+    try:
+        config = request.json
+    except ValueError:
+        abort(400,"Invalid json request")
+    return run_pipeline(config)
+
+@post('/run/<config_file>')
+def stored_config(config_file):
+    try:
+        reqbody = request.json
+    except ValueError:
+        abort(400,"Invalid json request")
+    try:
+        config_file = open('configs/'+config_file+'.yaml')
+    except FileNotFoundError:
+        abort(400,"Unknown configuration "+config_file)
+    config = yaml.load(config_file)
+    config.update(reqbody)
+    return run_pipeline(config)
 
 @error(400)
 def custom400 (error):

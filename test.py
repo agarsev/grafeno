@@ -13,7 +13,7 @@ group.add_argument('-s','--string')
 group.add_argument('-f','--file',type=argparse.FileType('r'))
 arg_parser.add_argument('-t','--transformers',type=arrayize,help='transformer pipeline to use')
 arg_parser.add_argument('-l','--linearizers',type=arrayize,help='linearizing pipeline to use')
-arg_parser.add_argument('-c','--config-file',type=argparse.FileType('r'),help='use a config file for pipeline options')
+arg_parser.add_argument('-c','--config-file',help='use a config file for pipeline options')
 arg_parser.add_argument('-d','--display',action='store_true',help='display a drawing of the graph')
 arg_parser.add_argument('-p','--print-json',action='store_true',help='print the graph in json')
 args = arg_parser.parse_args()
@@ -24,7 +24,13 @@ else:
     text = args.string
 
 if args.config_file:
-    config = yaml.load(args.config_file)
+    try:
+        config_file = open('configs/'+args.config_file+'.yaml')
+    except FileNotFoundError:
+        config_file = None
+    if not config_file:
+        config_file = open(args.config_file)
+    config = yaml.load(config_file)
 else:
     config = {}
     if args.transformers:
