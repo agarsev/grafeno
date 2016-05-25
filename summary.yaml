@@ -1,0 +1,18 @@
+transformers:
+    - pos_extract
+    - unique
+    - extend
+    - sim_link
+    - sentences
+transformer_args:
+    sempos:
+        noun: n
+    extended_sentence_edges: [ HYP ]
+operations:
+    - op: cluster
+      hubratio: 0.2
+linearizers:
+    - cluster_extract
+linearizer_args:
+    summary_length: 100
+    summary_margin: 10
