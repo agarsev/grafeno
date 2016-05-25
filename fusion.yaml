@@ -1,0 +1,12 @@
+transformers:
+    - pos_extract
+    - unique
+    - keep_deps
+    - edge_reverse
+transformer_args:
+    sempos:
+        noun: n
+        verb: v
+        preposition: p
+    unique_sempos: [ n ]
+linearizer_args: {}
