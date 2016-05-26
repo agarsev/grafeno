@@ -7,6 +7,9 @@ transformer_args:
     sempos:
         noun: n
         verb: v
+        adjective: j
+        adverb: r
         preposition: p
-    unique_sempos: [ n ]
-linearizer_args: {}
+    unique_sempos: [ n, j, r ]
+    reversed_edges:
+        - AGENT
