@@ -66,8 +66,7 @@ def view_config(config_file):
         cfile = open('configs/'+config_file+'.yaml')
     except FileNotFoundError:
         abort(404,"Unknown configuration "+config_file)
-    config = yaml.load(cfile)
-    return dict(name=config_file, config=json.dumps(config,indent=2))
+    return dict(name=config_file, config=cfile.read())
 
 @error(400)
 def custom400 (error):
