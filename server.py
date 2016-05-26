@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-from bottle import abort, error, get, post, request, run
+from bottle import abort, error, get, post, request, run, view
 import json
 import re
 import unicodedata
@@ -58,6 +58,16 @@ def stored_config(config_file):
     config = yaml.load(config_file)
     config.update(reqbody)
     return run_pipeline(config)
+
+@get('/run/<config_file>')
+@view('config')
+def view_config(config_file):
+    try:
+        cfile = open('configs/'+config_file+'.yaml')
+    except FileNotFoundError:
+        abort(404,"Unknown configuration "+config_file)
+    config = yaml.load(cfile)
+    return dict(name=config_file, config=json.dumps(config,indent=2))
 
 @error(400)
 def custom400 (error):
