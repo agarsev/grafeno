@@ -1,15 +1,18 @@
+%YAML 1.2
+---
+# Extracts a concept map from a text.
+#
+# TODO: prep rising
+#       unique n's and j's
+#       improve attach
 transformers:
     - pos_extract
-    - unique
-    - keep_deps
-    - edge_reverse
+    - attach
+    - verb_collapse
+    - lenient
 transformer_args:
     sempos:
         noun: n
-        verb: v
         adjective: j
-        adverb: r
-        preposition: p
-    unique_sempos: [ n, j, r ]
-    reversed_edges:
-        - AGENT
+linearizers:
+    - triplets
