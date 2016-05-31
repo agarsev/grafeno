@@ -4,6 +4,8 @@ class Transformer (PosExtract):
 
     def __init__ (self, sempos={}, **kwds):
         sempos['verb'] = 'v'
+        if 'unique_sempos' in kwds:
+            del kwds['unique_sempos']['verb']
         super().__init__(sempos=sempos, **kwds)
 
     def transform_dep (self, dep, parent, child):
@@ -19,8 +21,7 @@ class Transformer (PosExtract):
                 except KeyError:
                     a = dict()
                     p['args'] = a
-                a[dep] = child
-                edge['functor'] = dep
+                a[dep] = edge
         return edge
 
     def post_process (self):
@@ -30,9 +31,9 @@ class Transformer (PosExtract):
                 try:
                     a = node['args']
                 except KeyError:
-                    del node['functor']
+                    del node['concept']
                     continue
                 first_arg = a.get('dobj')
                 if not first_arg:
                     _, first_arg = a.popitem()
-                self.merge(first_arg, nid)
+                self.merge(first_arg['child'], nid)

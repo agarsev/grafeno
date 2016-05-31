@@ -8,8 +8,8 @@
 transformers:
     - pos_extract
     - attach
+    - unique
     - verb_collapse
-    - lenient
 transformer_args:
     sempos:
         noun: n
