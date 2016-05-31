@@ -9,6 +9,7 @@ transformers:
     - pos_extract
     - attach
     - unique
+    - prep_rise
     - verb_collapse
 transformer_args:
     sempos:

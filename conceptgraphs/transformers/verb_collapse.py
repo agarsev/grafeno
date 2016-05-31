@@ -4,8 +4,6 @@ class Transformer (PosExtract):
 
     def __init__ (self, sempos={}, **kwds):
         sempos['verb'] = 'v'
-        if 'unique_sempos' in kwds:
-            del kwds['unique_sempos']['verb']
         super().__init__(sempos=sempos, **kwds)
 
     def transform_dep (self, dep, parent, child):
@@ -13,6 +11,7 @@ class Transformer (PosExtract):
         p = self.nodes[parent]
         if p.get('sempos') == 'v':
             if dep == 'ncsubj':
+                p['relation'] = edge
                 edge['functor'] = p.get('concept')
                 edge['child'], edge['parent'] = edge['parent'], edge['child']
             else:
@@ -36,4 +35,6 @@ class Transformer (PosExtract):
                 first_arg = a.get('dobj')
                 if not first_arg:
                     _, first_arg = a.popitem()
+                if 'functor' in first_arg:
+                    node['relation']['functor'] += '_'+first_arg['functor']
                 self.merge(first_arg['child'], nid)

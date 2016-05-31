@@ -91,13 +91,12 @@ class Transformer:
                 c = edge['child']
             except KeyError:
                 continue
-            if (p == b and c == a) or (p == a and c == b):
-                edge['to_drop'] = True
-            elif p == b:
+            if ((p == b and c == a) or (p == a and c == b)) and 'functor' in edge:
+                del edge['functor']
+            if p == b:
                 edge['parent'] = a
-            elif c == b:
+            if c == b:
                 edge['child'] = a
-        self.edges = [e for e in self.edges if not e.get('to_drop')]
 
     def post_process (self):
         pass
