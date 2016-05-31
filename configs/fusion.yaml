@@ -11,6 +11,7 @@ transformers:
     - unique
     - prep_rise
     - verb_collapse
+    - lenient
 transformer_args:
     sempos:
         noun: n

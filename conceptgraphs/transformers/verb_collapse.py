@@ -1,10 +1,13 @@
 from .pos_extract import Transformer as PosExtract
 
+default_main_argument = [ 'dobj', 'iobj', 'ncmod' ]
+
 class Transformer (PosExtract):
 
-    def __init__ (self, sempos={}, **kwds):
+    def __init__ (self, sempos={}, main_argument=default_main_argument, **kwds):
         sempos['verb'] = 'v'
         super().__init__(sempos=sempos, **kwds)
+        self.__main = main_argument
 
     def transform_dep (self, dep, parent, child):
         edge = super().transform_dep(dep, parent, child)
@@ -14,7 +17,7 @@ class Transformer (PosExtract):
                 p['relation'] = edge
                 edge['functor'] = p.get('concept')
                 edge['child'], edge['parent'] = edge['parent'], edge['child']
-            else:
+            elif dep in self.__main:
                 try:
                     a = p['args']
                 except KeyError:
@@ -32,9 +35,13 @@ class Transformer (PosExtract):
                 except KeyError:
                     del node['concept']
                     continue
-                first_arg = a.get('dobj')
-                if not first_arg:
-                    _, first_arg = a.popitem()
-                if 'functor' in first_arg:
+                for rel in self.__main:
+                    if rel in a:
+                        first_arg = a[rel]
+                        break
+                else:
+                    del node['concept']
+                    continue
+                if 'functor' in first_arg and 'relation' in node:
                     node['relation']['functor'] += '_'+first_arg['functor']
                 self.merge(first_arg['child'], nid)

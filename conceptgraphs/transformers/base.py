@@ -86,17 +86,12 @@ class Transformer:
             raise AssertionError("merge must be called during post_process")
         del self.nodes[b]
         for edge in self.edges:
-            try:
-                p = edge['parent']
-                c = edge['child']
-            except KeyError:
-                continue
-            if ((p == b and c == a) or (p == a and c == b)) and 'functor' in edge:
-                del edge['functor']
-            if p == b:
+            if edge.get('parent') == b:
                 edge['parent'] = a
-            if c == b:
+            if edge.get('child') == b:
                 edge['child'] = a
+            if edge.get('parent', '-') == edge.get('child', 'x') and 'functor' in edge:
+                del edge['functor']
 
     def post_process (self):
         pass
