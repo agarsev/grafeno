@@ -2,12 +2,11 @@
 ---
 # Extracts a concept map from a text.
 #
-# TODO: prep rising
-#       unique n's and j's
-#       improve attach
+# TODO: improve attach
 transformers:
     - pos_extract
     - attach
+    - negation
     - unique
     - prep_rise
     - verb_collapse
