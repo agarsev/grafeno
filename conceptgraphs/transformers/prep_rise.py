@@ -10,8 +10,8 @@ class Transformer (Base):
 
     def transform_dep (self, dep, parent, child):
         edge = super().transform_dep(dep, parent, child)
-        p = self.nodes[parent]
-        c = self.nodes[child]
+        p = self.nodes[edge['parent']]
+        c = self.nodes[edge['child']]
         if 'pval' in p:
             p['p_obj'] = edge
         if 'pval' in c:

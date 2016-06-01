@@ -7,8 +7,9 @@ transformers:
     - pos_extract
     - attach
     - negation
-    - unique
+    - genitive
     - prep_rise
+    - unique
     - verb_collapse
     - lenient
 transformer_args:
