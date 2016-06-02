@@ -18,3 +18,5 @@ transformer_args:
         adjective: j
 operations:
     - op: spot_domain
+linearizers:
+    - prolog
