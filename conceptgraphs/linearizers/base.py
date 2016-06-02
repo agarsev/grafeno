@@ -19,7 +19,7 @@ class Linearizer ():
         return self.concat(words)
 
     def get_root_nodes (self):
-        return [0]
+        return [min(self._g.nodes())]
 
     def expand_node_list (self, nodes):
         change = True

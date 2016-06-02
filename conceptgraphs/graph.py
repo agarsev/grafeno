@@ -6,19 +6,22 @@ from .freeling_parse import parse, extract_semgraph
 
 class Graph:
 
-    def __init__ (self, use_freeling=False, transformer=None, transformer_args={}, text=None):
-        self.next_node = 0
-        self._g = nx.DiGraph()
-        self.gram = self._g.graph
-        self.node = self._g.node
-        if use_freeling:
-            self.use_freeling = True
-            self.transformer = None
-        elif transformer:
-            self.use_freeling = False
-            self.transformer = transformer(graph=self, **transformer_args)
+    def __init__ (self, original=None, transformer=None, transformer_args={}, text=None, subgraph=None):
+        if original:
+            self.next_node = original.next_node
+            if subgraph:
+                self._g = nx.DiGraph(original._g.subgraph(subgraph))
+            else:
+                self._g = nx.DiGraph(original._g)
+            self.gram = self._g.graph
+            self.node = self._g.node
         else:
-            raise ValueError('Either a transformer or using freeling is required')
+            self.next_node = 0
+            self._g = nx.DiGraph()
+            self.gram = self._g.graph
+            self.node = self._g.node
+        if transformer:
+            self.transformer = transformer(graph=self, **transformer_args)
         if text:
             self.add_text(text)
 
@@ -36,11 +39,8 @@ class Graph:
         self._g.add_edge(head, dependent, functor=functor, **gram)
 
     def add_text (self, text):
-        result = parse(text, self.use_freeling)
-        if self.use_freeling:
-            extract_semgraph(result, self)
-        else:
-            self.transformer.transform_text(result)
+        result = parse(text, False)
+        self.transformer.transform_text(result)
 
     # Examining the graph
 
@@ -64,17 +64,6 @@ class Graph:
         nx.draw_networkx_edges(g,lay)
         nx.draw_networkx_edge_labels(g,lay,edge_labels={(a,b):data['functor'] for (a,b,data) in g.edges(data=True)})
         plt.show()
-
-    def copy (self, keep=None):
-        ret = Graph(use_freeling=self.use_freeling,transformer=self.transformer)
-        ret.next_node = self.next_node
-        ret.gram = self.gram
-        if keep:
-            ret._g = nx.DiGraph(self._g.subgraph(n for n in self._g.nodes()
-                        if keep(self._g.node[n])))
-        else:
-            ret._g = nx.DiGraph(self._g)
-        return ret
 
     def to_json (self, with_labels = True):
         class BestEffortEncoder(json.JSONEncoder):

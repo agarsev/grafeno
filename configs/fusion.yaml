@@ -16,5 +16,5 @@ transformer_args:
     sempos:
         noun: n
         adjective: j
-linearizers:
-    - triplets
+operations:
+    - op: spot_domain

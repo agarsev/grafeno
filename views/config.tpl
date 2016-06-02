@@ -92,7 +92,10 @@
                     res = res.result;
                     if (typeof res === 'object') {
                         var nodes = new vis.DataSet(res.nodes);
-                        res.links.forEach(function (e) { e.from = e.source; e.to = e.target; });
+                        res.links.forEach(function (e) {
+                            e.from = res.nodes[e.source].id;
+                            e.to = res.nodes[e.target].id;
+                        });
                         var edges = new vis.DataSet(res.links);
                         var network = new vis.Network(resdiv, {nodes:nodes,edges:edges}, {edges:{arrows:"to"}});
                         resdiv.className = 'graphdisplay';
