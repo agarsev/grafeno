@@ -57,7 +57,7 @@
 <body>
     <h1>Service: {{name}}</h1>
     <div>
-        <textarea rows="5" id="test_text">John saw a man with a telescope. Mary loves John.</textarea>
+        <textarea rows="5" id="test_text">{{default_text}}</textarea>
         <p><button id="send_button" onclick="test_ws();">Send</button><span id="loading" class="hidden"></span></p>
     </div>
     <div id="result"></div>

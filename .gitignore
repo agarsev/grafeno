@@ -1,3 +1,4 @@
 data
 *.pyc
 node_modules
+default.txt

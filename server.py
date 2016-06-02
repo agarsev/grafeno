@@ -66,7 +66,11 @@ def view_config(config_file):
         cfile = open('configs/'+config_file+'.yaml')
     except FileNotFoundError:
         abort(404,"Unknown configuration "+config_file)
-    return dict(name=config_file, config=cfile.read())
+    try:
+        text = open('default.txt').read()
+    except FileNotFoundError:
+        text = "John loves Mary."
+    return dict(name=config_file, config=cfile.read(), default_text=text)
 
 @error(400)
 def custom400 (error):
