@@ -1,8 +1,9 @@
 from .pos_extract import Transformer as PosExtract
+from .__utils import Transformer as Utils
 
 default_attach = { 'ncmod' }
 
-class Transformer (PosExtract):
+class Transformer (PosExtract, Utils):
 
     def __init__ (self, attached_deps = default_attach, **kwds):
         super().__init__(**kwds)
@@ -13,7 +14,7 @@ class Transformer (PosExtract):
         p = self.nodes[parent]
         c = self.nodes[child]
         if dep in self.attached_deps and 'concept' in p and 'concept' in c and p.get('sempos') == 'n' and c.get('sempos') == 'j':
+            self.sprout(parent, 'isa', {'concept':p['concept'], 'sempos':'n'})
             p['concept'] = c['concept']+'_'+p['concept']
-            del c['concept']
-            return {}
+            edge['functor'] = 'is'
         return edge

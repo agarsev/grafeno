@@ -1,6 +1,6 @@
-from .base import Transformer as Base
+from .__utils import Transformer as Utils
 
-class Transformer (Base):
+class Transformer (Utils):
 
     def transform_node (self, ms):
         sem = super().transform_node(ms)
@@ -24,5 +24,6 @@ class Transformer (Base):
         if 'genitive_of' in p and 'concept' in c:
             p['genitive_obj'] = c['concept']
         if 'genitive_obj' in c and p.get('sempos') != 'v' and 'concept' in p:
+            self.sprout(parent, 'isa', {'concept':p['concept'], 'sempos':p.get('sempos')})
             p['concept'] += '_of_' + c['genitive_obj']
         return edge

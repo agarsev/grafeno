@@ -1,8 +1,6 @@
 %YAML 1.2
 ---
 # Extracts a concept map from a text.
-#
-# TODO: improve attach
 transformers:
     - pos_extract
     - attach
