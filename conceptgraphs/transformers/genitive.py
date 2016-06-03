@@ -1,6 +1,12 @@
 from .__utils import Transformer as Utils
 
+default_add_genitive_class = True
+
 class Transformer (Utils):
+
+    def __init__ (self, **kwds):
+        super().__init__(**kwds)
+        self.__addclass = kwds.get('add_genitive_class', default_add_genitive_class)
 
     def transform_node (self, ms):
         sem = super().transform_node(ms)
@@ -24,6 +30,7 @@ class Transformer (Utils):
         if 'genitive_of' in p and 'concept' in c:
             p['genitive_obj'] = c['concept']
         if 'genitive_obj' in c and p.get('sempos') != 'v' and 'concept' in p:
-            self.sprout(parent, 'isa', {'concept':p['concept'], 'sempos':p.get('sempos')})
+            if self.__addclass:
+                self.sprout(parent, 'isa', {'concept':p['concept'], 'sempos':p.get('sempos')})
             p['concept'] += '_of_' + c['genitive_obj']
         return edge

@@ -15,6 +15,10 @@ transformer_args:
         noun: n
         adjective: j
 operations:
+    - op: filter_edges
+      remove:
+        - isa
+        - of
     - op: spot_domain
 linearizers:
     - prolog
