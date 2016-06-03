@@ -2,7 +2,7 @@ from collections import deque
 
 class Transformer:
 
-    def __init__ (self, graph=None):
+    def __init__ (self, graph=None, **kwds):
         self.stage = ""
         self.graph = graph
 

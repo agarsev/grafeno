@@ -3,7 +3,9 @@
 # Extracts a concept map from a text.
 transformers:
     - pos_extract
-    - attach
+    - wordnet
+    - numerals
+    - attach_adjectives
     - negation
     - genitive
     - prep_rise
@@ -14,11 +16,14 @@ transformer_args:
     sempos:
         noun: n
         adjective: j
+    retain_attachments: False
 operations:
     - op: filter_edges
       remove:
         - isa
         - of
+      rename:
+        be: is
     - op: spot_domain
 linearizers:
     - prolog

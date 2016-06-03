@@ -9,10 +9,11 @@ class Transformer (Base):
         concept = sem.get('concept')
         if not concept:
             return sem
-        pos = sem.get('sempos', 'n')
-        if pos not in {'n','v'}:
-            return sem
-        ss = wn.synsets(concept, pos)
+        pos = sem.get('sempos')
+        if pos in {'n','v'}:
+            ss = wn.synsets(concept, pos)
+        else:
+            ss = wn.synsets(concept)
         if len(ss):
             # WSD by MFS
             sem['synset'] = ss[0]
