@@ -24,6 +24,9 @@ operations:
         - of
       rename:
         be: is
+      frequency:
+        max: 20
+        min: 0
     - op: spot_domain
 linearizers:
     - prolog
