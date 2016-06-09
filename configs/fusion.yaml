@@ -11,6 +11,7 @@ transformers:
     - prep_rise
     - unique
     - verb_collapse
+    - specific_copula
     - lenient
 transformer_args:
     sempos:

@@ -12,6 +12,8 @@ class Transformer (Base):
         pos = sem.get('sempos')
         if pos in {'n','v'}:
             ss = wn.synsets(concept, pos)
+        elif pos == 'j':
+            ss = wn.synsets(concept, 'a')
         else:
             ss = wn.synsets(concept)
         if len(ss):
