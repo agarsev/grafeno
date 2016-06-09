@@ -25,7 +25,7 @@ operations:
       rename:
         be: is
       frequency:
-        max: 20
+        max: 15
         min: 0
     - op: spot_domain
 linearizers:

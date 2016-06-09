@@ -6,12 +6,23 @@ class Transformer (Base):
         super().post_process()
         for edge in self.edges:
             try:
-                p = self.nodes[edge['parent']].get('concept')
-            except KeyError:
-                p = True
-            try:
-                c = self.nodes[edge['child']].get('concept')
-            except KeyError:
-                c = True
-            if (not p or not c) and 'functor' in edge:
-                del edge['functor']
+                if 'parent' in edge:
+                    p = edge['parent']
+                    if p in self.nodes:
+                        if 'concept' not in self.nodes[p]:
+                            del edge['functor']
+                    elif p not in self.graph.node:
+                        del edge['functor']
+                else:
+                    del edge['functor']
+                if 'child' in edge:
+                    c = edge['child']
+                    if c in self.nodes:
+                        if 'concept' not in self.nodes[c]:
+                            del edge['functor']
+                    elif c not in self.graph.node:
+                        del edge['functor']
+                else:
+                    del edge['functor']
+            except KeyError as e:
+                pass
