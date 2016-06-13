@@ -18,7 +18,7 @@ class Transformer (Base):
             form = t['form'].replace('_', ' ')
             if form == '\s':
                 form = "'s"
-            elif t['pos'] != 'punctuation' and not first:
+            elif t.get('pos') != 'punctuation' and not first:
                 form = ' '+form
             first = False
             sent.append(form)

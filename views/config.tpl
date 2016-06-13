@@ -68,7 +68,7 @@
     <div>
         <h3>Credits</h3>
         <ul>
-        <li>Code &mdash;coming soon</li>
+        <li>Github: <a href="https://github.com/agarsev/grafeno">grafeno</a></li>
         <li><a href="http://visjs.org/">vis.js</a></li>
         <li><a href="http://nlp.lsi.upc.edu/freeling/node/1">FreeLing</a></li>
         <li>By <a href="https://garciasevilla.com">Antonio F. G. Sevilla</a> <a href="mailto:afgs@ucm.es">&lt;afgs@ucm.es&gt;</a></li>
