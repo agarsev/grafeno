@@ -1,28 +1,44 @@
-Nilfusion
-=========
+Grafeno
+=======
 
-Python library for concept graphs extraction and operation, with an integrated
-REST server.
+Python library for concept graph extraction from text, operation, and
+linearization. An integrated REST server is provided.
 
-For more information, view the [wiki](https://gitlab.com/Nil102/nilfusion/wikis/home).
-
+This library is still a work in progress, but it has shown to be already useful
+for a number of applications, for example extractive text summarization.
 
 REST Server
 -----------
-Run the `server.py` script to get a REST json server which performs different
-graph operations.
+Run the `server.py` script to get a REST json server which exposes most of the
+pipeline functionality.
 
 Use `-h` to get the list of options available.
 
+Test script
+-----------
+A test script is provided in `test.py` that can run a pipeline to test the
+library. It can serve as the entry point to the library operation, or as an
+example of how to use it from python.
+
+Use `-h` to get the list of options available.
 
 Requirements
 ------------
-- python3
-- freeling
-
+- [python](https://www.python.org/) >= 3.4
+- [freeling](http://nlp.lsi.upc.edu/freeling/node/1)
 
 Authors
 -------
 - Antonio F. G. Sevilla <afgs@ucm.es>
 - Alberto Fernández Isabel <afernandezisabel@ucm.es>
 - Alberto Díaz <albertodiaz@fdi.ucm.es>
+
+Acknowledgements
+----------------
+This work is funded by ConCreTe. The project ConCreTe acknowledges the financial
+support of the Future and Emerging Technologies (FET) programme within the
+Seventh Framework Programme for Research of the European Commission, under FET
+grant number 611733.
+
+This research is funded by the Spanish Ministry of Economy and Competitiveness
+and the European Regional Development Fund (TIN2015-66655-R (MINECO/FEDER)).

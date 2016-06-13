@@ -2,8 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>NiL graphs: {{name}}</title>
-    <meta name="description" content="Example API page for NiL graphs by Antonio F. G. Sevilla" />
+    <title>Grafeno: {{name}}</title>
+    <meta name="description" content="Example API page for Grafeno by Antonio F. G. Sevilla" />
     <style>
         * {
             box-sizing: border-box;

@@ -1,3 +1,6 @@
+%YAML 1.2
+---
+# Summarizes a text by extracting the most relevant sentences.
 transformers:
     - pos_extract
     - unique
