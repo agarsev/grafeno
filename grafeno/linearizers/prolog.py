@@ -13,11 +13,13 @@ class Linearizer (Triplets):
                 n.get('sempos')=='n'),
                 key=lambda n: len(self.graph.edges(n)))
         self.__main_concept = self.graph.node[self.__me]['concept']
+        self.__start = 'r("'+self.__main_concept+'",'
+        self.__end = ').'
 
     def process_node (self, n):
         try:
-
-            return "r("+','.join([self.__main_concept,
-                n['left'], n['concept'], n['right']])+")."
+            triplet = [n['left'], n['concept'], n['right']]
+            triplet = ['"'+t+'"' for t in triplet]
+            return self.__start + ','.join(triplet) + self.__end
         except KeyError:
             return None
