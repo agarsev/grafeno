@@ -86,7 +86,6 @@
 
         function update () {
             if (this.readyState === XMLHttpRequest.DONE) {
-                console.log(this.responseText);
                 var res = JSON.parse(this.responseText);
                 if (res.ok) {
                     res = res.result;
@@ -117,7 +116,7 @@
             send_button.disabled = true;
             var req = new XMLHttpRequest();
             req.onreadystatechange = update.bind(req);
-            req.open("POST", "/run/{{name}}");
+            req.open("POST", window.location);
             req.setRequestHeader('Content-Type','application/json');
             req.send(JSON.stringify({text:test_text.value}));
         }
