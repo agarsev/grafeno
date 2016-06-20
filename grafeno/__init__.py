@@ -14,6 +14,16 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+'''This is the main package for the grafeno library. If you want to use grafeno
+from your code, import it like this::
+
+    import grafeno
+
+If you only need specific functionality, you may want to import it like this::
+
+    from grafeno import Graph as CG, pipeline
+
+'''
 
 from grafeno.graph import Graph
 import grafeno.pipeline as pipeline

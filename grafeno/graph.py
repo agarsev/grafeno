@@ -14,18 +14,57 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+'''
+This module provides the main Graph class. Graph objects are the core of the
+library, and most operations revolve around manipulating them.
+
+::
+
+    from grafeno import Graph as CG
+
+    g = CG(transformer = MyTransformer)
+    print(g.linearize(linearizer = MyLinearizer))
+
+'''
 
 import json
 import networkx as nx
 from networkx.readwrite import json_graph
 
-from grafeno.freeling_parse import parse
+from grafeno._parse_freeling import parse
 
 class Graph:
+    '''Semantic graph class. Nodes represent concepts, while edges stand for the
+    relations between them.
+
+    Parameters
+    ----------
+    transformer : Transformer class, optional
+        If provided, it will be used to transform all text added to the graph
+        into semantic nodes and edges.
+    transformer_args : dict, optional
+        Arguments for the `transformer` class.
+    text : string, optional
+        If provided, this text will be added to the graph (transformed with the
+        `transformer` class).
+    original : Graph, optional
+        If provided, the new graph will be initialized with the existing
+        information in `original`.
+    subgraph : bunch of nodes
+        If `original` and `subgraph` are provided, only the nodes in `subgraph`
+        will be copied over from `original`.
+
+    Attributes
+    ----------
+    gram : dict
+        dictionary of parameters global to the conceptual graph.
+    node : dict
+        dictionary of concept nodes, indexed by node id.
+    '''
 
     def __init__ (self, original=None, transformer=None, transformer_args={}, text=None, subgraph=None):
         if original:
-            self.next_node = original.next_node
+            self._next_node = original._next_node
             if subgraph:
                 self._g = nx.DiGraph(original._g.subgraph(subgraph))
             else:
@@ -33,7 +72,7 @@ class Graph:
             self.gram = self._g.graph
             self.node = self._g.node
         else:
-            self.next_node = 0
+            self._next_node = 0
             self._g = nx.DiGraph()
             self.gram = self._g.graph
             self.node = self._g.node
@@ -44,10 +83,26 @@ class Graph:
 
     # Building the graph
 
-    def add_node (self, concept, id=None, **gram):
-        nid = self.next_node
-        self.next_node += 1
-        self._g.add_node(nid, id=nid, concept=concept, **gram)
+    def add_node (self, concept, **gram):
+        '''Creates a concept node in the graph.
+
+        Parameters
+        ----------
+        concept : string
+            the (non-unique) textual representation of the concept node.
+        gram : keyword args, optional
+            additional 'grammatemes', a free-form python dict of attributes to
+            attach to the node.
+
+        Returns
+        -------
+        int
+            The graph id of the newly created node.
+        '''
+        nid = self._next_node
+        self._next_node += 1
+        gram['id'] = nid
+        self._g.add_node(nid, concept=concept, **gram)
         return nid
 
     def add_edge (self, head, dependent, functor, **gram):
