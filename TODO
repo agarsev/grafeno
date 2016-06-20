@@ -1,0 +1,26 @@
+Posible bugs
+============
+When getting parent and child in post_process, use 'parent' and 'child' ids in
+the edge, not in the function args. Check all transformers.
+
+Arch changes
+============
+- Consider using MULTIDIGRAPHs (would have to change _all_ edge accesses)
+- Improve linearizer arch
+  - make a common base to extract and a ?navigator/expander
+  - make a linearizer append id to concept
+
+New Transformers
+================
+- auxiliary verbs (distinguish passive and modal, see negation)
+- conjunctions (and, or)
+- comparison (larger_than, smaller_than)
+
+General Library
+===============
+- Add easy way to get edges that start from node (and maybe have particular
+  functor). Should be available in post_process too.
+
+Web Service
+===========
+Get / -> list all configs

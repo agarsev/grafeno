@@ -2,14 +2,14 @@ Grafeno
 =======
 
 Python library for concept graph extraction from text, operation, and
-linearization. An integrated REST server is provided.
+linearization. An integrated web service is provided.
 
 This library is still a work in progress, but it has shown to be already useful
 for a number of applications, for example extractive text summarization.
 
-REST Server
+Web Service
 -----------
-Run the `server.py` script to get a REST json server which exposes most of the
+Run the `server.py` script to get a json web service which exposes most of the
 pipeline functionality.
 
 Use `-h` to get the list of options available.
