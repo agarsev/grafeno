@@ -3,8 +3,8 @@ Posible bugs
 When getting parent and child in post_process, use 'parent' and 'child' ids in
 the edge, not in the function args. Check all transformers.
 
-Arch changes
-============
+Architecture changes
+====================
 - Consider using MULTIDIGRAPHs (would have to change _all_ edge accesses)
 - Improve linearizer arch
   - make a common base to extract and a ?navigator/expander

@@ -5,7 +5,7 @@ transformers:
     - pos_extract
     - wordnet
     - numerals
-    - attach_adjectives
+    - adjectives
     - negation
     - genitive
     - prep_rise

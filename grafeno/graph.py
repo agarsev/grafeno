@@ -39,7 +39,7 @@ class Graph:
 
     Parameters
     ----------
-    transformer : Transformer class, optional
+    transformer : :py:mod:`Transformer <grafeno.transformers>`, optional
         If provided, it will be used to transform all text added to the graph
         into semantic nodes and edges.
     transformer_args : dict, optional
@@ -89,9 +89,9 @@ class Graph:
         Parameters
         ----------
         concept : string
-            the (non-unique) textual representation of the concept node.
+            The (non-unique) textual representation of the concept node.
         gram : keyword args, optional
-            additional 'grammatemes', a free-form python dict of attributes to
+            Additional 'grammatemes', a free-form python dict of attributes to
             attach to the node.
 
         Returns
@@ -106,25 +106,78 @@ class Graph:
         return nid
 
     def add_edge (self, head, dependent, functor, **gram):
+        '''Creates a semantic edge between two concept nodes in the graph.
+
+        Parameters
+        ----------
+        head, dependent : node_id
+            The graph ids of the nodes to link. The edge is directed, from head
+            to dependent.
+        functor : string
+            The textual representation of the _functor_, the name of the
+            relation between the concepts.
+        gram : keyword args, optional
+            Additional 'grammatemes', a free-form python dict of attributes to
+            attach to the edge.
+
+        Raises
+        ------
+        ValueError
+            When the head or dependent id's are not valid.
+        '''
         if head not in self._g or dependent not in self._g:
             raise ValueError('Head or dependent are not in the graph ('+str(functor)+')')
         self._g.add_edge(head, dependent, functor=functor, **gram)
 
     def add_text (self, text):
+        '''Processes a text, and adds the resulting nodes and edges to the
+        graph.
+
+        Parameters
+        ----------
+        text : string
+            A clean text to process and add to the graph.
+        '''
         result = parse(text)
         self.transformer.transform_text(result)
 
     # Examining the graph
 
     def nodes (self):
+        '''Returns a list of all the nodes in the graph. Each node is
+        represented as a dictionary of concept and further grammatemes.'''
         return [gram for n, gram in self._g.nodes(data=True)]
 
     def edges (self, nid):
+        '''Returns a list of neighbours of a node.
+
+        Parameters
+        ----------
+        nid : int
+            ID of the node
+
+        Returns
+        -------
+            A list of node ids for all the nodes where an edge exists between
+            the node identified by `nid` and them.
+        '''
         return self._g[nid]
 
     # Output
 
     def draw (self, bunch=None):
+        '''Draws the graph on screen.
+
+        .. note::
+
+            Requires matplotlib and a compatible configured environment.
+
+        Parameters
+        ----------
+        bunch : list of nodes
+            An iterable of node ids to draw, if ``None`` then all nodes are
+            included.
+        '''
         import matplotlib.pyplot as plt
         if bunch:
             g = self._g.subgraph(bunch)
@@ -138,6 +191,19 @@ class Graph:
         plt.show()
 
     def to_json (self, with_labels = True):
+        '''Returns a JSON representation of the graph data.
+
+        Parameters
+        ----------
+        with_labels : bool
+            If True, a 'label' attribute is added to nodes and edges with the
+            _concept_ and _functor_, respectively. Useful for further consuming
+            by some libraries.
+
+        Returns
+        -------
+            A string with the graph data encoded in JSON.
+        '''
         class BestEffortEncoder(json.JSONEncoder):
             def default(self, obj):
                 return repr(obj)
@@ -150,6 +216,21 @@ class Graph:
         return json.dumps(json_graph.node_link_data(g), cls=BestEffortEncoder)
 
     def linearize (self, linearizer=None, linearizer_args={}):
+        '''Linearizes a graph into a string.
+
+        Parameters
+        ----------
+        linearizer : :py:mod:`Linearizer <grafeno.linearizers>`, optional
+            If provided, from this point on all linearizations of the graph will
+            use an instance of this class. The linearizer is used to transform
+            the semantic data, nodes and edges, into a string representation.
+        linearizer_args : dict, optional
+            Arguments for the `linearizer` class.
+
+        Returns
+        -------
+            A string, the result of running the linearizer on the graph.
+        '''
         if linearizer:
             self.linearizer = linearizer(graph=self, **linearizer_args)
         return self.linearizer.linearize()

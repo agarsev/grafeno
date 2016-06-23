@@ -25,6 +25,9 @@ Use `-h` to get the list of options available.
 Requirements
 ------------
 - [python](https://www.python.org/) >= 3.4
+    - Python packages for use of the library are listed in `requirements.txt`,
+      while those additionally needed for development can be found in
+          `dev-requirements.txt`.
 - [freeling](http://nlp.lsi.upc.edu/freeling/node/1)
 
 Authors

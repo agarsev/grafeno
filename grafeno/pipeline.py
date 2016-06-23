@@ -14,6 +14,54 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+'''
+The pipeline module allows the user to write full pipelines of experiments in a
+dict, which can then be loaded and run by the library with one function call::
+
+   from grafeno import pipeline
+
+   experiment = {
+       'text': 'Colorless green ideas sleep furiously.',
+       'transformers': [ 'all' ],
+       'linearizers': [ 'triplets' ]
+   }
+
+   result = pipeline.run(experiment)
+   print(result)
+
+Pipeline Formatting
+-------------------
+The following attributes for the pipeline dict are supported.
+
+.. note::
+
+    The pipeline is designed so that it can be easily serialized and loaded
+    from a string format such as YAML, making repeatable experiments as easy
+    as writing into a text file what operations to perform, and with what
+    arguments.
+
+.. rubric:: Input
+Input to the pipeline is required, it can be either a `graph`, or both `text`
+and `transformers`.
+
+- `graph`: a :py:mod:`Graph <grafeno.graph>`
+- `text`: a raw natural language text
+- `transformers`: list of transformer names to use (see :py:mod:`grafeno.transformers`)
+- `transformer_args`: dict of arguments for the `transformers`
+
+.. rubric:: Operation
+- `operations`: a list of dicts, each with an ``op`` attribute with the
+  operation name, and the rest of the arguments to be used as parameters for
+  the operation.
+
+.. rubric:: Output
+A text if a `linearizers` attribute is present, otherwise the raw `graph`
+obtained is returned.
+
+- `linearizers`: list of linearizer names to use (see :py:mod:`grafeno.linearizers`)
+- `linearizer_args`: dict of arguments for the linearizers
+
+'''
 
 from grafeno import Graph as CG, transformers, linearizers
 from grafeno.operations import operate
@@ -23,22 +71,18 @@ DEF_T_ARGS = {}
 DEF_LINEARIZERS = []
 DEF_L_ARGS = {}
 
-# Pipeline: a dict
-#
-# Input: either graph or text and transformers
-# * graph: a CGraph to recover
-# * text: a raw natural language text
-# * transformers: array of transformer names to use
-# * transformer_args: (optional) dict of arguments for the transformers
-#
-# Operations: an array of dicts, with "op" for the operation name, and the rest
-#   arguments to be passed to the operation
-#
-# Output: either graph or text if linearizers arg is present
-# * linearizers: array of linearizers to use
-# * linearizer_args: (optional) dict of arguments for the linearizers
-
 def run (pipeline):
+    '''Run a complete pipeline of graph operations.
+
+    Parameters
+    ----------
+    pipeline : dict
+        The pipeline description.
+
+    Returns
+    -------
+        The result from running the pipeline with the provided arguments.
+    '''
 
     # INPUT
     if 'graph' in pipeline:
