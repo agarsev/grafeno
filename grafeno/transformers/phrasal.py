@@ -16,7 +16,7 @@ class Transformer (Semantic):
                             pid, cpos, functor = e['parent'], self.nodes[e['child']]['sempos'], e['functor']
                         except KeyError:
                             continue
-                        if pid == nid and functor == 'COMP' and cpos == 'n':
+                        if pid == nid and functor == 'COMP' and cpos == 'n' and 'pval' in e:
                             node['concept'] += '_'+e['pval']
                             del e['pval']
                             e['functor'] = 'THEME'

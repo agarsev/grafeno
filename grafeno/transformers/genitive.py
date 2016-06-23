@@ -34,7 +34,7 @@ class Transformer (Utils):
             p['genitive_obj'] = c['concept']
         if 'genitive_obj' in c and p.get('sempos') != 'v' and 'concept' in p:
             if self.__addclass:
-                self.sprout(parent, 'isa', {'concept':p['concept'], 'sempos':p.get('sempos')})
+                self.sprout(parent, 'HYP', {'concept':p['concept'], 'sempos':p.get('sempos')})
             if self.__attach:
                 p['concept'] += '_of_' + c['genitive_obj']
         return edge

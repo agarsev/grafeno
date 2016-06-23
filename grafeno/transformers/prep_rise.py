@@ -15,7 +15,8 @@ class Transformer (Base):
         if 'pval' in p:
             p['p_obj'] = edge
         if 'pval' in c:
-            edge['functor'] = c['pval']
+            edge['functor'] = 'COMP'
+            edge['class'] = c['pval']
         return edge
 
     def post_process (self):

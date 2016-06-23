@@ -28,7 +28,7 @@ class Transformer (WordNet):
     def post_process (self):
         super().post_process()
         for edge in self.edges:
-            if edge.get('functor') != 'be':
+            if edge.get('functor') != 'ATTR' or 'class' in edge:
                 continue
             c = edge['child']
             if c in self.nodes:
@@ -39,4 +39,4 @@ class Transformer (WordNet):
                 continue
             cl = get_class(c['synset']) if 'synset' in c else None
             if cl:
-                edge['functor'] = cl
+                edge['class'] = cl

@@ -27,7 +27,7 @@ class Transformer (PosExtract, Utils):
         edge = super().transform_dep(dep, parent, child)
         p = self.nodes[parent]
         c = self.nodes[child]
-        if dep == 'ncmod' and 'concept' in p and 'concept' in c and p.get('sempos') == 'n' and c.get('sempos') == 'j':
+        if (dep=='ncmod' or edge.get('functor')=='ATTR') and 'concept' in p and 'concept' in c and p.get('sempos') == 'n' and c.get('sempos') == 'j':
             if self.__attach:
                 if self.__hyper:
                     self.sprout(parent, 'HYP', {'concept':p['concept'], 'sempos':'n'})

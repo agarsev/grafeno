@@ -14,8 +14,10 @@ class Transformer (PosExtract):
         p = self.nodes[parent]
         if p.get('sempos') == 'v':
             if dep == 'ncsubj':
-                p['relation'] = edge
-                edge['functor'] = p.get('concept')
+                p['subj_edge'] = edge
+                f = p.get('concept')
+                edge['functor'] = 'ATTR' if f == 'be' else 'REL'
+                edge['class'] = f
                 edge['child'], edge['parent'] = edge['parent'], edge['child']
             elif dep in self.__main:
                 try:
@@ -42,6 +44,6 @@ class Transformer (PosExtract):
                 else:
                     del node['concept']
                     continue
-                if 'functor' in first_arg and 'relation' in node:
-                    node['relation']['functor'] += '_'+first_arg['functor']
+                if 'functor' in first_arg and 'subj_edge' in node:
+                    node['subj_edge']['class'] += '_'+first_arg['class']
                 self.merge(first_arg['child'], nid)

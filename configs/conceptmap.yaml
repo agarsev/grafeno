@@ -10,19 +10,20 @@ transformers:
     - genitive
     - prep_rise
     - unique
+    - copula_class
     - verb_collapse
-    - specific_copula
+    - specific_edges
     - lenient
 transformer_args:
     sempos:
         noun: n
         adjective: j
-    retain_attachments: False
+    attach_adjectives: True
+    keep_attached_adj: True
 operations:
     - op: filter_edges
       remove:
         - isa
-        - of
       rename:
         be: is
       frequency:

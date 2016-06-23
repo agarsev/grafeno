@@ -16,6 +16,6 @@ class Transformer (Base):
         p = self.nodes[parent]
         c = self.nodes[child]
         if dep == 'ncmod-num':
-            p['concept'] = c['concept']+'_'+p['concept']
-            edge['functor'] = 'number'
+            edge['functor'] = 'ATTR'
+            edge['class'] = 'number'
         return edge
