@@ -19,3 +19,4 @@ linearizers:
 linearizer_args:
     summary_length: 100
     summary_margin: 10
+    normalize_sentence_scores: True
