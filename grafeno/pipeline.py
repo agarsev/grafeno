@@ -61,6 +61,11 @@ obtained is returned.
 - `linearizers`: list of linearizer names to use (see :py:mod:`grafeno.linearizers`)
 - `linearizer_args`: dict of arguments for the linearizers
 
+.. seealso::
+
+    Some pre-built pipelines can be found in the ``config`` directory,
+    written in YAML: :ref:`configs`.
+
 '''
 
 from grafeno import Graph as CG, transformers, linearizers
