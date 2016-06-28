@@ -5,6 +5,7 @@ the edge, not in the function args. Check all transformers.
 
 Architecture changes
 ====================
+- Make input independent of freeling (receive token list and dependency list)
 - Consider using MULTIDIGRAPHs (would have to change _all_ edge accesses)
 - Improve linearizer arch
   - make a common base to extract and a ?navigator/expander

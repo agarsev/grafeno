@@ -7,7 +7,7 @@ SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build
 APIDOCDIR	  = _reference
-APIDOCOPTS    = -T -M
+APIDOCOPTS    = -T -M -e -f
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -53,7 +53,7 @@ clean:
 	rm -rf $(BUILDDIR)/* $(APIDOCDIR)
 
 apidoc:
-	sphinx-apidoc $(APIDOCOPTS) -o $(APIDOCDIR) -f ../grafeno
+	sphinx-apidoc $(APIDOCOPTS) -o $(APIDOCDIR) ../grafeno
 
 .PHONY: html
 html: apidoc
