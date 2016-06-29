@@ -18,7 +18,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import argparse
-from bottle import abort, error, get, post, request, run, view
+
+import bottle
+from bottle import static_file, abort, error, get, post, request, run, view
+bottle.TEMPLATE_PATH = [ 'res' ]
+
 import json
 import re
 import unicodedata
@@ -105,6 +109,10 @@ def custom500 (error):
 
 
 # OTHER THINGS
+
+@get('/static/logo.svg')
+def get_logo ():
+    return static_file('logo.svg',root='res')
 
 from nltk.corpus import wordnet as wn
 @get('/other/synonyms/<word>')

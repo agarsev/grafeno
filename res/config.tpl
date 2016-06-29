@@ -55,7 +55,10 @@
     </style>
 </head>
 <body>
-    <h1>Service: {{name}}</h1>
+    <h1>
+        <img width="80" height="80" src="/static/logo.svg" />
+        Service: {{name}}
+    </h1>
     <div>
         <textarea rows="5" id="test_text">{{default_text}}</textarea>
         <p><button id="send_button" onclick="test_ws();">Send</button><span id="loading" class="hidden"></span></p>
