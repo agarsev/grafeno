@@ -2,7 +2,7 @@ from grafeno.transformers.pos_extract import Transformer as PosExtract
 from grafeno.transformers.__utils import Transformer as Utils
 
 class Transformer (PosExtract, Utils):
-    '''Processes adjectives. Adds an ``'ATTR'`` functor relation to the head noun.
+    '''Processes adjectives. Adds an ``ATTR`` functor relation to the head noun.
 
     Parameters
     ----------

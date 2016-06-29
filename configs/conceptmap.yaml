@@ -10,7 +10,7 @@ transformers:
     - genitive
     - prep_rise
     - unique
-    - copula_class
+    - attr_class
     - verb_collapse
     - specific_edges
     - lenient
