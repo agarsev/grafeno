@@ -9,7 +9,10 @@ class Linearizer (Extract):
         clusters = self.graph.gram['clusters']
         # TODO: add more heuristics
         best_cluster = max(range(len(clusters)), key=lambda i: len(clusters[i]))
-        self.__hvs = self.graph.gram['HVS'][best_cluster]
+        if 'HVS' in self.graph.gram:
+            self.__hvs = self.graph.gram['HVS'][best_cluster]
+        else:
+            self.__hvs = []
         self.__cluster = clusters[best_cluster]
 
     def score_sentence (self, sentence_nodes):

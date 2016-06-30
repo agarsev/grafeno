@@ -18,6 +18,7 @@
 from grafeno import Graph as CG
 
 from grafeno.operations.clustering2 import cluster
+from grafeno.operations.markov_clustering import cluster as markov_cluster
 from grafeno.operations.spot_domain import spot_domain
 from grafeno.operations.filters import filter_edges
 
@@ -37,6 +38,11 @@ def operate (graph, operation, **args):
 
     if operation == 'filter_edges':
         filter_edges(graph, **args)
+        return graph
+
+    if operation == 'markov_cluster':
+        clusters = markov_cluster(graph, **args)
+        graph.gram['clusters'] = clusters
         return graph
 
     raise ValueError("Unknown operation")
