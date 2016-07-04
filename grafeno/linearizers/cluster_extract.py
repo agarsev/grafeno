@@ -2,7 +2,7 @@ from grafeno.linearizers.extract import Linearizer as Extract
 
 class Linearizer (Extract):
 
-    def __init__ (self, hub_score=1, nonhub_score=0.5, **kwds):
+    def __init__ (self, hub_score=2, nonhub_score=1, **kwds):
         super().__init__(**kwds)
         self.__hub_score = hub_score
         self.__nonhub_score = nonhub_score
