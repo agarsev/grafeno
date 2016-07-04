@@ -59,3 +59,9 @@ def cluster (cgraph, hubratio = 0.2):
         best.append(n)
 
     return HVS, clusters
+
+def operate (graph, **args):
+    HVS, clusters = cluster(graph, **args)
+    graph.gram['HVS'] = HVS
+    graph.gram['clusters'] = clusters
+    return graph

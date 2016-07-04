@@ -16,3 +16,7 @@ def filter_edges (cgraph, remove=[], rename={}, frequency=None):
         if ftor in remove:
             to_rem.append((n,m))
     g.remove_edges_from(to_rem)
+
+def operate (graph, **args):
+    filter_edges(graph, **args)
+    return graph

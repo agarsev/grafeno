@@ -16,39 +16,13 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from grafeno import Graph as CG
-
-from grafeno.operations.clustering2 import cluster
-from grafeno.operations.markov_clustering import cluster as markov_cluster
-from grafeno.operations.louvain_clustering import cluster as louvain_cluster
-from grafeno.operations.spot_domain import spot_domain
-from grafeno.operations.filters import filter_edges
+from importlib import import_module
 
 def operate (graph, operation, **args):
 
-    if operation == 'cluster':
-        HVS, clusters = cluster(graph, **args)
-        graph.gram['HVS'] = HVS
-        graph.gram['clusters'] = clusters
-        return graph
+    try:
+        m = import_module('grafeno.operations.'+operation)
+    except ImportError:
+        raise ValueError('Unknown operation '+operation)
 
-    if operation == 'spot_domain':
-        subgraph, main_entity = spot_domain(graph, **args)
-        r = CG(graph, subgraph=subgraph)
-        r.gram['main_entity'] = main_entity
-        return r
-
-    if operation == 'filter_edges':
-        filter_edges(graph, **args)
-        return graph
-
-    if operation == 'markov_cluster':
-        clusters = markov_cluster(graph, **args)
-        graph.gram['clusters'] = clusters
-        return graph
-
-    if operation == 'louvain_cluster':
-        clusters = louvain_cluster(graph, **args)
-        graph.gram['clusters'] = clusters
-        return graph
-
-    raise ValueError("Unknown operation")
+    return m.operate(graph, **args)

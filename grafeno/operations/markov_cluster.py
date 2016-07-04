@@ -55,3 +55,8 @@ def cluster (graph, expand_factor = 2, inflate_factor = 2, max_loop = 10 , mult_
     A = nx.adjacency_matrix(graph._g)
     M, clusters = mcl(np.array(A.todense()), expand_factor, inflate_factor, max_loop, mult_factor)
     return clusters
+
+def operate (graph, **args):
+    clusters = cluster(graph, **args)
+    graph.gram['clusters'] = clusters
+    return graph

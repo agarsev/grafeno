@@ -1,6 +1,8 @@
 from collections import deque
 import networkx as nx
 
+from grafeno import Graph as CG
+
 def spot_domain (cgraph):
 
     g = nx.Graph(cgraph._g)
@@ -19,3 +21,9 @@ def spot_domain (cgraph):
                 to_process.append(m)
 
     return bunch, main
+
+def operate (graph, **args):
+    subgraph, main_entity = spot_domain(graph)
+    r = CG(graph, subgraph=subgraph)
+    r.gram['main_entity'] = main_entity
+    return r
