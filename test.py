@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# PYTHON_ARGCOMPLETE_OK
 
 # Grafeno -- Python concept graphs library
 # Copyright 2016 Antonio F. G. Sevilla <afgs@ucm.es>
@@ -18,9 +19,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import argparse
-import yaml
-
-from grafeno import pipeline
 
 arrayize = lambda t: t.split(',')
 
@@ -30,10 +28,25 @@ group.add_argument('-s','--string')
 group.add_argument('-f','--file',type=argparse.FileType('r'))
 arg_parser.add_argument('-t','--transformers',type=arrayize,help='transformer pipeline to use')
 arg_parser.add_argument('-l','--linearizers',type=arrayize,help='linearizing pipeline to use')
-arg_parser.add_argument('-c','--config-file',help='use a config file for pipeline options')
+arg_config = arg_parser.add_argument('-c','--config-file',help='use a config file for pipeline options')
 arg_parser.add_argument('-d','--display',action='store_true',help='display a drawing of the graph')
 arg_parser.add_argument('-p','--print-json',action='store_true',help='print the graph in json')
+
+try:
+    import argcomplete
+    import glob
+    from os.path import dirname, basename
+    def config_completer(prefix, **kwargs):
+        return (basename(c)[:-5] for c in glob.glob(dirname(__file__)+"/configs/*.yaml"))
+    arg_config.completer = config_completer
+    argcomplete.autocomplete(arg_parser)
+except ImportError:
+    pass
+
 args = arg_parser.parse_args()
+
+import yaml
+from grafeno import pipeline
 
 if args.file:
     text = args.file.read()
