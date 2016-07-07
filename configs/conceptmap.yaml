@@ -8,7 +8,7 @@ transformers:
     - adjectives
     - negation
     - genitive
-    - prep_rise
+    - prepositions
     - unique
     - attr_class
     - verb_collapse
