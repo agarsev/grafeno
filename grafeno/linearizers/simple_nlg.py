@@ -3,7 +3,7 @@ from grafeno.linearizers.base import Linearizer as Base
 class Linearizer (Base):
 
     def get_root_nodes (self):
-        return [n['id'] for n in self.graph.nodes() if n['sempos']=='v']
+        return [n['id'] for n in self.graph.nodes() if n.get('sempos')=='v']
 
     def expand_node (self, n):
         exps = super().expand_node(n)

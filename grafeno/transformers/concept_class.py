@@ -14,16 +14,16 @@ class Transformer (WNGet):
         super().__init__(**kwds)
         self.__hyper = concept_class_hypernyms
 
-    def transform_node (self, msnode):
-        sem = super().transform_node(msnode)
-        ss = sem.get('synset')
-        if ss:
-            concept_class = ss.lexname().split('.')[1]
-            if concept_class and concept_class != 'Tops':
-                sem['class'] = concept_class
-                if self.__hyper:
-                    chyp = { 'concept': concept_class }
-                    if 'sempos' in sem:
-                        chyp['sempos'] = sem['sempos']
-                    self.sprout(sem['id'], 'HYP', chyp)
-        return sem
+    def post_process (self):
+        super().post_process()
+        for n in self.nodes.values():
+            ss = n.get('synset')
+            if ss:
+                concept_class = ss.lexname().split('.')[1]
+                if concept_class and concept_class != 'Tops':
+                    n['class'] = concept_class
+                    if self.__hyper:
+                        chyp = { 'concept': concept_class }
+                        if 'sempos' in n:
+                            chyp['sempos'] = n['sempos']
+                        self.sprout(n['id'], 'HYP', chyp)
