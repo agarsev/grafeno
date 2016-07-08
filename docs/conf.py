@@ -336,3 +336,13 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #
 # texinfo_no_detailmenu = False
+
+from sphinx.apidoc import main as apidoc
+
+def run_apidoc(_):
+    cur_dir = os.path.abspath(os.path.dirname(__file__))
+    output_path = os.path.join(cur_dir, '_reference')
+    apidoc(['T', '-M', '-e', '-f', '-o', output_path,'../grafeno'])
+
+def setup(app):
+    app.connect('builder-inited', run_apidoc)
