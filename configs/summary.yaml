@@ -3,17 +3,23 @@
 # Summarizes a text by extracting the most relevant sentences.
 transformers:
     - pos_extract
-    - unique
-    - extend
     - sim_link
+    - extend
+    - unique
     - sentences
 transformer_args:
-    sempos:
-        noun: n
+    sempos: { noun: n }
+    unique_gram: { hyper: [ True ] }
     extended_sentence_edges: [ HYP ]
 operations:
     - op: cluster
       hubratio: 0.2
+#    - op: markov_cluster
+#      expand_factor: 10
+#      inflate_factor: 2
+#      max_loop: 10
+#      mult_factor: 1
+#    - op: louvain_cluster
 linearizers:
     - cluster_extract
 linearizer_args:

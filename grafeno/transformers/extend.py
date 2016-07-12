@@ -1,36 +1,33 @@
 from collections import deque
 from nltk.corpus import wordnet as wn
 
-from grafeno.transformers.index import Transformer as Index
 from grafeno.transformers.wordnet import Transformer as WNGet
+from grafeno.transformers.__utils import Transformer as Utils
 
-class Transformer (WNGet, Index):
+class Transformer (WNGet, Utils):
 
-    def __init__ (self, min_depth = 4, **kwds):
+    def __init__ (self, extend_min_depth = 4, **kwds):
         super().__init__(**kwds)
-        self.min_depth = min_depth
+        self.__min_depth = extend_min_depth
 
-    def post_insertion (self, sentence_nodes):
-        super().post_insertion(sentence_nodes)
+    def post_process (self):
+        super().post_process()
         g = self.graph
-        node_dict = self.node_from_concept
+        mind = self.__min_depth
         # Extend with hypernyms
-        to_extend = deque(sentence_nodes)
+        to_extend = deque(list(self.nodes))
         while len(to_extend)>0:
             n = to_extend.popleft()
-            node = g.node[n]
+            node = self.nodes[n]
             ss = node.get('synset')
             if not ss:
                 continue
             for cc in ss.hypernyms() + ss.instance_hypernyms():
                 depth = ss.min_depth()
-                if depth < self.min_depth:
+                if depth < mind:
                     continue
                 concept = cc.lemmas()[0].name()
-                if concept not in node_dict:
-                    nid = g.add_node(concept,synset=cc)
-                    to_extend.append(nid)
-                    node_dict[concept] = nid
-                else:
-                    nid = node_dict[concept]
-                g.add_edge(n, nid, 'HYP', weight=depth/(depth+1))
+                nid = self.sprout(n,
+                        {'functor':'HYP','weight':depth/(depth+1)},
+                        {'concept':concept,'synset':cc,'hyper':True})
+                to_extend.append(nid)

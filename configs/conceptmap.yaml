@@ -9,10 +9,10 @@ transformers:
     - negation
     - genitive
     - prepositions
-    - unique
     - attr_class
     - verb_collapse
     - specific_edges
+    - unique
     - lenient
 transformer_args:
     sempos:

@@ -2,20 +2,24 @@ from grafeno.transformers.index import Transformer as Index
 
 class Transformer (Index):
 
-    def __init__ (self, unique_sempos = None, **kwds):
+    def __init__ (self, unique_gram = None, **kwds):
         super().__init__(**kwds)
-        self.__sempos = unique_sempos
+        self.__gram = unique_gram
 
     def post_process (self):
         super().post_process()
         self.__reused_nodes = []
-        usem = self.__sempos
+        gram = self.__gram
         node_dict = self.node_from_concept
         first_node = {}
         for nid, node in list(self.nodes.items()):
-            if usem and node.get('sempos') not in usem:
-                continue
-            # Only one node for each concept in unique_sempos
+            if gram:
+                for attr in gram.keys():
+                    if node.get(attr) in gram[attr]:
+                        break
+                else:
+                    continue
+            # Only one node for each concept with any of the specified grammatemes
             concept = node.get('concept')
             if concept in first_node:
                 self.merge(first_node[concept], nid)

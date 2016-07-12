@@ -21,6 +21,7 @@ General Library
 ===============
 - Add easy way to get edges that start from node (and maybe have particular
   functor). Should be available in post_process too.
+- add unit tests with unittest
 
 Web Service
 ===========

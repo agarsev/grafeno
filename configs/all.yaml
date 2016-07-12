@@ -1,0 +1,4 @@
+transformers:
+    - all
+linearizers:
+    - triplets
