@@ -10,6 +10,20 @@ def functor_equal (a, b):
     if a['functor'] == b['functor']:
         return a
 
+def wordnet_generalize(a, b):
+    if a.get('sempos','x') != b.get('sempos'):
+        return None
+    try:
+        sa = a['synset']
+        sb = b['synset']
+    except AttributeError:
+        return None
+    gen = sa.lowest_common_hypernyms(sb)
+    if len(gen)>0:
+        return { 'concept': gen[0].lemma_names()[0],
+                 'sempos': a['sempos'],
+                 'num': 'p' }
+
 def _generalize_rec (G, a, b, an, bn, node_generalize, edge_generalize):
     na = a.node[an]
     nb = b.node[bn]

@@ -12,6 +12,14 @@ class Transformer (WNGet):
         self.__threshold = sim_threshold
         self.__weight = sim_weight
 
+    def get_similarity (self, a, b):
+        if 'synset' not in a or 'synset' not in b \
+                or a.get('sempos','x') != b.get('sempos','-'):
+            return 0
+        sa = a['synset']
+        sb = b['synset']
+        return sa.jcn_similarity(sb, brown_ic)
+
     def post_insertion (self, sentence_nodes):
         super().post_insertion(sentence_nodes)
         g = self.graph
@@ -21,14 +29,7 @@ class Transformer (WNGet):
         for n, m in product(sentence_nodes, oldnodes):
             if m == n:
                 continue
-            ga = g.node[n]
-            gb = g.node[m]
-            if 'synset' not in ga or 'synset' not in gb \
-                    or ga.get('sempos','x') != gb.get('sempos','-'):
-                continue
-            sa = ga.get('synset')
-            sb = gb.get('synset')
-            sim = sa.jcn_similarity(sb, brown_ic)
+            sim = self.get_similarity(g.node[n], g.node[m])
             if sim > threshold:
                 g.add_edge(n, m, 'SIM', weight=weight)
                 g.add_edge(m, n, 'SIM', weight=weight)
