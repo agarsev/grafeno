@@ -10,11 +10,7 @@ class Transformer (PosExtract):
 
     def transform_node (self, msnode):
         sem = super().transform_node(msnode)
-        sempos = sem.get('sempos')
-        if sempos == 'n':
-            sem['proper'] = msnode.get('type') == 'proper'
-            sem['num'] = msnode.get('num','p')
-        elif sempos == 'v':
+        if sem.get('sempos') == 'v':
             sem['tense'] = msnode.get('vform')
         return sem
 

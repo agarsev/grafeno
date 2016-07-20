@@ -13,6 +13,7 @@ Architecture changes
 
 New Transformers
 ================
+- attach (put together this functionality from genitive, adjectives, etc)
 - auxiliary verbs (distinguish passive and modal, see negation)
 - conjunctions (and, or)
 - comparison (larger_than, smaller_than)

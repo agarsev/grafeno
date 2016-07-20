@@ -1,6 +1,12 @@
 from grafeno.transformers.base import Transformer as Base
 
 class Transformer (Base):
+    '''Processes prepositions, trying to turn them into ``COMP`` edges with the
+    preposition lemma as the ``class`` grammateme.
+    
+    These edges join the prepositional phrase nucleus (direct dependent of the
+    preposition, head) with the parent (direct dominating node of the
+    preposition).'''
 
     def transform_node (self, msnode):
         sem = super().transform_node(msnode)

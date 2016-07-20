@@ -1,15 +1,29 @@
 from grafeno.transformers.__utils import Transformer as Utils
 
-default_add_genitive_class = True
-default_attach_genitive = True
-
 class Transformer (Utils):
+    '''Processes genitive relations. Does two main things:
 
-    def __init__ (self, add_genitive_class = default_add_genitive_class,
-            attach_genitive = default_attach_genitive, **kwds):
+    1. Turns saxon genitive (``'s``) into the preposition ``of`` with the
+    correct dependencencies. This means that it must appear before preposition
+    processing nodes in the transformer chain.
+    2. If enabled, collapses ``of`` edges, adding the information to the parent
+    node.
+
+    Parameters
+    ----------
+    attach_genitive : bool
+        If True, the concept is attached to the parent concept. For example,
+        ``john's father`` turns into a single node ``father_of_john``, instead of a
+        ``father`` node with an ``of`` edge to a ``john`` node.
+    add_genitive_class : bool
+        If both `attach_genitive` and `add_genitive_class` are True, a ``HYP``
+        edge is added with the original dependent concept.
+    '''
+
+    def __init__ (self, attach_genitive = False, add_genitive_class = True, **kwds):
         super().__init__(**kwds)
-        self.__addclass = add_genitive_class
-        self.__attach = attach_genitive
+        self.__gen_attach = attach_genitive
+        self.__gen_addclass = add_genitive_class
 
     def transform_node (self, ms):
         sem = super().transform_node(ms)
@@ -32,9 +46,8 @@ class Transformer (Utils):
         p = self.nodes[edge['parent']]
         if 'genitive_of' in p and 'concept' in c:
             p['genitive_obj'] = c['concept']
-        if 'genitive_obj' in c and p.get('sempos') != 'v' and 'concept' in p:
-            if self.__addclass:
+        if 'genitive_obj' in c and p.get('sempos') != 'v' and 'concept' in p and self.__gen_attach:
+            if self.__gen_addclass:
                 self.sprout(parent, 'HYP', {'concept':p['concept'], 'sempos':p.get('sempos')})
-            if self.__attach:
-                p['concept'] += '_of_' + c['genitive_obj']
+            p['concept'] += '_of_' + c['genitive_obj']
         return edge
