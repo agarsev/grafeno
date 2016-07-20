@@ -16,8 +16,8 @@ class Transformer (PosExtract):
 
     def transform_dep (self, dep, pid, cid):
         edge = super().transform_dep(dep, pid, cid)
-        parent = self.nodes[pid]
-        child = self.nodes[cid]
+        parent = self.nodes[edge['parent']]
+        child = self.nodes[edge['child']]
         if 'concept' not in parent or 'concept' not in child:
             return edge
         elif parent.get('sempos') == 'v' and dep in self.predication:

@@ -3,6 +3,7 @@
 # Extracts a concept map from a text.
 transformers:
     - pos_extract
+    - pronouns
     - nouns
     - thematic
     - phrasal

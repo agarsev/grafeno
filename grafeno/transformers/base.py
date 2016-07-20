@@ -60,13 +60,13 @@ class Transformer:
     def _transform_sentence (self, tree):
         self.stage = "pre_process"
         self.pre_process(tree)
+        self.stage = "extract_dependencies"
+        self.deps = self._extract_dependencies(tree)
         self.stage = "process_nodes"
         self._process_nodes(tree)
-        self.stage = "extract_dependencies"
-        deps = self._extract_dependencies(tree)
-        deps.reverse()
         self.stage = "process_edges"
-        self._process_edges(deps)
+        self.deps.reverse()
+        self._process_edges(self.deps)
         self.stage = "post_process"
         self.post_process()
         self.stage = "add_to_graph"
