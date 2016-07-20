@@ -3,14 +3,17 @@
 # Extracts a concept map from a text.
 transformers:
     - pos_extract
+    - nouns
     - thematic
     - phrasal
-    - prepositions
-    - numerals
-    - adjectives
-    - negation
     - genitive
+    - prepositions
+    #- numerals
+    - adjectives
+    - adverbs
+    - negation
     - wordnet
+    - attr_class
 transformer_args: {}
 linearizers:
     - triplets
