@@ -210,9 +210,11 @@ class Graph:
         g = self._g
         if with_labels:
             for n in g:
-                g.node[n]['label'] = g.node[n]['concept']
+                node = g.node[n]
+                node['label'] = '.'.join(x for x in [node.get('class'),node.get('concept'),node.get('sempos')] if x)
                 for m in g[n]:
-                    g[n][m]['label'] = g[n][m]['functor']
+                    edge = g[n][m]
+                    edge['label'] = '.'.join(x for x in [edge.get('functor'),edge.get('class')] if x)
         return json.dumps(json_graph.node_link_data(g), cls=BestEffortEncoder)
 
     def linearize (self, linearizer=None, linearizer_args={}):
