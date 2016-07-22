@@ -16,12 +16,34 @@ class Transformer (PosExtract):
 
     def transform_dep (self, dep, pid, cid):
         edge = super().transform_dep(dep, pid, cid)
-        parent = self.nodes[edge['parent']]
-        child = self.nodes[edge['child']]
-        if 'concept' not in parent or 'concept' not in child:
+        p = self.nodes[edge['parent']]
+        c = self.nodes[edge['child']]
+        if not('concept' in p and 'concept' in c and p.get('sempos')=='v'):
             return edge
-        elif parent.get('sempos') == 'v' and dep in self.predication:
+        if dep in self.predication:
             functor, w, pos_set = self.predication[dep]
-            if not pos_set or child.get('sempos') in pos_set:
+            if not pos_set or c.get('sempos') in pos_set:
                 edge['functor'], edge['weight'] = functor, w
+        elif dep == 'aux':
+            mod = c['concept']
+            if mod == 'have':
+                p['aspect'] = 'perfect'
+                del c['concept']
+            elif mod == 'be':
+                p['passive'] = True
+                del c['concept']
         return edge
+
+    def post_process (self):
+        super().post_process()
+        for nid, n in self.nodes.items():
+            if n.get('passive'):
+                for e in self.edges:
+                    if e.get('parent') != nid:
+                        continue
+                    f = e.get('functor')
+                    if f == 'AGENT':
+                        e['functor'] = 'THEME'
+                    if f == 'COMP' and e.get('class') == 'by':
+                        e['functor'] = 'AGENT'
+                        del e['class']

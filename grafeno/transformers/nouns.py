@@ -1,12 +1,11 @@
 from grafeno.transformers.pos_extract import Transformer as PosExtract
 
-import re
-
-modre = re.compile('mod')
+modmapping = { 'modnomatch': 'EQ',
+               'ncmod': 'HYP' }
+defaultrel = 'ATTR'
 
 class Transformer (PosExtract):
-    '''Processes noun grammatemes and noun-noun modifications, such as aposition
-    (creates ``EQ`` edges).'''
+    '''Processes noun grammatemes and noun-noun modifications, such as apposition.'''
 
     def transform_node (self, msnode):
         sem = super().transform_node(msnode)
@@ -20,6 +19,6 @@ class Transformer (PosExtract):
         edge = super().transform_dep(dep, pid, cid)
         p = self.nodes[pid]
         c = self.nodes[cid]
-        if modre.match(dep) and 'concept' in p and 'concept' in c and p.get('sempos') == 'n' and c.get('sempos') == 'n':
-            edge['functor'] = 'EQ'
+        if 'concept' in p and 'concept' in c and p.get('sempos') == 'n' and c.get('sempos') == 'n':
+            edge['functor'] = modmapping.get(dep, defaultrel)
         return edge
