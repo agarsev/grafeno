@@ -1,6 +1,12 @@
 from grafeno.transformers.base import Transformer as Base
 
 class Transformer (Base):
+    '''Removes edges where parent or child node don't have a concept.
+
+    This might necessary because otherwise these edges would give an error when
+    trying to be added to the graph. Ideally, this situation should never
+    happen, but sometimes nodes get dropped after the edges have already been
+    processed.'''
 
     def post_process (self):
         super().post_process()

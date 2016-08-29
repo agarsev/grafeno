@@ -5,6 +5,17 @@ from grafeno.transformers.wordnet import Transformer as WNGet
 from grafeno.transformers.__utils import Transformer as Utils
 
 class Transformer (WNGet, Utils):
+    '''Adds to the graph all WordNet hypernyms of every possible concept node.
+
+    The hypernyms are added as nodes with grammateme ``hyper = True'', and
+    related by edges with functor ``HYP''.
+
+    Parameters
+    ----------
+    extend_min_depth : int
+        Minimum depth of hypernyms to add. This depth is defined as the shortest
+        path from the synset to the root of the WordNet hypernym hierarchy.
+    '''
 
     def __init__ (self, extend_min_depth = 4, **kwds):
         super().__init__(**kwds)
