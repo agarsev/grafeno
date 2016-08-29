@@ -7,6 +7,17 @@ default_deps = {
 }
 
 class Transformer (Base):
+    '''Converts syntactic dependency relations directly into semantic edges. It
+    uses a translation table to find the appropriate functor given a syntactic
+    dependency.
+
+    Parameters
+    ----------
+    dep_translate : dict
+        A map from syntactic function to functor.
+    unknown_dep_translate : functor
+        Functor to use for unknown dependencencies.
+    '''
 
     def __init__ (self, dep_translate = default_deps, unknown_dep_translate = '', **kwds):
         super().__init__(**kwds)

@@ -3,6 +3,14 @@ from grafeno.transformers.base import Transformer as Base
 default_reverse = { 'AGENT', }
 
 class Transformer (Base):
+    '''Reverses the direction of some edges.
+
+    Parameters
+    ----------
+    reversed_edges : set
+        Set of functors which should have reverse orientation from the syntactic
+        dependency.
+    '''
 
     def __init__ (self, reversed_edges = default_reverse, **kwds):
         super().__init__(**kwds)
