@@ -8,6 +8,7 @@ from grafeno.transformers.wordnet import Transformer as WNGet
 class Transformer (WNGet):
 
     def __init__ (self, sim_threshold = 0.1, sim_weight = 1, **kwds):
+        global brown_ic
         super().__init__(**kwds)
         if not brown_ic:
             brown_ic = wordnet_ic.ic('ic-brown.dat')
