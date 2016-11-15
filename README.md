@@ -25,10 +25,15 @@ Use `-h` to get the list of options available.
 Requirements
 ------------
 - [python](https://www.python.org/) >= 3.4
-    - Python packages for use of the library are listed in `requirements.txt`,
-      while those additionally needed for development can be found in
-          `dev-requirements.txt`.
+    - Python packages for use of the library are listed in `requirements.txt`
 - [freeling](http://nlp.lsi.upc.edu/freeling/node/1)
+
+You will probably also need some NLTK data, for example 'wordnet' and
+'wordnet_ic'. They can be downloaded in python with:
+```python
+import nltk
+nltk.download(['wordnet', 'wordnet_ic'])
+```
 
 Authors
 -------

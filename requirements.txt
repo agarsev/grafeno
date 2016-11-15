@@ -1,8 +1,7 @@
-PyYAML==3.11
+pyyaml==3.11
 bottle==0.12.9
 cycler==0.10.0
 decorator==4.0.9
-matplotlib==1.5.1
 networkx==1.11
 nltk==3.2.1
 numpy==1.11.0
