@@ -7,9 +7,9 @@ import re
 
 regex = re.compile('}\s*{')
 
-def parse (sentence):
+def parse (sentence, lang):
     '''Calls the freeling process to obtain the dependency parse of a text.'''
-    config = "grafeno/freeling_deps.cfg"
+    config = "grafeno/freeling_deps_"+lang+".cfg"
     proc = Popen(["analyze", "--flush", "-f", config], stdin=PIPE, stdout=PIPE, stderr=PIPE)
     data, err = proc.communicate(sentence.encode('UTF-8'))
     return json.loads('['+regex.sub('},{',data.decode('UTF-8'))+']')

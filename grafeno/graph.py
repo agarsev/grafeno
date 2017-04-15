@@ -138,7 +138,7 @@ class Graph:
         text : string
             A clean text to process and add to the graph.
         '''
-        result = parse(text)
+        result = parse(text, lang=self.transformer.lang)
         self.transformer.transform_text(result)
 
     # Examining the graph

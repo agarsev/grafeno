@@ -24,6 +24,9 @@ class Transformer:
     ----------
     graph : :py:mod:`Graph <grafeno.graph>`
         The graph to which all transformed text will be added.
+    lang : string
+        Language code to use for parsing, and available to any subclassing
+        transformers.
 
     Attributes
     ----------
@@ -41,8 +44,9 @@ class Transformer:
         List of semantic edges obtained for the sentence being processed.
     '''
 
-    def __init__ (self, graph=None, **kwds):
+    def __init__ (self, graph=None, lang='en', **kwds):
         self.stage = ""
+        self.lang = lang
         self.graph = graph
 
     def transform_text (self, sentences):
