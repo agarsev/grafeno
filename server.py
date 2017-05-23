@@ -27,6 +27,7 @@ import json
 import re
 import unicodedata
 import yaml
+import collections
 
 from grafeno import pipeline
 
@@ -56,6 +57,15 @@ def run_pipeline (config):
         'result': result
         })
 
+def dict_merge (x, y):
+    for key, val in y.items():
+        if isinstance(val, collections.Mapping):
+            r = dict_merge(x.get(key, {}), val)
+            x[key] = r
+        else:
+            x[key] = y[key]
+    return x
+
 # ROUTES
 
 @post('/raw')
@@ -77,7 +87,7 @@ def stored_config(config_file):
     except FileNotFoundError:
         abort(400,"Unknown configuration "+config_file)
     config = yaml.load(config_file)
-    config.update(reqbody)
+    dict_merge(config, reqbody)
     return run_pipeline(config)
 
 @get('/run/<config_file>')
