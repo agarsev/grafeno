@@ -7,6 +7,10 @@ from grafeno.transformers.base import Transformer as Base
 
 class Transformer (Base):
 
+    def __init__ (self, **kwds):
+        super().__init__(**kwds)
+        self.__last_noun = None
+
     def transform_node (self, ms):
         sem = super().transform_node(ms)
         if ms.get('pos') == 'noun':
