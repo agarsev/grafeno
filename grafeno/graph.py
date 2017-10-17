@@ -142,6 +142,7 @@ class Graph:
         self.transformer.transform_text(result)
 
     # Examining the graph
+    # TODO: Usage examples with iteration
 
     def nodes (self):
         '''Returns a list of all the nodes in the graph. Each node is
@@ -149,7 +150,7 @@ class Graph:
         return [gram for n, gram in self._g.nodes(data=True)]
 
     def edges (self, nid):
-        '''Returns a list of neighbours of a node.
+        '''Returns a dictionary of the dependents of a node.
 
         Parameters
         ----------
@@ -158,8 +159,8 @@ class Graph:
 
         Returns
         -------
-            A list of node ids for all the nodes where an edge exists between
-            the node identified by `nid` and them.
+            A dictionary of edges, keyed by neighbor id, and with data
+            the grammatemes of the edge.
         '''
         return self._g[nid]
 

@@ -112,6 +112,7 @@ def run (pipeline):
             graph = operate(graph, name, **operation)
         except TypeError as e:
             raise ValueError(e)
+        operation['op'] = name
 
     # OUTPUT
     if 'linearizers' in pipeline:
