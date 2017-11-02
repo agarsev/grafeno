@@ -1,0 +1,22 @@
+%YAML 1.2
+---
+# Extracts a concept map from a text.
+transformers:
+    - pos_extract
+    - pronouns
+    - nouns
+    - thematic
+    - phrasal
+    - genitive
+    - prepositions
+    #- numerals
+    - adjectives
+    - adverbs
+    - negation
+    - wordnet
+    - attr_class
+    - lenient
+operations:
+    - op: rename_concepts
+linearizers:
+    - cypher
