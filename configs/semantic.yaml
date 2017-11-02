@@ -19,4 +19,4 @@ transformers:
 operations:
     - op: rename_concepts
 linearizers:
-    - triplets
+    - node_edges
