@@ -80,7 +80,8 @@ obtained is returned.
 from grafeno import Graph as CG, transformers, linearizers
 from grafeno.operations import operate
 
-DEF_TRANSFORMERS = ['semantic']
+DEF_PARSER = 'freeling'
+DEF_TRANSFORMERS = ['all']
 DEF_T_ARGS = {}
 DEF_LINEARIZERS = []
 DEF_L_ARGS = {}
@@ -104,7 +105,7 @@ def run (pipeline):
     elif 'text' in pipeline:
         ts = []
         try:
-            ts.append(pipeline.get('parser')+'_parse')
+            ts.append(pipeline.get('parser', DEF_PARSER)+'_parse')
         except KeyError:
             pass
         try:
