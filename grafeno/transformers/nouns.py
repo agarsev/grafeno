@@ -1,7 +1,6 @@
 from grafeno.transformers.pos_extract import Transformer as PosExtract
 
-modmapping = { 'modnomatch': 'EQ',
-               'ncmod': 'HYP' }
+modmapping = { 'modnomatch': 'EQ' }
 defaultrel = 'ATTR'
 
 class Transformer (PosExtract):

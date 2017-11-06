@@ -7,6 +7,7 @@ class Transformer (Base):
     def __init__ (self, **kwds):
         super().__init__(**kwds)
         self.__nlp = spacy.load(self.lang)
+        self._parser = 'spacy'
 
     def parse_text (self, text):
         parse = self.__nlp(text)
@@ -20,8 +21,8 @@ class Transformer (Base):
         self.__current_temp_id = temp_id
         self.nodes[temp_id] = self.transform_node({
             'lemma': token.lemma_,
-            'pos': token.pos_,
-            'tag': token.tag_,
+            'pos': token.pos_.lower(),
+            'tag': token.tag_.lower(),
             'spacy_tok': token
         })
         for c in token.children:

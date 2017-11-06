@@ -11,10 +11,14 @@ regex = re.compile('}\s*{')
 
 class Transformer (Base):
 
+    def __init__ (self, **kwds):
+        super().__init__(**kwds)
+        self.__config = os.path.dirname(__file__)+"/freeling_conf/"+self.lang+".cfg"
+        self._parser = 'freeling'
+
     def parse_text (self, text):
         '''Calls the freeling process to obtain the dependency parse of a text.'''
-        config = os.path.dirname(__file__)+"/freeling_conf/"+self.lang+".cfg"
-        proc = Popen(["analyze", "--flush", "-f", config], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        proc = Popen(["analyze", "--flush", "-f", self.__config], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         data, err = proc.communicate(text.encode('UTF-8'))
         return json.loads('['+regex.sub('},{',data.decode('UTF-8'))+']')
 

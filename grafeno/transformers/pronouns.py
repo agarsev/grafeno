@@ -1,6 +1,7 @@
 from grafeno.transformers.base import Transformer as Base
 
 # TODO:
+# - check with spacy
 # - reference across sentences (what to do with the dep?)
 # - syntactic agreement
 # - semantic agreement (heuristic)

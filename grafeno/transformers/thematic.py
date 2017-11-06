@@ -4,8 +4,15 @@ class Transformer (PosExtract):
 
     predication = {
             'ncsubj': ('AGENT', 1.0, {'n'}),
+            'nsubj': ('AGENT', 1.0, {'n'}),
+            'agent': ('AGENT', 1.0, {'n'}),
             'dobj': ('THEME', 1.0, None),
+            'nsubjpass': ('THEME', 1.0, {'n'}),
+            'attr': ('THEME', 1.0, {'n'}),
             'iobj': ('IOBJ', 1.0, None),
+            'prep': ('ARG', 1.0, None),
+            'obj': ('ARG', 1.0, None),
+            'obl': ('ARG', 1.0, None),
             }
 
     def transform_node (self, msnode):
