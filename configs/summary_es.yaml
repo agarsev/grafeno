@@ -1,8 +1,8 @@
 %YAML 1.2
 ---
 # Summarizes a text by extracting the most relevant sentences.
+parser: freeling
 transformers:
-    - freeling_parse
     - pos_extract
     - sim_link
     - extend

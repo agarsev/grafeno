@@ -1,5 +1,5 @@
+parser: freeling
 transformers:
-    - freeling_parse
     - all
 linearizers:
     - triplets

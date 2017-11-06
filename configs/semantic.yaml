@@ -1,8 +1,8 @@
 %YAML 1.2
 ---
 # Extracts a concept map from a text.
+parser: freeling
 transformers:
-    - freeling_parse
     - pos_extract
     - pronouns
     - nouns
