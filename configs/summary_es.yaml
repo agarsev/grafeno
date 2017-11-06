@@ -2,6 +2,7 @@
 ---
 # Summarizes a text by extracting the most relevant sentences.
 transformers:
+    - freeling_parse
     - pos_extract
     - sim_link
     - extend

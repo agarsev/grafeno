@@ -2,6 +2,7 @@
 ---
 # Extracts a concept map from a text.
 transformers:
+    - freeling_parse
     - pos_extract
     - wordnet
     - numerals
