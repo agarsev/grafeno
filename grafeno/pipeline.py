@@ -48,13 +48,21 @@ otherwise `text`, `parser` and `transformers` will be needed.
 - `graph`: a :py:mod:`Graph <grafeno.graph>`
 - `text`: a raw natural language text.
 - `parser`: what parser to use to process the text. Possible values are:
-    - ``freeling``
+    - ``freeling``: http://nlp.lsi.upc.edu/freeling/node/1
+    - ``spacy``: https://spacy.io
 
     .. note::
 
         This is just a shortcut for using as first transformer a module named
         ``<parser_type>_parser``. This allows parsers to be changed easily and
         independently from the rest of the pipeline.
+
+    .. warning::
+
+        To use a specific parser, it must be installed and available to grafeno.
+        For *freeling*, the `analyze` executable must be in the path, in the
+        case of *spacy*, the module must be importable.
+
 - `transformers`: list of transformer names to use (see :py:mod:`grafeno.transformers`)
 - `transformer_args`: dict of arguments for the `transformers`
 
