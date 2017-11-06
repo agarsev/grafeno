@@ -1,3 +1,6 @@
+# TODO:
+# - revise whether necessary
+# - if so, spacy
 from grafeno.transformers.pos_extract import Transformer as PosExtract
 
 default_main_argument = [ 'dobj', 'iobj', 'ncmod' ]

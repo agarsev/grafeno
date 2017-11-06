@@ -1,5 +1,3 @@
-from collections import deque
-
 class Transformer:
     '''This class is the basic transformer class. Other transformers should
     inherit from it either directly or indirectly.
@@ -49,35 +47,34 @@ class Transformer:
         self.lang = lang
         self.graph = graph
 
-    def transform_text (self, sentences):
+    def transform_text (self, text):
         '''Transforms a list of sentences into the semantic graph.
 
         It shouldn't be overriden.'''
         self.stage = "before_all"
         self.before_all()
-        for s in sentences:
-            self._transform_sentence(s)
+        self.stage = "parse_text"
+        sentences = self.parse_text(text)
+        for tree in sentences:
+            self.stage = "pre_process"
+            self.pre_process(tree)
+            self.stage = "transform"
+            self.transform_tree(tree)
+            self.stage = "post_process"
+            self.post_process()
+            self.stage = "add_to_graph"
+            sentence_nodes = self._add_to_graph()
+            self.stage = "post_insertion"
+            self.post_insertion(sentence_nodes)
         self.stage = "after_all"
         self.after_all()
         self.stage = ""
 
-    def _transform_sentence (self, tree):
-        self.stage = "pre_process"
-        self.pre_process(tree)
-        self.stage = "extract_dependencies"
-        self.deps = self._extract_dependencies(tree)
-        self.stage = "process_nodes"
-        self._process_nodes(tree)
-        self.stage = "process_edges"
-        self.deps.reverse()
-        self._process_edges(self.deps)
-        self.stage = "post_process"
-        self.post_process()
-        self.stage = "add_to_graph"
-        sentence_nodes = self._add_to_graph()
-        self.stage = "post_insertion"
-        self.post_insertion(sentence_nodes)
-        self.stage = ""
+    def parse_text (self, text):
+        '''
+        Return a list of dependency treees.
+        '''
+        raise NotImplementedError("A parsing transformer should be used")
 
     def pre_process (self, tree):
         '''Prepares the transformer for processing a new sentence. Transformers
@@ -91,15 +88,14 @@ class Transformer:
         self.nodes = {} # ID -> dict { concept }
         self.edges = [] # dict { parent(ID), child(ID), functor }
 
-    def _process_nodes (self, tree):
-        for ms in tree['tokens']:
-            self.nodes[ms['id']] = self.transform_node(ms)
-
     def transform_node (self, msnode):
         '''Transform a morphosyntactic node to a semantic one.
 
         Transformers should extend this module if any processing should occur
         for individual nodes.
+
+        The parser module should add to it an `id` property with the temporary
+        id to use to refer to it.
 
         Parameters
         ----------
@@ -110,28 +106,7 @@ class Transformer:
         -------
         :ref:`semantic node <semantic_nodes>`
         '''
-        return { 'id': msnode['id'] }
-
-    def _extract_dependencies (self, tree):
-        root = tree['dependencies'][0]
-        deps = deque([(c, root['token']) for c in root.get('children', [])])
-        ret = []
-        while True:
-            try:
-                d, parent = deps.popleft()
-            except IndexError:
-                break
-            ret.append((d['function'], parent, d['token']))
-            for c in d.get('children', []):
-                deps.append((c,d['token']))
-        return ret
-
-    def _process_edges (self, deps):
-        for name, parent, child in deps:
-            try:
-                self.edges.append(self.transform_dep(name, parent, child))
-            except KeyError:
-                continue
+        return {}
 
     def transform_dep (self, dependency, parent, child):
         '''Transforms a dependency relation into a semantic edge.

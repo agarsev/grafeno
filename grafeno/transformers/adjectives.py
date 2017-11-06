@@ -1,6 +1,8 @@
 from grafeno.transformers.pos_extract import Transformer as PosExtract
 from grafeno.transformers.__utils import Transformer as Utils
 
+adjective_deps = ('ncmod', 'amod')
+
 class Transformer (PosExtract, Utils):
     '''Processes adjectives. Adds an ``ATTR`` functor relation to the head noun.
 
@@ -27,7 +29,7 @@ class Transformer (PosExtract, Utils):
         edge = super().transform_dep(dep, parent, child)
         p = self.nodes[parent]
         c = self.nodes[child]
-        if (dep=='ncmod' or edge.get('functor')=='ATTR') and 'concept' in p and 'concept' in c and p.get('sempos') == 'n' and c.get('sempos') == 'j':
+        if (dep in adjective_deps or edge.get('functor')=='ATTR') and 'concept' in p and 'concept' in c and p.get('sempos') == 'n' and c.get('sempos') == 'j':
             if self.__attach:
                 if self.__hyper:
                     self.sprout(parent, 'HYP', {'concept':p['concept'], 'sempos':'n'})

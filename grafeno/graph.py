@@ -31,8 +31,6 @@ import json
 import networkx as nx
 from networkx.readwrite import json_graph
 
-from grafeno._parse_freeling import parse
-
 class Graph:
     '''Semantic graph class. Nodes represent concepts, while edges stand for the
     relations between them.
@@ -138,8 +136,7 @@ class Graph:
         text : string
             A clean text to process and add to the graph.
         '''
-        result = parse(text, lang=self.transformer.lang)
-        self.transformer.transform_text(result)
+        self.transformer.transform_text(text)
 
     # Examining the graph
     # TODO: Usage examples with iteration

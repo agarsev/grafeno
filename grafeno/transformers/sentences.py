@@ -12,17 +12,23 @@ class Transformer (Base):
 
     def pre_process (self, tree):
         super().pre_process(tree)
-        sent = []
-        first = True
-        for t in tree['tokens']:
-            form = t['form'].replace('_', ' ')
-            if form == '\s':
-                form = "'s"
-            elif t.get('pos') != 'punctuation' and not first:
-                form = ' '+form
-            first = False
-            sent.append(form)
-        self.graph.gram['sentences'].append(''.join(sent))
+        if self.parser == 'freeling':
+            sent = []
+            first = True
+            for t in tree['tokens']:
+                form = t['form'].replace('_', ' ')
+                if form == '\s':
+                    form = "'s"
+                elif t.get('pos') != 'punctuation' and not first:
+                    form = ' '+form
+                first = False
+                sent.append(form)
+            text = ''.join(sent)
+        elif self.parser == 'spacy':
+            text = tree.text
+        else:
+            text = str(tree)
+        self.graph.gram['sentences'].append(text)
 
     def post_insertion (self, sentence_nodes):
         super().post_insertion(sentence_nodes)

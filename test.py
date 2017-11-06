@@ -26,11 +26,12 @@ arg_parser = argparse.ArgumentParser(description='Test script')
 group = arg_parser.add_mutually_exclusive_group()
 group.add_argument('-s','--string')
 group.add_argument('-f','--file',type=argparse.FileType('r'))
+arg_parser.add_argument('-p','--parser',help='parser module to use')
 arg_parser.add_argument('-t','--transformers',type=arrayize,help='transformer pipeline to use')
 arg_parser.add_argument('-l','--linearizers',type=arrayize,help='linearizing pipeline to use')
 arg_config = arg_parser.add_argument('-c','--config-file',help='use a config file for pipeline options')
 arg_parser.add_argument('-d','--display',action='store_true',help='display a drawing of the graph')
-arg_parser.add_argument('-p','--print-json',action='store_true',help='print the graph in json')
+arg_parser.add_argument('-j','--print-json',action='store_true',help='print the graph in json')
 
 try:
     import argcomplete
@@ -63,10 +64,13 @@ if args.config_file:
     config = yaml.load(config_file)
 else:
     config = {}
-    if args.transformers:
-        config['transformers'] = args.transformers
-    if args.linearizers:
-        config['linearizers'] = args.linearizers
+
+if args.parser:
+    config['parser'] = args.parser
+if args.transformers:
+    config['transformers'] = args.transformers
+if args.linearizers:
+    config['linearizers'] = args.linearizers
 
 config['text'] = text
 

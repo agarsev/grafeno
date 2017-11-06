@@ -1,5 +1,7 @@
 from grafeno.transformers.base import Transformer as Base
 
+preposition_pos = ('preposition', 'adp')
+
 class Transformer (Base):
     '''Processes prepositions, trying to turn them into ``COMP`` edges with the
     preposition lemma as the ``class`` grammateme.
@@ -10,7 +12,7 @@ class Transformer (Base):
 
     def transform_node (self, msnode):
         sem = super().transform_node(msnode)
-        if msnode.get('pos') == 'preposition':
+        if msnode.get('pos') in preposition_pos:
             sem['pval'] = msnode.get('lemma')
         return sem
 

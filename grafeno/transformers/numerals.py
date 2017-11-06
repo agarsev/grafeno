@@ -1,3 +1,4 @@
+# TODO: check with spacy
 from grafeno.transformers.base import Transformer as Base
 
 class Transformer (Base):

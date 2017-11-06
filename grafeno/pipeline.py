@@ -22,6 +22,7 @@ dict, which can then be loaded and run by the library with one function call::
 
    experiment = {
        'text': 'Colorless green ideas sleep furiously.',
+       'parser': 'freeling', 
        'transformers': [ 'all' ],
        'linearizers': [ 'triplets' ]
    }
@@ -41,11 +42,27 @@ The following attributes for the pipeline dict are supported.
     arguments.
 
 .. rubric:: Input
-Input to the pipeline is required, it can be either a `graph`, or both `text`
-and `transformers`.
+Input to the pipeline is required. It can be an already constructed `graph`,
+otherwise `text`, `parser` and `transformers` will be needed.
 
 - `graph`: a :py:mod:`Graph <grafeno.graph>`
-- `text`: a raw natural language text
+- `text`: a raw natural language text.
+- `parser`: what parser to use to process the text. Possible values are:
+    - ``freeling``: http://nlp.lsi.upc.edu/freeling/node/1
+    - ``spacy``: https://spacy.io
+
+    .. note::
+
+        This is just a shortcut for using as first transformer a module named
+        ``<parser_type>_parser``. This allows parsers to be changed easily and
+        independently from the rest of the pipeline.
+
+    .. warning::
+
+        To use a specific parser, it must be installed and available to grafeno.
+        For *freeling*, the `analyze` executable must be in the path, in the
+        case of *spacy*, the module must be importable.
+
 - `transformers`: list of transformer names to use (see :py:mod:`grafeno.transformers`)
 - `transformer_args`: dict of arguments for the `transformers`
 
@@ -71,7 +88,8 @@ obtained is returned.
 from grafeno import Graph as CG, transformers, linearizers
 from grafeno.operations import operate
 
-DEF_TRANSFORMERS = ['semantic']
+DEF_PARSER = 'freeling'
+DEF_TRANSFORMERS = ['all']
 DEF_T_ARGS = {}
 DEF_LINEARIZERS = []
 DEF_L_ARGS = {}
@@ -93,8 +111,14 @@ def run (pipeline):
     if 'graph' in pipeline:
         graph = pipeline['graph']
     elif 'text' in pipeline:
+        ts = []
         try:
-            T = transformers.get_pipeline(pipeline.get('transformers', DEF_TRANSFORMERS))
+            ts.append(pipeline.get('parser', DEF_PARSER)+'_parse')
+        except KeyError:
+            pass
+        try:
+            ts += pipeline.get('transformers', DEF_TRANSFORMERS)
+            T = transformers.get_pipeline(ts)
         except KeyError:
             raise ValueError("Unknown transformer pipeline")
         T_args = pipeline.get('transformer_args', DEF_T_ARGS)

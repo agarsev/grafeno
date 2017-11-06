@@ -2,9 +2,12 @@ from grafeno.transformers.base import Transformer as Base
 
 default_sempos = {
     'noun': 'n',
+    'propn': 'n',
     'verb': 'v',
     'adjective': 'j',
-    'adverb': 'r'
+    'adj': 'j',
+    'adverb': 'r',
+    'adv': 'r'
 }
 
 class Transformer (Base):
