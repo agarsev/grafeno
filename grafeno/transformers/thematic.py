@@ -4,6 +4,7 @@ class Transformer (PosExtract):
 
     predication = {
             'ncsubj': ('AGENT', 1.0, {'n'}),
+            'csubj': ('AGENT', 1.0, None),
             'nsubj': ('AGENT', 1.0, {'n'}),
             'agent': ('AGENT', 1.0, {'n'}),
             'dobj': ('THEME', 1.0, None),

@@ -9,14 +9,10 @@ transformers:
     - phrasal
     - genitive
     - prepositions
-    #- numerals
     - adjectives
     - adverbs
     - negation
-    - wordnet
-    - attr_class
+    - interrogative
     - lenient
-operations:
-    - op: rename_concepts
 linearizers:
     - node_edges

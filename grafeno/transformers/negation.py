@@ -6,6 +6,8 @@ class Transformer (Base):
         sem = super().transform_node(ms)
         if ms.get('lemma') == 'not':
             sem['_negation'] = True
+            if 'concept' in sem:
+                del sem['concept']
         return sem
 
     def transform_dep (self, dep, pid, cid):
@@ -18,15 +20,9 @@ class Transformer (Base):
                 parent['negative'] = True
             else:
                 parent['_negation'] = True
-            do_del = True
         if dep == 'aux' and 'negative' in child:
             parent['negative'] = True
             do_del = True
-        if do_del:
-            if 'functor' in edge:
-                del edge['functor']
-            if 'concept' in child:
-                del child['concept']
         return edge
 
 
