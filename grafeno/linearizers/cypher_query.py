@@ -6,7 +6,7 @@ class Linearizer (CypherBase):
         super().__init__(
             node_header='MATCH\n',
             node_sep=',\n',
-            node_gram_whitelist=['concept'],
+            node_gram_whitelist=['concept','polarity'],
             edge_header=',\n',
             edge_sep=',\n',
             footer='\nRETURN count(*)',
@@ -17,7 +17,7 @@ class Linearizer (CypherBase):
     def filter_node (self, node):
         if node['concept'] == '?':
             self.__variable_dict[node['id']] = 'what'
-            self.footer = ',\npath = (what)-[*..4]->()\nRETURN path'
+            self.footer = ',\npath = (what)-[*..4]->()\nRETURN distinct path'
             return False
         return True
 
