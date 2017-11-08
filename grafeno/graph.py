@@ -161,6 +161,16 @@ class Graph:
         '''
         return self._g[nid]
 
+    def all_edges (self):
+        '''Iterates over all the edges in the graph.
+
+        Returns
+        -------
+            An iterator over all the edges of the graph, in the form of tuples
+            `(head id, dependent id, edge)`.
+        '''
+        return self._g.edges(data=True)
+
     # Output
 
     def draw (self, bunch=None):

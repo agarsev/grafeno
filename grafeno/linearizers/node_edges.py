@@ -31,15 +31,14 @@ class Linearizer ():
         self.footer = footer
 
     def linearize (self):
-        n_ids = [ n['id'] for n in self.graph.nodes() if self.filter_node(n) ]
-        edges = []
-        for n in n_ids:
-            for m, edge in self.graph.edges(n).items():
-                if m in n_ids:
-                    edges.append(self.process_edge(n, m, edge))
-        node = self.graph.node
+        nodes = [ self.process_node(n)
+                 for n in self.graph.nodes()
+                 if self.filter_node(n) ]
+        edges = [ self.process_edge(n, m, edge)
+                 for n, m, edge in self.graph.all_edges()
+                 if self.filter_edge(n, m, edge) ]
         return (self.node_header
-            + self.node_sep.join(self.process_node(node[n]) for n in n_ids)
+            + self.node_sep.join(nodes)
             + self.edge_header
             + self.edge_sep.join(edges)
             + self.footer)
@@ -55,7 +54,7 @@ class Linearizer ():
         Returns
         -------
         bool
-            Whether to include this node (and its edges) in further processing.
+            Whether to include this node in further processing.
         '''
         return True
 
@@ -74,6 +73,25 @@ class Linearizer ():
             A string representation of the node.
         '''
         return '{}: {}'.format(node['id'], node['concept'])
+
+    def filter_edge (self, n, m, edge):
+        ''' Override this method to exclude some edges from the output.
+
+        Parameters
+        ----------
+        n : int
+            The id of the head of the edge
+        m : int
+            The id of the child of the edge
+        edge : dict
+            The grammatemes of the edge to filter.
+
+        Returns
+        -------
+        bool
+            Whether to include this edge in further processing.
+        '''
+        return True
 
     def process_edge (self, n, m, edge):
         '''This method generates a string representation of an edge. Override to
