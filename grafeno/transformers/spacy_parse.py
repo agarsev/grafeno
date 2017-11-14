@@ -11,6 +11,7 @@ class Transformer (Base):
 
     def parse_text (self, text):
         parse = self.__nlp(text)
+        self.graph.spacy_parse = parse
         return parse.sents
 
     def transform_tree (self, tree):
