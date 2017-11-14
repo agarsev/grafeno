@@ -1,6 +1,6 @@
 from grafeno.linearizers.node_edges import Linearizer as Base
 
-default_node_gram_blacklist = ( 'id', 'sempos' )
+default_node_gram_blacklist = ( 'id' )
 default_edge_gram_blacklist = ( 'functor' )
 default_sempos_map = {
     'n': 'NOUN',

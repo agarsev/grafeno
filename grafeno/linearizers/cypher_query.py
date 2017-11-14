@@ -17,7 +17,7 @@ class Linearizer (CypherBase):
     def filter_node (self, node):
         if node['concept'] == '?':
             self.__variable_dict[node['id']] = 'what'
-            self.footer = ',\npath = (what)-[*..4]->()\nRETURN distinct path'
+            self.footer = '\nOPTIONAL MATCH path = (what)-[*..4]->()\nRETURN DISTINCT what, path'
             return False
         return True
 
