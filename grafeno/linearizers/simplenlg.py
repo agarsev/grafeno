@@ -36,10 +36,8 @@ class Linearizer ():
 
     def process_verb (self, verb):
         phrase = jvm.SPhraseSpec()
-        concept = verb.get('concept').split('_')
-        phrase.setVerb(concept[0])
-        if len(concept)>1:
-            phrase.addComplement(concept[1])
+        concept = verb.get('concept').replace('_', ' ')
+        phrase.setVerb(concept)
         for node, edge in self.graph.neighbours(verb):
             child = self.process_node(node)
             self.process_edge(phrase, child, edge)
