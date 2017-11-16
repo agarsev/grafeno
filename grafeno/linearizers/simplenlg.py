@@ -2,16 +2,22 @@ import atexit
 from py4j_server import launch_py4j_server
 from py4j.java_gateway import java_import
 
-gateway = launch_py4j_server()
-jvm = gateway.jvm
-java_import(jvm, "simplenlg.features.*")
-java_import(jvm, "simplenlg.realiser.*")
-atexit.register(gateway.close)
+jvm = None
+
+def init_gateway ():
+    global jvm
+    if not jvm:
+        gateway = launch_py4j_server()
+        jvm = gateway.jvm
+        java_import(jvm, "simplenlg.features.*")
+        java_import(jvm, "simplenlg.realiser.*")
+        atexit.register(gateway.close)
 
 class Linearizer ():
 
     def __init__ (self, graph=None, **kwds):
         self.graph=graph
+        init_gateway()
 
     def linearize (self):
         phrases = [ self.process_node(v)
