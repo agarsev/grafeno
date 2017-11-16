@@ -171,6 +171,32 @@ class Graph:
         '''
         return self._g.edges(data=True)
 
+    def neighbours (self, node):
+        '''Iterates over the neighbours of a node, giving the edge information
+        for each neighbour.
+
+        ::
+
+            node = graph.node[0]
+            for neighbour, edge in graph.neighbours(node)
+                print('{}-{}->{}'.format(
+                        node['concept'],
+                        edge['functor'],
+                        neighbour['concept']))
+
+        Parameters
+        ----------
+        node : node
+            The node in the graph to explore
+
+        Returns
+        -------
+            An iterator over the neighbours of the node, in the form of tuples
+            `(node, edge)`.
+        '''
+        return ((self.node[mid], edge)
+                for mid, edge in self._g[node['id']].items())
+
     # Output
 
     def draw (self, bunch=None):

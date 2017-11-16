@@ -3,36 +3,64 @@ from py4j_server import launch_py4j_server
 from py4j.java_gateway import java_import
 
 gateway = launch_py4j_server()
-java_import(gateway.jvm, "simplenlg.features.*")
-java_import(gateway.jvm, "simplenlg.realiser.*")
+jvm = gateway.jvm
+java_import(jvm, "simplenlg.features.*")
+java_import(jvm, "simplenlg.realiser.*")
 atexit.register(gateway.close)
 
 class Linearizer ():
 
-    def __init__ (self, **kwds):
-        pass
+    def __init__ (self, graph=None, **kwds):
+        self.graph=graph
 
     def linearize (self):
-        jvm = gateway.jvm
+        phrases = [ self.process_node(v)
+                   for v in self.graph.nodes()
+                   if v.get('sempos')=='v' ]
+        return ' '.join(phrases).strip()
 
+    def process_node (self, node):
+        sempos = node['sempos']
+        if sempos == 'n':
+            return self.process_noun(node)
+        elif sempos == 'v':
+            return self.process_verb(node)
+        else:
+            return self.process_other(node)
+
+    def process_verb (self, verb):
         phrase = jvm.SPhraseSpec()
-
-        recipe_type = jvm.NPPhraseSpec("recipes")
-        recipe_type.addModifier("breakfast")
-        recipe_type.addModifier("Mexican")
-
-        prep = jvm.PPPhraseSpec()
-        prep.setPreposition("that contain")
-        prep.addComplement("cheese")
-        prep.addComplement("salsa")
-        prep.addComplement("eggs")
-        recipe_type.addModifier(prep)
-
+        concept = verb.get('concept').split('_')
+        phrase.setVerb(concept[0])
+        if len(concept)>1:
+            phrase.addComplement(concept[1])
+        for node, edge in self.graph.neighbours(verb):
+            child = self.process_node(node)
+            self.process_edge(phrase, child, edge)
         phrase.setInterrogative(jvm.InterrogativeType.YES_NO)
-        phrase.setSubject("you")
-        phrase.setVerb("want")
-        phrase.addComplement(recipe_type)
-
+        phrase.setTense(jvm.Tense.PAST)
         realiser = jvm.Realiser()
-        result = realiser.realiseDocument(phrase).strip()
-        return result
+        return realiser.realiseDocument(phrase)
+
+    def process_noun (self, node):
+        np = jvm.NPPhraseSpec(node.get('concept'))
+        for mod, edge in self.graph.neighbours(node):
+            child = self.process_node(mod)
+            self.process_edge(np, child, edge)
+        return np
+
+    def process_other (self, node):
+        return node.get('concept')
+
+    def process_edge (self, parent, child, edge):
+        if edge['functor'] == 'AGENT':
+            parent.addSubject(child)
+        elif edge['functor'] == 'COMP':
+            prep = jvm.PPPhraseSpec()
+            prep.setPreposition(edge.get('pval'))
+            prep.addComplement(child)
+            parent.addModifier(prep)
+        elif edge['functor'] == 'ATTR':
+            parent.addModifier(child)
+        else:
+            parent.addComplement(child)
