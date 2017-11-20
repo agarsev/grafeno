@@ -1,17 +1,30 @@
 import atexit
-from py4j_server import launch_py4j_server
-from py4j.java_gateway import java_import
+import os
+import glob
+from subprocess import Popen, PIPE
+from py4j.java_gateway import JavaGateway, GatewayClient, java_import
 
 jvm = None
 
 def init_gateway ():
     global jvm
     if not jvm:
-        gateway = launch_py4j_server()
+
+        LIBDIR=os.path.dirname(__file__)+'/simplenlg_lib'
+        CLASSPATH=LIBDIR+':'+(':'.join(glob.glob(LIBDIR+'/*.jar')))
+        pid = Popen(["java", "-classpath", CLASSPATH, "Py4JServer", "0"],
+            stdout=PIPE, stdin=PIPE)
+        port = int(pid.stdout.readline())
+        gateway = JavaGateway(GatewayClient(port=port))
+
         jvm = gateway.jvm
         java_import(jvm, "simplenlg.features.*")
         java_import(jvm, "simplenlg.realiser.*")
-        atexit.register(gateway.close)
+
+        def close_gateway ():
+            gateway.close()
+            pid.kill()
+        atexit.register(close_gateway)
 
 class Linearizer ():
 
