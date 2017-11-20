@@ -8,6 +8,7 @@ class Transformer (Base):
         super().__init__(**kwds)
         self.__nlp = spacy.load(self.lang)
         self._parser = 'spacy'
+        self.graph.roots = []
 
     def parse_text (self, text):
         parse = self.__nlp(text)
@@ -15,7 +16,7 @@ class Transformer (Base):
         return parse.sents
 
     def transform_tree (self, tree):
-        self.__process_node(tree.root)
+        self.__root_node = self.__process_node(tree.root)
 
     def __process_node (self, token):
         temp_id = '_t_{}'.format(token.i)
@@ -38,4 +39,8 @@ class Transformer (Base):
         sem = super().transform_node(msnode)
         sem['id'] = self.__current_temp_id
         return sem
+
+    def post_insertion (self, sentence_nodes):
+        super().post_insertion(sentence_nodes)
+        self.graph.roots.append(self._id_map[self.__root_node])
 
