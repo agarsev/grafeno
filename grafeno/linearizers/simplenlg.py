@@ -49,13 +49,14 @@ class Linearizer ():
 
     def process_verb (self, verb):
         phrase = jvm.SPhraseSpec()
+        self.__has_subject = False
         concept = verb.get('concept').replace('_', ' ')
         phrase.setVerb(concept)
         for node, edge in self.graph.neighbours(verb):
             child = self.process_node(node)
             self.process_edge(phrase, child, edge)
-        phrase.setInterrogative(jvm.InterrogativeType.YES_NO)
-        phrase.setTense(jvm.Tense.PAST)
+        #phrase.setInterrogative(jvm.InterrogativeType.YES_NO)
+        #phrase.setTense(jvm.Tense.PAST)
         realiser = jvm.Realiser()
         return realiser.realiseDocument(phrase)
 
@@ -70,7 +71,13 @@ class Linearizer ():
         return node.get('concept')
 
     def process_edge (self, parent, child, edge):
-        if edge['functor'] == 'AGENT':
+        if edge['functor'] == 'COP':
+            if self.__has_subject:
+                parent.addComplement(child)
+            else:
+                parent.addSubject(child)
+                self.__has_subject = True
+        elif edge['functor'] == 'AGENT':
             parent.addSubject(child)
         elif edge['functor'] == 'COMP':
             prep = jvm.PPPhraseSpec()
