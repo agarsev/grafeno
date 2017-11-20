@@ -60,20 +60,21 @@ class Graph:
         dictionary of concept nodes, indexed by node id.
     '''
 
-    def __init__ (self, original=None, transformer=None, transformer_args={}, text=None, subgraph=None):
-        if original:
+    def __init__ (self, original=None, transformer=None, transformer_args={}, text=None, subgraph=None, from_networkx=None):
+        if from_networkx:
+            self._g = from_networkx
+            self._next_node = max(n['id'] for _, n in from_networkx.nodes(data=True))+1
+        elif original:
             self._next_node = original._next_node
             if subgraph:
                 self._g = nx.DiGraph(original._g.subgraph(subgraph))
             else:
                 self._g = nx.DiGraph(original._g)
-            self.gram = self._g.graph
-            self.node = self._g.node
         else:
             self._next_node = 0
             self._g = nx.DiGraph()
-            self.gram = self._g.graph
-            self.node = self._g.node
+        self.gram = self._g.graph
+        self.node = self._g.node
         if transformer:
             self.transformer = transformer(graph=self, **transformer_args)
         if text:

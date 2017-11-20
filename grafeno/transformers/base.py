@@ -63,9 +63,9 @@ class Transformer:
             self.stage = "post_process"
             self.post_process()
             self.stage = "add_to_graph"
-            sentence_nodes = self._add_to_graph()
+            self._id_map = self._add_to_graph()
             self.stage = "post_insertion"
-            self.post_insertion(sentence_nodes)
+            self.post_insertion(list(self._id_map.values()))
         self.stage = "after_all"
         self.after_all()
         self.stage = ""
@@ -176,7 +176,7 @@ class Transformer:
                 child = edge.pop('child')
                 g.add_edge(real_id.get(parent, parent),
                            real_id.get(child, child), **edge)
-        return list(real_id.values())
+        return real_id
 
     def post_insertion (self, sentence_nodes):
         '''Called after the processed nodes and edges are added to the semantic
