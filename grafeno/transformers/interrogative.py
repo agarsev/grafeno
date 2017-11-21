@@ -11,6 +11,7 @@ class Transformer (PosExtract):
         tag_pos = msnode.get('tag', msnode.get('pos'))
         if tag_pos and tag_pos.startswith('w'):
             sem['concept'] = '?'
+            sem['sempos'] = 'n'
         return sem
 
     def post_insertion (self, sentence_nodes):

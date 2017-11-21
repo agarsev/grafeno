@@ -6,7 +6,7 @@ class Linearizer (CypherBase):
         super().__init__(
             node_header='MATCH\n',
             node_sep=',\n',
-            node_gram_whitelist=['concept','polarity'],
+            node_gram_whitelist=['concept','sempos','polarity'],
             edge_header=',\n',
             edge_sep=',\n',
             footer='\nRETURN count(*)',

@@ -85,6 +85,6 @@ class Linearizer ():
             prep.addComplement(child)
             parent.addModifier(prep)
         elif edge['functor'] == 'ATTR':
-            parent.addModifier(child)
+            parent.addPremodifier(child)
         else:
             parent.addComplement(child)

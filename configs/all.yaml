@@ -1,4 +1,4 @@
 transformers:
     - all
 linearizers:
-    - triplets
+    - node_edges
