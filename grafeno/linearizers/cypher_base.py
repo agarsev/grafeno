@@ -72,10 +72,10 @@ class Linearizer (Base):
 
     def cypher_get_edge_gram (self, edge):
         if self.edge_gram_whitelist:
-            gram = { key:edge[key] for key in edge
+            return { key:edge[key] for key in edge
                     if key in self.edge_gram_whitelist }
         else:
-            gram = { key:edge[key] for key in edge
+            return { key:edge[key] for key in edge
                     if key not in self.edge_gram_blacklist }
 
     def cypher_print_node (self, id, labels, gram):

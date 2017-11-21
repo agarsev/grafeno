@@ -13,7 +13,7 @@ class Transformer (Thematic):
 
     def transform_node (self, msnode):
         sem = super().transform_node(msnode)
-        if msnode['pos'] == 'particle':
+        if msnode['pos'] in ('particle', 'part'):
             sem['particle'] = msnode['lemma']
         elif msnode['pos'] == 'preposition' and not self.__first_prep:
             self.__first_prep = sem['id']
@@ -23,7 +23,7 @@ class Transformer (Thematic):
         edge = super().transform_dep(dep, pid, cid)
         p = self.nodes[pid]
         c = self.nodes[cid]
-        if dep == 'ncmod-prt' and p.get('sempos') == 'v' and 'particle' in c:
+        if dep in ('prt', 'ncmod-prt') and p.get('sempos') == 'v' and 'particle' in c:
             p['concept'] += '_'+c['particle']
         return edge
 

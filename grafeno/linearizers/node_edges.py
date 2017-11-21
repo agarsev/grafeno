@@ -72,7 +72,7 @@ class Linearizer ():
         string
             A string representation of the node.
         '''
-        return '{}: {}'.format(node['id'], node['concept'])
+        return '{}: {} {}'.format(node['id'], node['concept'], node)
 
     def filter_edge (self, n, m, edge):
         ''' Override this method to exclude some edges from the output.
@@ -111,5 +111,5 @@ class Linearizer ():
         string
             A string representation of the edge.
         '''
-        return '{}-{}->{}'.format(n, edge['functor'], m)
+        return '{}-{}->{} {}'.format(n, edge['functor'], m, edge)
 
