@@ -7,6 +7,11 @@ linearization. An integrated web service is provided.
 This library is still a work in progress, but it has shown to be already useful
 for a number of applications, for example extractive text summarization.
 
+Examples
+--------
+See the notebooks in the [examples directory](docs/_examples) for how to use grafeno
+in different applications.
+
 Web Service
 -----------
 Run the `server.py` script to get a json web service which exposes most of the

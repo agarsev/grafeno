@@ -14,6 +14,7 @@ Contents:
    :maxdepth: 2
 
    intro
+   examples
    configs
    _reference/grafeno
 
