@@ -93,10 +93,12 @@ from os.path import dirname, basename, isfile
 
 transformers = dict()
 
-for m in glob.glob(dirname(__file__)+"/*.py"):
-    f = basename(m)[:-3]
-    if isfile(m) is True and not f.startswith('__'):
-        transformers[f] = import_module('grafeno.transformers.'+f, __name__).Transformer
+def _get_single_transformer (name):
+    if name in transformers:
+        return transformers[name]
+    else:
+        transformers[name] = import_module('grafeno.transformers.'+name, __name__).Transformer
+        return transformers[name]
 
 def get_pipeline (modules):
     '''Takes a list of transformers and returns a transformer class which
@@ -105,6 +107,6 @@ def get_pipeline (modules):
     if name in transformers:
         return transformers[name]
     else:
-        T = type(name, tuple(transformers[m] for m in reversed(modules)), {})
+        T = type(name, tuple(_get_single_transformer(m) for m in reversed(modules)), {})
         transformers[name] = T
         return T

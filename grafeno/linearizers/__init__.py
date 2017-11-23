@@ -21,10 +21,12 @@ from os.path import dirname, basename, isfile
 
 linearizers = dict()
 
-for m in glob.glob(dirname(__file__)+"/*.py"):
-    f = basename(m)[:-3]
-    if isfile(m) is True and not f.startswith('__'):
-        linearizers[f] = import_module('grafeno.linearizers.'+f, __name__).Linearizer
+def _get_single_linearizer (name):
+    if name in linearizers:
+        return linearizers[name]
+    else:
+        linearizers[name] = import_module('grafeno.linearizers.'+name, __name__).Linearizer
+        return linearizers[name]
 
 def get_pipeline (modules):
     '''Takes a list of linearizers and returns a linearizer which
@@ -33,6 +35,6 @@ def get_pipeline (modules):
     if name in linearizers:
         return linearizers[name]
     else:
-        T = type(name, tuple(linearizers[m] for m in reversed(modules)), {})
+        T = type(name, tuple(_get_single_linearizer(m) for m in reversed(modules)), {})
         linearizers[name] = T
         return T

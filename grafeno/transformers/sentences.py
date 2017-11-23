@@ -12,7 +12,7 @@ class Transformer (Base):
 
     def pre_process (self, tree):
         super().pre_process(tree)
-        if self.parser == 'freeling':
+        if self._parser == 'freeling':
             sent = []
             first = True
             for t in tree['tokens']:
@@ -24,7 +24,7 @@ class Transformer (Base):
                 first = False
                 sent.append(form)
             text = ''.join(sent)
-        elif self.parser == 'spacy':
+        elif self._parser == 'spacy':
             text = tree.text
         else:
             text = str(tree)
