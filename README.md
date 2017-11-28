@@ -7,6 +7,11 @@ linearization. An integrated web service is provided.
 This library is still a work in progress, but it has shown to be already useful
 for a number of applications, for example extractive text summarization.
 
+Documentation
+-------------
+The documentation is a work in progress, so it is a bit patchy, but go ahead and
+read it in [ReadTheDocs](http://grafeno.readthedocs.io/en/latest/).
+
 Examples
 --------
 See the notebooks in the [examples directory](docs/_examples) for how to use grafeno
@@ -30,11 +35,17 @@ Use `-h` to get the list of options available.
 Requirements
 ------------
 - [python](https://www.python.org/) >= 3.4
-    - Python packages for use of the library are listed in `requirements.txt`
-- [freeling](http://nlp.lsi.upc.edu/freeling/node/1)
+    - Python packages for use of the library are listed in `requirements.txt`.
+      We recommend using [conda](https://conda.io/docs/) to install grafeno and
+      its dependencies in a virtual environment.
+- A dependency parser. For now, the following are supported:
+    - [spaCy](https://spacy.io/) (recommended)
+    - [freeling](http://nlp.lsi.upc.edu/freeling/node/1)
+- If using the `simplenlg` linearizer, a `java` executable will have to be
+  available.
 
-You will probably also need some NLTK data, for example 'wordnet' and
-'wordnet_ic'. They can be downloaded in python with:
+You may also need some NLTK data, for example 'wordnet' and 'wordnet_ic'. They
+can be downloaded in python with:
 ```python
 import nltk
 nltk.download(['wordnet', 'wordnet_ic'])
@@ -43,15 +54,19 @@ nltk.download(['wordnet', 'wordnet_ic'])
 Authors
 -------
 - Antonio F. G. Sevilla <afgs@ucm.es>
-- Alberto Fernández Isabel <afernandezisabel@ucm.es>
 - Alberto Díaz <albertodiaz@fdi.ucm.es>
 
 Acknowledgements
 ----------------
-This work is funded by ConCreTe. The project ConCreTe acknowledges the financial
-support of the Future and Emerging Technologies (FET) programme within the
-Seventh Framework Programme for Research of the European Commission, under FET
-grant number 611733.
+The continued development of this library has been possible thanks to a number
+of different research and development projects, listed below.
 
-This research is funded by the Spanish Ministry of Economy and Competitiveness
-and the European Regional Development Fund (TIN2015-66655-R (MINECO/FEDER)).
+- A collaboration with [MedWhat](https://medwhat.com/), a company that develops
+  virtual medical assistant bots and other medical artificial intelligence
+  solutions.
+- This research is funded by the Spanish Ministry of Economy and Competitiveness
+  and the European Regional Development Fund (TIN2015-66655-R (MINECO/FEDER)).
+- This work is funded by ConCreTe. The project ConCreTe acknowledges the
+  financial support of the Future and Emerging Technologies (FET) programme
+  within the Seventh Framework Programme for Research of the European
+  Commission, under FET grant number 611733.

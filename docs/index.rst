@@ -32,13 +32,19 @@ Credits
 Authors:
 
 - Antonio F. G. Sevilla <afgs@ucm.es>
-- Alberto Fernández Isabel <afernandezisabel@ucm.es>
 - Alberto Díaz <albertodiaz@fdi.ucm.es>
 
-This work is funded by ConCreTe. The project ConCreTe acknowledges the financial
-support of the Future and Emerging Technologies (FET) programme within the
-Seventh Framework Programme for Research of the European Commission, under FET
-grant number 611733.
+Acknowledgements
+----------------
+The continued development of this library has been possible thanks to a number
+of different research and development projects, listed below.
 
-This research is funded by the Spanish Ministry of Economy and Competitiveness
-and the European Regional Development Fund (TIN2015-66655-R (MINECO/FEDER)).
+- A collaboration with MedWhat (https://medwhat.com/), a company that develops
+  virtual medical assistant bots and other medical artificial intelligence
+  solutions.
+- This research is funded by the Spanish Ministry of Economy and Competitiveness
+  and the European Regional Development Fund (TIN2015-66655-R (MINECO/FEDER)).
+- This work is funded by ConCreTe. The project ConCreTe acknowledges the
+  financial support of the Future and Emerging Technologies (FET) programme
+  within the Seventh Framework Programme for Research of the European
+  Commission, under FET grant number 611733.
