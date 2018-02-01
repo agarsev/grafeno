@@ -1,6 +1,9 @@
 from grafeno.transformers.pos_extract import Transformer as PosExtract
 
-modmapping = { 'modnomatch': 'EQ' }
+modmapping = {
+    'modnomatch': 'EQ',
+    'conj': False
+}
 defaultrel = 'ATTR'
 
 class Transformer (PosExtract):
@@ -19,5 +22,7 @@ class Transformer (PosExtract):
         p = self.nodes[pid]
         c = self.nodes[cid]
         if 'concept' in p and 'concept' in c and p.get('sempos') == 'n' and c.get('sempos') == 'n':
-            edge['functor'] = modmapping.get(dep, defaultrel)
+            functor = modmapping.get(dep, defaultrel)
+            if functor:
+                edge['functor'] = functor
         return edge
