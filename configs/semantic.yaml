@@ -14,7 +14,7 @@ transformers:
     - negation
     - interrogative
     - copula
-    - lenient
     - conjunction
+    - lenient
 linearizers:
     - node_edges

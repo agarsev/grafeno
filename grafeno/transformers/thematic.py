@@ -32,7 +32,7 @@ class Transformer (PosExtract):
             functor, w, pos_set = self.predication[dep]
             if not pos_set or c.get('sempos') in pos_set:
                 edge['functor'], edge['weight'] = functor, w
-        elif dep == 'aux':
+        elif dep == 'aux' or dep == 'auxpass':
             mod = c['concept']
             if mod == 'have':
                 p['aspect'] = 'perfect'
@@ -55,3 +55,5 @@ class Transformer (PosExtract):
                     if f == 'COMP' and e.get('class') == 'by':
                         e['functor'] = 'AGENT'
                         del e['class']
+                        del e['pval']
+                del n['passive']

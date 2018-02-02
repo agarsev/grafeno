@@ -1,4 +1,3 @@
-# TODO: check with spacy
 from grafeno.transformers.thematic import Transformer as Thematic
 
 class Transformer (Thematic):
