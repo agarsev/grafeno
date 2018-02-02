@@ -1,3 +1,4 @@
+# TODO: rename to rel pronoun
 from grafeno.transformers.pos_extract import Transformer as PosExtract
 
 class Transformer (PosExtract):

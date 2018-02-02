@@ -12,9 +12,9 @@ transformers:
     - adjectives
     - adverbs
     - negation
-    - interrogative
     - copula
     - conjunction
+    - relative
     - lenient
 linearizers:
     - node_edges
