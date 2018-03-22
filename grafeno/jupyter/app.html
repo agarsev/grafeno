@@ -1,17 +1,17 @@
 <style>
-    #d3-container {
+    #d3-container-$OUTPUT_COUNTER$ {
         display: block;
         width: 100%;
         padding-bottom: 75%;
         border: 1px solid gray;
         position: relative;
     }
-    #d3-container > div {
+    #d3-container-$OUTPUT_COUNTER$ > div {
         position: absolute;
         display: block;
         top: 0; right: 0; bottom: 0; left: 0;
     }
-    #d3-container svg {
+    #d3-container-$OUTPUT_COUNTER$ svg {
         width: 100%;
         height: 100%;
     }
@@ -38,7 +38,7 @@
         fill: #333;
     }
 </style>
-<div id="d3-container">
+<div id="d3-container-$OUTPUT_COUNTER$">
     <div>
         <svg>
             <defs>
