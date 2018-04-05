@@ -1,4 +1,14 @@
+var m; // workaround for a weird minimizer problem
+
+require.config({
+    paths: {
+        d3: '//cdnjs.cloudflare.com/ajax/libs/d3/3.4.8/d3.min'
+    }
+});
+
 window.CreateGrafenoVisualization = function (output_counter, graph) {
+
+require(['d3'], function (d3) {
     function node_color (node) {
         switch (node.sempos) {
             case 'n': return '#CF3C46';
@@ -86,6 +96,9 @@ window.CreateGrafenoVisualization = function (output_counter, graph) {
             .attr("dx", d => d.x)
             .attr("dy", d => d.y);
     });
+
+});
+
 }
 
 /* vim: set filetype=javascript : */
