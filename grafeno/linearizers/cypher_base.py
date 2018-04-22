@@ -31,6 +31,7 @@ class Linearizer (Base):
                   edge_gram_blacklist = default_edge_gram_blacklist,
                   edge_gram_whitelist = None,
                   sempos_map = default_sempos_map,
+                  cypher_extra_params = {},
                   **kwds):
         super().__init__(**kwds)
         self.node_gram_blacklist = node_gram_blacklist
@@ -38,6 +39,7 @@ class Linearizer (Base):
         self.edge_gram_blacklist = edge_gram_blacklist
         self.edge_gram_whitelist = edge_gram_whitelist
         self.sempos_map = sempos_map
+        self.cypher_extra_params = cypher_extra_params
 
     def process_node (self, node):
         return self.cypher_format_node(node,
@@ -52,11 +54,13 @@ class Linearizer (Base):
 
     def cypher_get_node_gram (self, node):
         if self.node_gram_whitelist:
-            return { key:node[key] for key in node
+            node_gram = { key:node[key] for key in node
                     if key in self.node_gram_whitelist }
         else:
-            return { key:node[key] for key in node
+            node_gram = { key:node[key] for key in node
                     if key not in self.node_gram_blacklist }
+        node_gram.update(self.cypher_extra_params)
+        return node_gram
 
     def process_edge (self, n, m, edge):
         return self.cypher_format_edge(n, m, edge,
