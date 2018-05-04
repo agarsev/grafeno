@@ -4,7 +4,8 @@ from grafeno.transformers.base import Transformer as Base
 
 wordnet_langs = {
     'en': 'eng',
-    'es': 'spa'
+    'es': 'spa',
+    'ca': 'cat'
 }
 
 class Transformer (Base):
