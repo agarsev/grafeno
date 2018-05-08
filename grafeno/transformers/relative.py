@@ -17,6 +17,6 @@ class Transformer (Interrogative):
                 for f in self.edges:
                     if f.get('parent', None) == subord_verb:
                         obj = self.nodes[f['child']]
-                        if obj['concept'] == '?':
+                        if obj.get('concept') == '?':
                             f['child'] = referent
                             del obj['concept']

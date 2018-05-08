@@ -1,0 +1,53 @@
+<style>
+    #d3-container-$OUTPUT_COUNTER$ {
+        display: block;
+        width: 100%;
+        padding-bottom: 75%;
+        border: 1px solid gray;
+        position: relative;
+    }
+    #d3-container-$OUTPUT_COUNTER$ > div {
+        position: absolute;
+        display: block;
+        top: 0; right: 0; bottom: 0; left: 0;
+    }
+    #d3-container-$OUTPUT_COUNTER$ svg {
+        width: 100%;
+        height: 100%;
+    }
+    .node circle {
+        stroke: #fff;
+        stroke-width: 2px;
+    }
+    .link path {
+        stroke: #333; stroke-width: 2px;
+        fill: none;
+        marker-end: url(#markerArrow);
+    }
+    .link text, .node text {
+        stroke: #fff;
+        paint-order: stroke;
+        stroke-width: 4px;
+        fill: #333;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        font-weight: boldest;
+        pointer-events: none;
+    }
+    .marker {
+        fill: #333;
+    }
+</style>
+<div id="d3-container-$OUTPUT_COUNTER$">
+    <div>
+        <svg>
+            <defs>
+                <marker id="markerArrow" markerWidth="6" markerHeight="8"
+                    orient="auto" refX="21" refY="3">
+                    <path d="M0,3 L6,5 1,8" />
+                </marker>
+            </defs>
+            <g id="graph-layer"></g>
+        </svg>
+    </div>
+</div>

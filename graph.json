@@ -1,0 +1,521 @@
+{
+    "links": [
+        {
+            "source": 0,
+            "functor": "ATTR",
+            "target": 13
+        },
+        {
+            "source": 1,
+            "functor": "COP",
+            "target": 9
+        },
+        {
+            "source": 1,
+            "functor": "COP",
+            "target": 2
+        },
+        {
+            "source": 2,
+            "functor": "COMP",
+            "target": 0
+        },
+        {
+            "source": 2,
+            "functor": "ATTR",
+            "target": 10
+        },
+        {
+            "source": 4,
+            "functor": "ATTR",
+            "target": 11
+        },
+        {
+            "source": 5,
+            "functor": "THEME",
+            "target": 3
+        },
+        {
+            "source": 5,
+            "functor": "SEQ",
+            "target": 4
+        },
+        {
+            "source": 7,
+            "functor": "AGENT",
+            "target": 12
+        },
+        {
+            "source": 7,
+            "functor": "SEQ",
+            "target": 5
+        },
+        {
+            "source": 9,
+            "functor": "THEME",
+            "target": 12
+        },
+        {
+            "source": 12,
+            "functor": "ATTR",
+            "target": 8
+        },
+        {
+            "source": 12,
+            "functor": "RESTR",
+            "target": 5
+        },
+        {
+            "source": 12,
+            "functor": "RESTR",
+            "target": 7
+        },
+        {
+            "source": 14,
+            "functor": "ATTR",
+            "target": 19
+        },
+        {
+            "source": 15,
+            "functor": "COMP",
+            "target": 17
+        },
+        {
+            "source": 15,
+            "functor": "ATTR",
+            "target": 20
+        },
+        {
+            "source": 15,
+            "functor": "COMP",
+            "target": 21
+        },
+        {
+            "source": 15,
+            "functor": "AGENT",
+            "target": 14
+        },
+        {
+            "source": 17,
+            "functor": "RESTR",
+            "target": 18
+        },
+        {
+            "source": 18,
+            "functor": "AGENT",
+            "target": 16
+        },
+        {
+            "source": 18,
+            "functor": "THEME",
+            "target": 17
+        },
+        {
+            "source": 18,
+            "functor": "ATTR",
+            "target": 22
+        },
+        {
+            "source": 24,
+            "functor": "AGENT",
+            "target": 26
+        },
+        {
+            "source": 25,
+            "functor": "THEME",
+            "target": 31
+        },
+        {
+            "source": 29,
+            "functor": "ATTR",
+            "target": 28
+        },
+        {
+            "source": 30,
+            "functor": "COMP",
+            "target": 27
+        },
+        {
+            "source": 32,
+            "functor": "COP",
+            "target": 33
+        },
+        {
+            "source": 32,
+            "functor": "COP",
+            "target": 34
+        },
+        {
+            "source": 32,
+            "functor": "COP",
+            "target": 25
+        },
+        {
+            "source": 33,
+            "functor": "RESTR",
+            "target": 24
+        },
+        {
+            "source": 34,
+            "functor": "ATTR",
+            "target": 29
+        },
+        {
+            "source": 35,
+            "functor": "ATTR",
+            "target": 43
+        },
+        {
+            "source": 39,
+            "functor": "ATTR",
+            "target": 42
+        },
+        {
+            "source": 40,
+            "functor": "THEME",
+            "target": 37
+        },
+        {
+            "source": 40,
+            "functor": "COMP",
+            "target": 39
+        },
+        {
+            "source": 41,
+            "functor": "ATTR",
+            "target": 36
+        },
+        {
+            "source": 44,
+            "functor": "COP",
+            "target": 40
+        },
+        {
+            "source": 44,
+            "functor": "COP",
+            "target": 41
+        },
+        {
+            "source": 44,
+            "functor": "COP",
+            "target": 46
+        },
+        {
+            "source": 46,
+            "functor": "ATTR",
+            "target": 35
+        }
+    ],
+    "nodes": [
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 0,
+            "concept": "research"
+        },
+        {
+            "sempos": "v",
+            "tense": null,
+            "polarity": "+",
+            "id": 1,
+            "concept": "be"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 2,
+            "concept": "goal"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 3,
+            "concept": "problem"
+        },
+        {
+            "sempos": "v",
+            "tense": null,
+            "polarity": "+",
+            "id": 4,
+            "concept": "think"
+        },
+        {
+            "sempos": "v",
+            "tense": null,
+            "polarity": "+",
+            "id": 5,
+            "concept": "solve"
+        },
+        {
+            "sempos": "v",
+            "tense": null,
+            "polarity": "+",
+            "id": 6,
+            "concept": "can"
+        },
+        {
+            "sempos": "v",
+            "tense": null,
+            "polarity": "+",
+            "id": 7,
+            "concept": "learn"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 8,
+            "concept": "computer"
+        },
+        {
+            "sempos": "v",
+            "tense": null,
+            "polarity": "+",
+            "id": 9,
+            "concept": "create"
+        },
+        {
+            "sempos": "j",
+            "id": 10,
+            "concept": "extreme"
+        },
+        {
+            "sempos": "r",
+            "id": 11,
+            "concept": "logically"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 12,
+            "concept": "program"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 13,
+            "concept": "ai"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 14,
+            "concept": "application"
+        },
+        {
+            "tense": null,
+            "sempos": "v",
+            "id": 15,
+            "concept": "pick",
+            "polarity": "+",
+            "aspect": "perfect"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 16,
+            "concept": "computer"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 17,
+            "concept": "problem"
+        },
+        {
+            "sempos": "v",
+            "tense": null,
+            "polarity": "+",
+            "id": 18,
+            "concept": "do"
+        },
+        {
+            "sempos": "j",
+            "id": 19,
+            "concept": "most"
+        },
+        {
+            "sempos": "r",
+            "id": 20,
+            "concept": "however"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 21,
+            "concept": "practice"
+        },
+        {
+            "sempos": "r",
+            "id": 22,
+            "concept": "well"
+        },
+        {
+            "sempos": "v",
+            "tense": null,
+            "polarity": "+",
+            "id": 23,
+            "concept": "can"
+        },
+        {
+            "sempos": "v",
+            "tense": null,
+            "polarity": "+",
+            "id": 24,
+            "concept": "do"
+        },
+        {
+            "sempos": "v",
+            "tense": null,
+            "polarity": "+",
+            "id": 25,
+            "concept": "do"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 26,
+            "concept": "computer"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 27,
+            "concept": "people"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 28,
+            "concept": "data"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 29,
+            "concept": "base"
+        },
+        {
+            "sempos": "j",
+            "id": 30,
+            "concept": "good"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 31,
+            "concept": "calculation"
+        },
+        {
+            "sempos": "v",
+            "tense": null,
+            "polarity": "+",
+            "id": 32,
+            "concept": "be"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 33,
+            "concept": "thing"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 34,
+            "concept": "searching"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 35,
+            "concept": "day"
+        },
+        {
+            "sempos": "j",
+            "id": 36,
+            "concept": "other"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 37,
+            "concept": "environment"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 38,
+            "concept": "way"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 39,
+            "concept": "sense"
+        },
+        {
+            "sempos": "v",
+            "tense": null,
+            "polarity": "+",
+            "id": 40,
+            "concept": "perceive"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 41,
+            "concept": "hand"
+        },
+        {
+            "sempos": "j",
+            "id": 42,
+            "concept": "real"
+        },
+        {
+            "sempos": "j",
+            "id": 43,
+            "concept": "present"
+        },
+        {
+            "sempos": "v",
+            "tense": null,
+            "polarity": "+",
+            "id": 44,
+            "concept": "be"
+        },
+        {
+            "sempos": "j",
+            "id": 45,
+            "concept": "-PRON-"
+        },
+        {
+            "proper": false,
+            "num": "p",
+            "sempos": "n",
+            "id": 46,
+            "concept": "computing"
+        }
+    ]
+}
