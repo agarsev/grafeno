@@ -28,42 +28,46 @@ require(['d3'], function (d3) {
         }
     }
     function middle_point (s, t) {
-        var mx = (t.x + s.x)/2;
-        var my = (t.y + s.y)/2;
-        var dx = (t.x - s.x);
-        var dy = (t.y - s.y);
+        let mx = (t.x + s.x)/2,
+            my = (t.y + s.y)/2,
+            dx = (t.x - s.x),
+            dy = (t.y - s.y);
         return { x: mx+dy/3,
             y: my-dx/3
         };
     }
-    var zoom = d3.behavior.zoom()
+    let container = d3.select(`#d3-container-${output_counter}`).select("div");
+    let { clientWidth: w, clientHeight: h } = container[0][0];
+    let zoom = d3.behavior.zoom()
         .scaleExtent([.5, 5])
+        .size([w, h])
+        .translate([w/2, h/2])
         .on('zoom', zoomed);
-    var force = d3.layout.force()
-        .charge(-200)
+    container.call(zoom);
+    let force = d3.layout.force()
+        .charge(-300)
         .gravity(0.05)
         .linkDistance(link_distance);
-    var container = d3.select(`#d3-container-${output_counter}`).select("div")
-        .call(zoom);
-    var svg = container.select("#graph-layer");
+    let svg = container.select("#graph-layer");
     function zoomed(){
         force.stop();
-        var canvasTranslate = zoom.translate();
+        let canvasTranslate = zoom.translate();
         svg.attr('transform', `translate(${canvasTranslate[0]},${canvasTranslate[1]})scale(${zoom.scale()})`);
         force.resume();
     }
+    zoomed();
 
     force.nodes(graph.nodes)
         .links(graph.links)
         .start();
-    var link = svg.selectAll(".link")
+    let link = svg.selectAll(".link")
         .data(graph.links)
         .enter().append("g")
         .attr("class", "link");
     link.append("path");
     link.append("text")
         .text(d => d.functor);
-    var node = svg.selectAll(".node")
+    let node = svg.selectAll(".node")
         .data(graph.nodes)
         .enter().append("g")
         .attr("class", "node");

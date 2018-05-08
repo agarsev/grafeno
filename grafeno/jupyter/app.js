@@ -5,7 +5,6 @@ var m; // workaround for a weird minimizer problem
 require.config({
     paths: {
         d3: '//cdnjs.cloudflare.com/ajax/libs/d3/3.4.8/d3.min'
-        // http://d3js.org/d3.v3.min.js
     }
 });
 
@@ -35,17 +34,22 @@ window.CreateGrafenoVisualization = function (output_counter, graph) {
             }
         }
         function middle_point(s, t) {
-            var mx = (t.x + s.x) / 2;
-            var my = (t.y + s.y) / 2;
-            var dx = t.x - s.x;
-            var dy = t.y - s.y;
+            var mx = (t.x + s.x) / 2,
+                my = (t.y + s.y) / 2,
+                dx = t.x - s.x,
+                dy = t.y - s.y;
             return { x: mx + dy / 3,
                 y: my - dx / 3
             };
         }
-        var zoom = d3.behavior.zoom().scaleExtent([.5, 5]).on('zoom', zoomed);
-        var force = d3.layout.force().charge(-200).gravity(0.05).linkDistance(link_distance);
-        var container = d3.select('#d3-container-' + output_counter).select("div").call(zoom);
+        var container = d3.select('#d3-container-' + output_counter).select("div");
+        var _container$0$ = container[0][0],
+            w = _container$0$.clientWidth,
+            h = _container$0$.clientHeight;
+
+        var zoom = d3.behavior.zoom().scaleExtent([.5, 5]).size([w, h]).translate([w / 2, h / 2]).on('zoom', zoomed);
+        container.call(zoom);
+        var force = d3.layout.force().charge(-300).gravity(0.05).linkDistance(link_distance);
         var svg = container.select("#graph-layer");
         function zoomed() {
             force.stop();
@@ -53,6 +57,7 @@ window.CreateGrafenoVisualization = function (output_counter, graph) {
             svg.attr('transform', 'translate(' + canvasTranslate[0] + ',' + canvasTranslate[1] + ')scale(' + zoom.scale() + ')');
             force.resume();
         }
+        zoomed();
 
         force.nodes(graph.nodes).links(graph.links).start();
         var link = svg.selectAll(".link").data(graph.links).enter().append("g").attr("class", "link");
