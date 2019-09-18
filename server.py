@@ -52,6 +52,7 @@ def run_pipeline (config):
         result = json.loads(j)
     except AttributeError:
         pass
+    bottle.response.content_type = 'application/json'
     return json.dumps({
         'ok': True,
         'result': result
@@ -86,7 +87,7 @@ def stored_config(config_file):
         config_file = open('configs/'+config_file+'.yaml')
     except FileNotFoundError:
         abort(400,"Unknown configuration "+config_file)
-    config = yaml.load(config_file)
+    config = yaml.load(config_file, Loader=yaml.FullLoader)
     dict_merge(config, reqbody)
     return run_pipeline(config)
 
