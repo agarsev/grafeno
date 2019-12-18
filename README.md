@@ -7,6 +7,14 @@ linearization. An integrated web service is provided.
 This library is still a work in progress, but it has shown to be already useful
 for a number of applications, for example extractive text summarization.
 
+Install
+-------
+
+Using [poetry](https://python-poetry.org/):
+
+1. `poetry install`
+2. `poetry run setup`
+
 Documentation
 -------------
 The documentation is a work in progress, so it is a bit patchy, but go ahead and

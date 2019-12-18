@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "grafeno"
+version = "0.3.0"
+description = "Concept graph library"
+authors = ["Antonio F. G. Sevilla <antonio@garciasevilla.com>"]
+license = "AGPL-3.0"
+
+[tool.poetry.dependencies]
+python = "^3.4"
+spacy = "^2"
+networkx = "^2"
+PyYAML = "*"
+
+[tool.poetry.extras]
+
+# For running the web service
+web = ["bottle"]
+
+# For using wordnet
+lexical = ["nltk"]
+
+# For clustering modules
+modules = ["pexpect", "numpy", "scipy"]
+
+[tool.poetry.scripts]
+setup = "grafeno.setup:setup"
