@@ -2,7 +2,7 @@
 name = "grafeno"
 version = "0.3.0"
 description = "Concept graph library"
-authors = ["Antonio F. G. Sevilla <antonio@garciasevilla.com>"]
+authors = ["Antonio F. G. Sevilla <afgs@ucm.es>"]
 license = "AGPL-3.0"
 
 [tool.poetry.dependencies]

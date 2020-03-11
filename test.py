@@ -61,7 +61,7 @@ if args.config_file:
         config_file = None
     if not config_file:
         config_file = open(args.config_file)
-    config = yaml.load(config_file)
+    config = yaml.safe_load(config_file)
 else:
     config = {}
 
