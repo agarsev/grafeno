@@ -42,5 +42,8 @@ class Transformer (Base):
 
     def post_insertion (self, sentence_nodes):
         super().post_insertion(sentence_nodes)
-        self.graph.roots.append(self._id_map[self.__root_node])
+        try:
+            self.graph.roots.append(self._id_map[self.__root_node])
+        except KeyError:
+            pass
 
