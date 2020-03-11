@@ -13,7 +13,12 @@ Install
 Using [poetry](https://python-poetry.org/):
 
 1. `poetry install`
-2. `poetry run setup`
+2. If you want to install some extras, run `poetry install --extras "web lexical
+   modules"` with the extras that you need (see `pyproject.toml`).
+3. `poetry run setup`
+
+To run any grafeno script with poetry, use `poetry run` before the name of the
+script and its arguments.
 
 Documentation
 -------------

@@ -11,6 +11,11 @@ spacy = "^2"
 networkx = "^2"
 PyYAML = "*"
 
+nltk = { version = "*", optional = true }
+pexpect = { version = "*", optional = true }
+numpy = { version = "*", optional = true }
+scipy = { version = "*", optional = true }
+
 [tool.poetry.extras]
 
 # For running the web service

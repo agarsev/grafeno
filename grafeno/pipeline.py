@@ -88,7 +88,7 @@ obtained is returned.
 from grafeno import Graph as CG, transformers, linearizers
 from grafeno.operations import operate
 
-DEF_PARSER = 'freeling'
+DEF_PARSER = 'spacy'
 DEF_TRANSFORMERS = ['all']
 DEF_T_ARGS = {}
 DEF_LINEARIZERS = []
