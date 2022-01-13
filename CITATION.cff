@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: "Grafeno: Semantic Graph Extraction and Operation"
+authors:
+  - family-names: Sevilla
+    given-names: Antonio F. G.
+    orcid: "https://orcid.org/0000-0001-9025-1724"
+abstract: |
+    Python library for concept graph extraction from text, operation, and
+    linearization. An integrated web service is provided.
+version: 0.3.0
+date-released: "2020-03-11"
+message: |
+    If you use this software, please cite the article from the ICDIM conference,
+    but also don't hesitate to get in touch!
+preferred-citation:
+    title: "Grafeno: Semantic Graph Extraction and Operation"
+    authors:
+      - family-names: Sevilla
+        given-names: "Antonio F. G."
+        orcid: "https://orcid.org/0000-0001-9025-1724"
+      - family-names: Fernández-Isabel
+        given-names: Alberto
+      - family-names: Díaz Esteban
+        given-names: Alberto
+    type: article
+    date-released: "2016-10-01"
+    url: "https://doi.org/10.1109/ICDIM.2016.7829770"
