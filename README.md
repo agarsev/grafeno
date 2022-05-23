@@ -79,7 +79,7 @@ of different research and development projects, listed below.
   solutions.
 - This research is funded by the Spanish Ministry of Economy and Competitiveness
   and the European Regional Development Fund (TIN2015-66655-R (MINECO/FEDER)).
-- This work is funded by ConCreTe. The project ConCreTe acknowledges the
+- This work is funded by [ConCreTe](http://nil.fdi.ucm.es/?q=node/780). The project ConCreTe acknowledges the
   financial support of the Future and Emerging Technologies (FET) programme
   within the Seventh Framework Programme for Research of the European
   Commission, under FET grant number 611733.
