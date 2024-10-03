@@ -17,48 +17,45 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import argparse
-
 import bottle
-from bottle import static_file, abort, error, get, post, request, run, view
-bottle.TEMPLATE_PATH = [ 'res' ]
+from bottle import abort, error, get, post, request, run, static_file, view
 
+bottle.TEMPLATE_PATH = ["res"]
+
+import collections
 import json
 import re
 import unicodedata
+
 import yaml
-import collections
 
 from grafeno import pipeline
 
-arrayize = lambda t: t.split(',')
-arg_parser = argparse.ArgumentParser(description='REST server for concept graphs')
-arg_parser.add_argument('-H','--hostname',help='hostname to bind to',default='localhost')
-arg_parser.add_argument('-P','--port',type=int,help='port number to bind to',default=9000)
-args = arg_parser.parse_args()
+control_chars = "".join(
+    [chr(x) for x in range(0, 32)] + [chr(x) for x in range(127, 160)]
+)
+control_char_re = re.compile("[%s]" % re.escape(control_chars))
 
-control_chars = ''.join([chr(x) for x in range(0,32)] + [chr(x) for x in range(127,160)])
-control_char_re = re.compile('[%s]' % re.escape(control_chars))
+
 def remove_control_chars(s):
-    return control_char_re.sub(' ', s)
+    return control_char_re.sub(" ", s)
 
-def run_pipeline (config):
+
+def run_pipeline(config):
     try:
         result = pipeline.run(config)
     except ValueError as e:
-        abort(400,str(e))
+        abort(400, str(e))
     try:
         j = result.to_json()
         result = json.loads(j)
     except AttributeError:
         pass
-    bottle.response.content_type = 'application/json'
-    return json.dumps({
-        'ok': True,
-        'result': result
-        })
+    bottle.response.content_type = "application/json"
+    return json.dumps({"ok": True, "result": result})
 
-def dict_merge (x, y):
+
+def dict_merge(x, y):
     for key, val in y.items():
         if isinstance(val, collections.Mapping):
             r = dict_merge(x.get(key, {}), val)
@@ -67,73 +64,79 @@ def dict_merge (x, y):
             x[key] = y[key]
     return x
 
+
 # ROUTES
 
-@post('/raw')
+
+@post("/raw")
 def raw_request():
     try:
         config = request.json
     except ValueError:
-        abort(400,"Invalid json request")
+        abort(400, "Invalid json request")
     return run_pipeline(config)
 
-@post('/run/<config_file>')
+
+@post("/run/<config_file>")
 def stored_config(config_file):
     try:
         reqbody = request.json
     except ValueError:
-        abort(400,"Invalid json request")
+        abort(400, "Invalid json request")
     try:
-        config_file = open('configs/'+config_file+'.yaml')
+        config_file = open("configs/" + config_file + ".yaml")
     except FileNotFoundError:
-        abort(400,"Unknown configuration "+config_file)
+        abort(400, "Unknown configuration " + config_file)
     config = yaml.load(config_file, Loader=yaml.FullLoader)
     dict_merge(config, reqbody)
     return run_pipeline(config)
 
-@get('/run/<config_file>')
-@view('config')
+
+@get("/run/<config_file>")
+@view("config")
 def view_config(config_file):
     try:
-        cfile = open('configs/'+config_file+'.yaml')
+        cfile = open("configs/" + config_file + ".yaml")
     except FileNotFoundError:
-        abort(404,"Unknown configuration "+config_file)
+        abort(404, "Unknown configuration " + config_file)
     try:
-        text = open('default.txt').read()
+        text = open("default.txt").read()
     except FileNotFoundError:
         text = "John loves Mary."
     return dict(name=config_file, config=cfile.read(), default_text=text)
 
+
 @error(400)
-def custom400 (error):
-    return json.dumps({
-        'ok': False,
-        'error_message': error.body
-        })
+def custom400(error):
+    return json.dumps({"ok": False, "error_message": error.body})
+
 
 @error(500)
-def custom500 (error):
-    return json.dumps({
-        'ok': False,
-        'error_message': error.body
-        })
+def custom500(error):
+    return json.dumps({"ok": False, "error_message": error.body})
 
 
 # OTHER THINGS
 
-@get('/static/logo.svg')
-def get_logo ():
-    return static_file('logo.svg',root='res')
 
-from nltk.corpus import wordnet as wn
-@get('/other/synonyms/<word>')
-def get_synonyms(word):
-    '''For Alberto's alternative project'''
-    if word is None:
-        abort(400,"No word")
-    synonyms = set(l.name() for ss in wn.synsets(word) for l in ss.lemmas())
-    return json.dumps({'synonyms': list(synonyms)})
+@get("/static/logo.svg")
+def get_logo():
+    return static_file("logo.svg", root="res")
+
 
 # RUN SERVER
 
-run(host=args.hostname,port=args.port,reloader=True)
+if __name__ == "__main__":
+    import argparse
+
+    arg_parser = argparse.ArgumentParser(description="REST server for concept graphs")
+    arg_parser.add_argument(
+        "-H", "--hostname", help="hostname to bind to", default="localhost"
+    )
+    arg_parser.add_argument(
+        "-P", "--port", type=int, help="port number to bind to", default=9000
+    )
+    args = arg_parser.parse_args()
+    run(host=args.hostname, port=args.port, reloader=True)
+else:
+    app = bottle.default_app()

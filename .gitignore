@@ -3,4 +3,3 @@ data
 node_modules
 default.txt
 .ipynb_checkpoints
-poetry.lock

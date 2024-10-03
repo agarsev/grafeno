@@ -1,22 +1,21 @@
-[tool.poetry]
+[project]
 name = "grafeno"
-version = "0.3.0"
+version = "0.4.0"
 description = "Concept graph library"
-authors = ["Antonio F. G. Sevilla <afgs@ucm.es>"]
-license = "AGPL-3.0"
+authors = [
+    {name = "Antonio F. G. Sevilla", email = "afgs@ucm.es"}
+]
+license = {text = "AGPL-3.0"}
+readme = "README.md"
+requires-python = "~=3.7.0"
+dependencies = [
+    "spacy~=2.0",
+    "networkx~=2.2",
+    "PyYAML",
+    "pip>=24.0",
+]
 
-[tool.poetry.dependencies]
-python = "^3.4"
-spacy = "^2"
-networkx = "^2"
-PyYAML = "*"
-
-nltk = { version = "*", optional = true }
-pexpect = { version = "*", optional = true }
-numpy = { version = "*", optional = true }
-scipy = { version = "*", optional = true }
-
-[tool.poetry.extras]
+[project.optional-dependencies]
 
 # For running the web service
 web = ["bottle"]
@@ -27,5 +26,9 @@ lexical = ["nltk"]
 # For clustering modules
 modules = ["pexpect", "numpy", "scipy"]
 
-[tool.poetry.scripts]
+[project.scripts]
 setup = "grafeno.setup:setup"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
